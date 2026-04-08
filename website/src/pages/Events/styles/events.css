@@ -1,0 +1,222 @@
+.events-hero {
+  height: 60vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.events-hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.container-hero-events {
+  position: relative;
+  z-index: 10;
+  color: var(--white);
+}
+
+.intro-box {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: var(--white);
+  padding: 4rem 3.5rem;
+  border-radius: 12px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.06);
+  border-top: 6px solid var(--secondary);
+}
+
+.intro-description {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}
+
+.intro-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Saloon Items */
+.saloon-types {
+  display: flex;
+  flex-direction: column;
+  gap: 8rem;
+  padding-bottom: 5rem;
+}
+
+.saloon-item {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.saloon-item.reverse {
+  grid-template-columns: 1fr 1.2fr;
+}
+
+.saloon-image {
+  position: relative;
+  height: 400px;
+}
+
+.saloon-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.capacity-tag {
+  position: absolute;
+  bottom: -1.5rem;
+  right: 2rem;
+  background-color: var(--secondary);
+  color: var(--white);
+  padding: 0.8rem 2rem;
+  font-weight: 700;
+  border-radius: 4px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.saloon-title {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+}
+
+.saloon-text {
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}
+
+.saloon-features {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+}
+
+.saloon-features li {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.95rem;
+}
+
+.saloon-features svg {
+  width: 1.8rem;
+  height: 1.8rem;
+  color: var(--secondary);
+  background-color: var(--accent);
+  padding: 0.4rem;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.saloon-item.reverse .saloon-image {
+  order: 2;
+}
+
+/* Video Modal */
+.video-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-modal.active {
+  display: flex;
+}
+
+.video-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.video-modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 1000px;
+  z-index: 10;
+}
+
+.video-modal-close {
+  position: absolute;
+  top: -3rem;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 3rem;
+  cursor: pointer;
+}
+
+.video-responsive-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
+.video-responsive-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+@media (max-width: 992px) {
+  .intro-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .saloon-item,
+  .saloon-item.reverse {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+
+  .saloon-item.reverse .saloon-image {
+    order: -1;
+  }
+
+  .saloon-image {
+    height: 300px;
+  }
+
+  .saloon-title {
+    font-size: 1.8rem;
+  }
+}

@@ -1,0 +1,126 @@
+.restaurant-hero {
+  height: 60vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.restaurant-hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.container-hero-restaurant {
+  position: relative;
+  z-index: 10;
+  color: var(--white);
+}
+
+.intro-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.intro-text {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}
+
+.service-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--accent);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  color: var(--primary);
+  border: 1px solid rgba(26, 43, 72, 0.1);
+}
+
+.service-notice svg {
+  color: var(--secondary);
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* Menus Section */
+.menus-section {
+  padding-bottom: 5rem;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+}
+
+.menu-card {
+  background-color: var(--white);
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border-top: 4px solid var(--secondary);
+}
+
+.menu-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: var(--primary);
+}
+
+.pricing-table-wrapper {
+  overflow-x: auto;
+}
+
+.pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pricing-table th,
+.pricing-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.pricing-table th {
+  color: var(--secondary-dark);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.pricing-table td {
+  font-weight: 500;
+}
+
+.pricing-table td:last-child {
+  text-align: right;
+  font-weight: 700;
+  color: var(--secondary-dark);
+}
+
+@media (max-width: 992px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+}

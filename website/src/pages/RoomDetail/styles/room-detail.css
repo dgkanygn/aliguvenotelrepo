@@ -1,0 +1,113 @@
+.room-detail-page {
+  padding-bottom: 8rem;
+}
+
+.room-detail-hero {
+  height: 60vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.room-detail-hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.container-hero-room-detail {
+  position: relative;
+  z-index: 10;
+  color: var(--white);
+}
+
+.room-detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.room-detail-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.room-intro-box {
+  background-color: var(--white);
+  padding: 3.5rem;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+  border-top: 5px solid var(--secondary);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.room-detail-description {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}
+
+.room-detail-cta {
+  display: flex;
+  justify-content: center;
+}
+
+.reservation-btn {
+  padding: 1rem 3rem;
+  font-size: 1.1rem;
+  border-radius: 50px;
+}
+
+/* Pricing Table (Room Detail specific) */
+.room-pricing {
+  background-color: var(--white);
+  box-shadow: var(--shadow);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 5rem;
+}
+
+.room-pricing th,
+.room-pricing td {
+  padding: 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.room-pricing th {
+  background-color: var(--primary);
+  color: var(--white);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+.room-pricing td {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--secondary-dark);
+}
+
+@media (max-width: 768px) {
+  .room-detail-title {
+    font-size: 2rem;
+  }
+
+  .room-pricing th,
+  .room-pricing td {
+    padding: 1rem;
+  }
+}

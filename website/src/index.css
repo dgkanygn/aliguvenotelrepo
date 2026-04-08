@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+/* ===== Design Tokens (CSS Variables) ===== */
+:root {
+  --primary: #1A2B48;
+  --secondary: #C5A059;
+  --secondary-dark: #A68045;
+  --accent: #F9F6F0;
+  --white: #FFFFFF;
+  --black: #121212;
+  --text: #333333;
+  --text-muted: #666666;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Global Reset & Base ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background-color: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  transition: var(--transition);
+}
+
+/* ===== Utility Classes ===== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.section-padding {
+  padding: 5rem 0;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mb-4 {
+  margin-bottom: 2rem;
+}
+
+.mt-4 {
+  margin-top: 2rem;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* ===== Common Components ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  gap: 0.5rem;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-dark);
+}
+
+.btn-outline {
+  border: 2px solid var(--secondary);
+  color: var(--secondary-dark);
+  background: transparent;
+}
+
+.btn-outline:hover {
+  background-color: var(--secondary);
+  color: var(--white);
+}
+
+.btn-rounded {
+  border-radius: 50px !important;
+}
+
+.btn-sm {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.85rem;
+}
+
+/* ===== Section Shared ===== */
+.section-subtitle {
+  display: block;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+/* ===== Page Title (shared across page heroes) ===== */
+.page-title {
+  font-size: 4rem;
+  color: var(--white);
+  margin-top: 1rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 992px) {
+  .page-title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+  }
+}

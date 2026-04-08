@@ -1,0 +1,74 @@
+.biography-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.biography-image-wrapper {
+  position: relative;
+  padding-bottom: 2rem;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.vintage-frame {
+  background-color: var(--white);
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transform: rotate(-2deg);
+  border-radius: 4px;
+}
+
+.biography-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: sepia(0.2) contrast(1.1);
+}
+
+.signature {
+  margin-top: 1.5rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+.bio-text {
+  margin-bottom: 1.5rem;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+.bio-quote {
+  margin-top: 2.5rem;
+  padding-left: 1.5rem;
+  border-left: 4px solid var(--secondary);
+  position: relative;
+  color: var(--primary);
+  font-weight: 500;
+  font-style: italic;
+}
+
+.quote-icon {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 2rem;
+  height: 2rem;
+  color: var(--secondary);
+  opacity: 0.2;
+}
+
+@media (max-width: 992px) {
+  .biography-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .biography-image-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
