@@ -4,10 +4,8 @@ import { LogIn } from 'lucide-react';
 
 const LoginPage = () => {
   const { 
-    email, 
-    setEmail, 
-    password, 
-    setPassword, 
+    register,
+    errors,
     error, 
     isLoading, 
     handleSubmit 
@@ -32,27 +30,29 @@ const LoginPage = () => {
             )}
 
             <div>
-              <label className="block text-slate-300 text-sm font-medium mb-2">E-posta Adresi</label>
+              <label className="block text-slate-300 text-sm font-medium mb-2">Kullanıcı Adı</label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@aliguven.com"
+                type="text"
+                {...register('username')}
+                placeholder="admin"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#C5A059] transition-all"
-                required
               />
+              {errors.username && (
+                <p className="mt-1 text-red-400 text-xs">{errors.username.message}</p>
+              )}
             </div>
 
             <div>
               <label className="block text-slate-300 text-sm font-medium mb-2">Şifre</label>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                {...register('password')}
                 placeholder="••••••••"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#C5A059] transition-all"
-                required
               />
+              {errors.password && (
+                <p className="mt-1 text-red-400 text-xs">{errors.password.message}</p>
+              )}
             </div>
 
             <button
@@ -74,7 +74,7 @@ const LoginPage = () => {
 
         {/* Footer info */}
         <p className="mt-8 text-center text-slate-500 text-xs">
-          © 2024 Ali Güven Otel. Tüm hakları saklıdır.
+          © 2026 Ali Güven Otel. Tüm hakları saklıdır.
         </p>
       </div>
     </div>

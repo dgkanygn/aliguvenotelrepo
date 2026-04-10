@@ -1,40 +1,50 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast } from 'react-hot-toast';
+
+const loginSchema = z.object({
+  username: z.string().min(1, "Kullanıcı adı gerekli"),
+  password: z.string().min(1, "Şifre gerekli")
+});
 
 export const useLogin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: zodResolver(loginSchema)
+  });
+
+  const onSubmit = async (data) => {
     setError('');
     setIsLoading(true);
 
-    // Artificial delay for premium feel
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    const success = login(email, password);
+    const success = await login(data.username, data.password);
 
     if (success) {
+      toast.success('Giriş başarılı');
       navigate('/dashboard');
     } else {
-      setError('Geçersiz e-posta veya şifre.');
+      setError('Geçersiz kullanıcı adı veya şifre.');
     }
     setIsLoading(false);
   };
 
   return {
-    email,
-    setEmail,
-    password,
-    setPassword,
+    register,
+    errors,
     error,
     isLoading,
-    handleSubmit
+    handleSubmit: handleSubmit(onSubmit)
   };
 };

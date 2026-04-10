@@ -75,4 +75,32 @@ class AuthController
             echo json_encode(["success" => false, "message" => "Sunucu hatası: " . $e->getMessage()]);
         }
     }
+    public function handleMe()
+    {
+        $decoded = AuthMiddleware::authenticate();
+        http_response_code(200);
+        echo json_encode([
+            "success" => true,
+            "user" => [
+                "id" => $decoded->sub,
+                "username" => $decoded->username
+            ]
+        ]);
+    }
+
+    public function handleLogout()
+    {
+        setcookie("auth_token", "", [
+            'expires' => time() - 3600,
+            'path' => '/',
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+
+        http_response_code(200);
+        echo json_encode([
+            "success" => true,
+            "message" => "Çıkış yapıldı."
+        ]);
+    }
 }

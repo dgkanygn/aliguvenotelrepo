@@ -85,6 +85,10 @@ class Router
                 $this->handleCrud(HomeFeatureController::class);
                 break;
 
+            case 'page-banners':
+                $this->handleCrud(PageBannerController::class);
+                break;
+
             // ========================
             // STATIC CONTENT (Update Only)
             // ========================
@@ -122,6 +126,10 @@ class Router
 
         if ($this->subResource === 'login' && $this->method === 'POST') {
             $controller->handleLogin();
+        } elseif ($this->subResource === 'me' && $this->method === 'GET') {
+            $controller->handleMe();
+        } elseif ($this->subResource === 'logout' && $this->method === 'POST') {
+            $controller->handleLogout();
         } else {
             $this->notFound();
         }

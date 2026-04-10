@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authService } from '../../services/auth.service';
+import { toast } from 'react-hot-toast';
 
 const AuthContext = createContext();
 
@@ -6,33 +8,50 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Check if user is logged in (temporary mock)
-    const storedUser = localStorage.getItem('admin_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+  const checkAuth = async () => {
+    try {
+      const data = await authService.me();
+      if (data.success) {
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, []);
-
-  const login = (email, password) => {
-    // Temporary mock login logic
-    if (email === 'admin@aliguven.com' && password === 'admin123') {
-      const userData = { email, name: 'Admin User' };
-      setUser(userData);
-      localStorage.setItem('admin_user', JSON.stringify(userData));
-      return true;
-    }
-    return false;
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('admin_user');
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const login = async (username, password) => {
+    try {
+      const data = await authService.login(username, password);
+      if (data.success) {
+        await checkAuth(); // re-fetch user details and set them
+        return true;
+      }
+      return false;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error("Logout error", error);
+    } finally {
+      setUser(null);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, checkAuth, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );
