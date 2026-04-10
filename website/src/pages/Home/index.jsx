@@ -14,11 +14,11 @@ const Home = () => {
 
   return (
     <>
-      <Hero data={data?.hero} />
-      <Counter data={data?.counters} />
-      <Biography data={data?.founder} />
-      <Features data={data?.features} />
+      <Hero data={data?.home_hero} />
+      <Counter data={data?.home_counters} />
       <Experience />
+      {/* <Biography data={data?.home_founder} /> */}
+      <Features data={data?.home_features} />
       <Services />
     </>
   )

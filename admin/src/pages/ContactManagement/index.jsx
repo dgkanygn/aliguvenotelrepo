@@ -4,12 +4,17 @@ import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
 import { useContact } from './hooks/useContact';
 import { FORM_LIMITS } from '../../utils/formLimits';
-import { Save, MapPin, Phone, Mail, Printer, Smartphone } from 'lucide-react';
+import { Save, MapPin, Phone, Mail, Printer, Smartphone, MessageCircle, Link as LinkIcon, Camera, Video, Share2, Globe } from 'lucide-react';
 
 const ContactManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
   const { contact, isLoading, handleUpdate } = useContact();
   const [formData, setFormData] = useState(contact);
+
+  // Sync formData with contact when contact changes (e.g. after fetch)
+  React.useEffect(() => {
+    setFormData(contact);
+  }, [contact]);
 
   const onSave = async () => {
     await handleUpdate(formData);
@@ -79,72 +84,156 @@ const ContactManagement = () => {
             </button>
           </header>
 
-          <div className="max-w-4xl">
-             <div className="bg-[#1E293B]/30 border border-white/5 rounded-[40px] p-10 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                   <div className="md:col-span-2">
-                      <InputField 
-                        label="Otel Adresi" 
-                        icon={MapPin} 
-                        value={formData.address} 
-                        onChange={(val) => setFormData({...formData, address: val})}
-                        maxLength={FORM_LIMITS.contact.address}
-                        isTextArea={true}
-                      />
+          <div className="max-w-6xl">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Basic Information */}
+              <div className="bg-[#1E293B]/30 border border-white/5 rounded-[40px] p-8 sm:p-10 space-y-8">
+                <div className="flex items-center gap-3 mb-2">
+                   <div className="p-2 bg-[#C5A059]/10 rounded-lg text-[#C5A059]">
+                      <Phone size={20} />
                    </div>
-                   
-                   <InputField 
-                    label="Sabit Telefon" 
-                    icon={Phone} 
-                    value={formData.landline_phone} 
-                    onChange={(val) => setFormData({...formData, landline_phone: val})}
-                    maxLength={FORM_LIMITS.contact.landline}
-                    placeholder="0 (222) ..."
-                  />
-                  
-                  <InputField 
-                    label="Cep Telefonu" 
-                    icon={Smartphone} 
-                    value={formData.mobile_phone} 
-                    onChange={(val) => setFormData({...formData, mobile_phone: val})}
-                    maxLength={FORM_LIMITS.contact.mobile}
-                    placeholder="0 550 ..."
+                   <h2 className="text-xl font-bold text-white">Genel İletişim</h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
+                  <InputField
+                    label="Otel Adresi"
+                    icon={MapPin}
+                    value={formData.address}
+                    onChange={(val) => setFormData({ ...formData, address: val })}
+                    maxLength={FORM_LIMITS.contact.address}
+                    isTextArea={true}
                   />
 
-                  <InputField 
-                    label="E-posta Adresi" 
-                    icon={Mail} 
-                    value={formData.email} 
-                    onChange={(val) => setFormData({...formData, email: val})}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InputField
+                      label="Sabit Telefon"
+                      icon={Phone}
+                      value={formData.landline_phone}
+                      onChange={(val) => setFormData({ ...formData, landline_phone: val })}
+                      maxLength={FORM_LIMITS.contact.landline}
+                      placeholder="0 (222) ..."
+                    />
+
+                    <InputField
+                      label="Cep Telefonu"
+                      icon={Smartphone}
+                      value={formData.mobile_phone}
+                      onChange={(val) => setFormData({ ...formData, mobile_phone: val })}
+                      maxLength={FORM_LIMITS.contact.mobile}
+                      placeholder="0 550 ..."
+                    />
+
+                    <InputField
+                      label="WhatsApp Hattı"
+                      icon={MessageCircle}
+                      value={formData.whatsapp_number}
+                      onChange={(val) => setFormData({ ...formData, whatsapp_number: val })}
+                      maxLength={FORM_LIMITS.contact.whatsapp}
+                      placeholder="5xx xxx xx xx"
+                    />
+
+                    <InputField
+                      label="Faks"
+                      icon={Printer}
+                      value={formData.fax}
+                      onChange={(val) => setFormData({ ...formData, fax: val })}
+                      maxLength={FORM_LIMITS.contact.fax}
+                      placeholder="0 (222) ..."
+                    />
+                  </div>
+
+                  <InputField
+                    label="E-posta Adresi"
+                    icon={Mail}
+                    value={formData.email}
+                    onChange={(val) => setFormData({ ...formData, email: val })}
                     maxLength={FORM_LIMITS.contact.email}
                     placeholder="bilgi@..."
                   />
+                </div>
 
-                  <InputField 
-                    label="Faks" 
-                    icon={Printer} 
-                    value={formData.fax} 
-                    onChange={(val) => setFormData({...formData, fax: val})}
-                    maxLength={FORM_LIMITS.contact.fax}
-                    placeholder="0 (222) ..."
+                <div className="pt-8 border-t border-white/5">
+                  <div className="bg-[#C5A059]/5 border border-[#C5A059]/10 p-6 rounded-3xl flex items-start gap-4">
+                    <div className="p-3 bg-[#C5A059]/10 rounded-2xl text-[#C5A059]">
+                      <MapPin size={24} />
+                    </div>
+                    <div>
+                      <h4 className="text-white font-bold mb-1 italic">Harita Görünümü</h4>
+                      <p className="text-slate-500 text-sm leading-relaxed">
+                        Adres değişikliği web sitesindeki harita işaretçisini otomatik olarak etkilemez.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Social Media Links */}
+              <div className="bg-[#1E293B]/30 border border-white/5 rounded-[40px] p-8 sm:p-10 space-y-8">
+                <div className="flex items-center gap-3 mb-2">
+                   <div className="p-2 bg-[#C5A059]/10 rounded-lg text-[#C5A059]">
+                      <Share2 size={20} />
+                   </div>
+                   <h2 className="text-xl font-bold text-white">Sosyal Medya</h2>
+                </div>
+
+                <div className="space-y-6">
+                  <InputField
+                    label="Instagram"
+                    icon={Camera}
+                    value={formData.instagram || ''}
+                    onChange={(val) => setFormData({ ...formData, instagram: val })}
+                    maxLength={FORM_LIMITS.contact.social}
+                    placeholder="https://instagram.com/..."
+                  />
+
+                  <InputField
+                    label="Facebook"
+                    icon={Globe}
+                    value={formData.facebook || ''}
+                    onChange={(val) => setFormData({ ...formData, facebook: val })}
+                    maxLength={FORM_LIMITS.contact.social}
+                    placeholder="https://facebook.com/..."
+                  />
+
+                  <InputField
+                    label="Twitter (X)"
+                    icon={Share2}
+                    value={formData.twitter || ''}
+                    onChange={(val) => setFormData({ ...formData, twitter: val })}
+                    maxLength={FORM_LIMITS.contact.social}
+                    placeholder="https://twitter.com/..."
+                  />
+
+                  <InputField
+                    label="LinkedIn"
+                    icon={LinkIcon}
+                    value={formData.linkedin || ''}
+                    onChange={(val) => setFormData({ ...formData, linkedin: val })}
+                    maxLength={FORM_LIMITS.contact.social}
+                    placeholder="https://linkedin.com/in/..."
+                  />
+
+                  <InputField
+                    label="YouTube"
+                    icon={Video}
+                    value={formData.youtube || ''}
+                    onChange={(val) => setFormData({ ...formData, youtube: val })}
+                    maxLength={FORM_LIMITS.contact.social}
+                    placeholder="https://youtube.com/..."
+                  />
+                  
+                  <InputField
+                    label="Pinterest"
+                    icon={Share2}
+                    value={formData.pinterest || ''}
+                    onChange={(val) => setFormData({ ...formData, pinterest: val })}
+                    maxLength={FORM_LIMITS.contact.social}
+                    placeholder="https://pinterest.com/..."
                   />
                 </div>
-                
-                <div className="pt-8 border-t border-white/5">
-                   <div className="bg-[#C5A059]/5 border border-[#C5A059]/10 p-6 rounded-3xl flex items-start gap-4">
-                      <div className="p-3 bg-[#C5A059]/10 rounded-2xl text-[#C5A059]">
-                         <MapPin size={24} />
-                      </div>
-                      <div>
-                         <h4 className="text-white font-bold mb-1 italic">Harita Görünümü</h4>
-                         <p className="text-slate-500 text-sm leading-relaxed">
-                            Adres değişikliği web sitesindeki harita (Google Maps) işaretçisini otomatik olarak etkilemez. 
-                            Harita koordinatları için lütfen teknik ekiple iletişime geçin.
-                         </p>
-                      </div>
-                   </div>
-                </div>
-             </div>
+              </div>
+            </div>
           </div>
         </main>
       </div>

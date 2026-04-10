@@ -3,6 +3,7 @@ import { MessageCircle } from 'lucide-react'
 import './styles/hero.css'
 
 const Hero = ({ data = [] }) => {
+
   const [currentIndex, setCurrentIndex] = useState(0)
   const intervalRef = useRef(null)
 

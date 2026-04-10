@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import './styles/navbar.css'
+import { useNavMenus } from './hooks/useNavMenus'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const location = useLocation()
+  const { menus } = useNavMenus()
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev)
@@ -42,21 +44,28 @@ const Navbar = () => {
 
         <div className="navbar-right">
           <ul className="navbar-links">
-            <li><Link to="/rooms">Odalar</Link></li>
+            <li><Link to="/">Ana Sayfa</Link></li>
+            <li className="has-dropdown">
+              <Link to="/rooms">Odalar</Link>
+              <ul className="dropdown-menu">
+                {menus.rooms.map(room => (
+                  <li key={room.id}><Link to={`/event-detail/rooms/${room.id}`}>{room.title}</Link></li>
+                ))}
+              </ul>
+            </li>
             <li><Link to="/restaurant">Restoran</Link></li>
-            <li><Link to="/events">Organizasyon &amp; Düğün</Link></li>
+            <li className="has-dropdown">
+              <Link to="/events">Organizasyon &amp; Düğün</Link>
+              <ul className="dropdown-menu">
+                {menus.saloons.map(saloon => (
+                  <li key={saloon.id}><Link to={`/event-detail/saloons/${saloon.id}`}>{saloon.title}</Link></li>
+                ))}
+              </ul>
+            </li>
             <li><Link to="/contact">İletişim</Link></li>
           </ul>
 
           <div className="navbar-actions">
-            <a
-              href="https://wa.me/902223300326"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary btn-sm btn-rounded cursor-pointer navbar-rez-btn"
-            >
-              Rezervasyon
-            </a>
             <button
               className="navbar-toggle cursor-pointer"
               onClick={toggleMenu}
@@ -78,22 +87,25 @@ const Navbar = () => {
         </div>
         <ul className="mobile-menu-links">
           <li><Link to="/" onClick={closeMenu}>Ana Sayfa</Link></li>
-          <li><Link to="/rooms" onClick={closeMenu}>Odalar</Link></li>
+          <li className="mobile-has-dropdown">
+            <span className="mobile-dropdown-label">Odalar</span>
+            <ul className="mobile-dropdown">
+              {menus.rooms.map(room => (
+                <li key={room.id}><Link to={`/event-detail/rooms/${room.id}`} onClick={closeMenu}>{room.title}</Link></li>
+              ))}
+            </ul>
+          </li>
           <li><Link to="/restaurant" onClick={closeMenu}>Restoran</Link></li>
-          <li><Link to="/events" onClick={closeMenu}>Organizasyon &amp; Düğün</Link></li>
+          <li className="mobile-has-dropdown">
+            <span className="mobile-dropdown-label">Organizasyon &amp; Düğün</span>
+            <ul className="mobile-dropdown">
+              {menus.saloons.map(saloon => (
+                <li key={saloon.id}><Link to={`/event-detail/saloons/${saloon.id}`} onClick={closeMenu}>{saloon.title}</Link></li>
+              ))}
+            </ul>
+          </li>
           <li><Link to="/meetings" onClick={closeMenu}>Toplantı &amp; Etkinlik</Link></li>
           <li><Link to="/contact" onClick={closeMenu}>İletişim</Link></li>
-          <li className="mobile-rez-item">
-            <a
-              href="https://wa.me/902223300326"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary btn-block cursor-pointer"
-              onClick={closeMenu}
-            >
-              Rezervasyon Yap
-            </a>
-          </li>
         </ul>
       </div>
     </nav>
@@ -101,3 +113,4 @@ const Navbar = () => {
 }
 
 export default Navbar
+

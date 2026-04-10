@@ -39,14 +39,22 @@ export const FORM_LIMITS = {
     maxPhotos: 10
   },
   contact: {
-    address: 100,
+    address: 150,
     landline: 20,
     mobile: 20,
+    whatsapp: 20,
     email: 50,
-    fax: 20
+    fax: 20,
+    social: 255
   },
   banners: {
     top_title: 25,
     page_title: 25
+  },
+  overview: {
+    tagline: 25,
+    title: 40,
+    summary: 350,
+    maxFeatures: 4
   }
 };

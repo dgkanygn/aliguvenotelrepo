@@ -1,13 +1,14 @@
-Options -MultiViews -Indexes
 RewriteEngine On
 
-# Yönlendirme zaten yapıldıysa tekrar yönlendirme
+# Allow actual files and directories
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Auth header desteklemek istersen (ileride token kullanırsan) apache'nin silmesini engeller:
-RewriteCond %{HTTP:Authorization} .
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+# Redirect everything to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
 
-# url formatını değiştirmek: ornek.com/api/home -> /api/index.php?route=home
-RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+# CORS Headers handled dynamically in index.php
+
+# Handle preflight
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ index.php [QSA,L]

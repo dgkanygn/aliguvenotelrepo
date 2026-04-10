@@ -70,6 +70,47 @@
   color: var(--secondary);
 }
 
+.navbar-links li {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: var(--white);
+  min-width: 220px;
+  padding: 1rem 0;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s ease;
+  z-index: 100;
+  list-style: none;
+}
+
+.has-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.dropdown-menu li a {
+  padding: 0.8rem 1.5rem;
+  display: block;
+  color: var(--primary) !important;
+  text-transform: none !important;
+  font-size: 0.85rem !important;
+  transition: 0.2s;
+}
+
+.dropdown-menu li a:hover {
+  background-color: var(--accent);
+  color: var(--secondary) !important;
+}
+
 .navbar-actions {
   display: flex;
   align-items: center;
@@ -86,7 +127,7 @@
   position: fixed;
   top: 0;
   right: -100%;
-  width: 80%;
+  width: 85%;
   height: 100vh;
   background-color: var(--white);
   z-index: 1001;
@@ -95,7 +136,8 @@
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2.5rem;
+  overflow-y: auto;
 }
 
 .mobile-menu.active {
@@ -116,14 +158,43 @@
 .mobile-menu-links {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
-.mobile-menu-links a {
-  font-size: 1.2rem;
+.mobile-menu-links > li {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 0.5rem;
+}
+
+.mobile-menu-links a, 
+.mobile-dropdown-label {
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--primary);
   text-transform: uppercase;
+  display: block;
+}
+
+.mobile-dropdown-label {
+    color: var(--secondary);
+    margin-bottom: 0.8rem;
+}
+
+.mobile-dropdown {
+  list-style: none;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mobile-dropdown a {
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  color: var(--text-muted) !important;
 }
 
 @media (max-width: 992px) {
@@ -134,17 +205,5 @@
     display: block;
     margin-left: 1rem;
   }
-  .navbar-rez-btn {
-    display: none;
-  }
 }
 
-.mobile-rez-item {
-  margin-top: 1rem;
-}
-
-.btn-block {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}

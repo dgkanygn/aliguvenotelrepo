@@ -1,0 +1,834 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Ali Güven Otel API",
+		"description": "Ali Güven Uygulama Oteli CMS API - Tüm rotalar",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"    console.log('Token kaydedildi!');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin1\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Admin girişi. Başarılı olursa JWT token döner ve otomatik olarak koleksiyon değişkenine kaydedilir."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📄 Public Sayfalar",
+			"item": [
+				{
+					"name": "Home Page",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/home-page",
+							"host": ["{{base_url}}"],
+							"path": ["home-page"]
+						},
+						"description": "Ana sayfa verileri: page_banner, home_hero, home_counters, home_founder, home_features"
+					},
+					"response": []
+				},
+				{
+					"name": "Rooms Page",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/rooms-page",
+							"host": ["{{base_url}}"],
+							"path": ["rooms-page"]
+						},
+						"description": "Odalar sayfası: page_banner, rooms (images dahil)"
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurant Page",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/restaurant-page",
+							"host": ["{{base_url}}"],
+							"path": ["restaurant-page"]
+						},
+						"description": "Restoran sayfası: page_banner, restaurant_info, restaurant_images"
+					},
+					"response": []
+				},
+				{
+					"name": "Events Page",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/events-page",
+							"host": ["{{base_url}}"],
+							"path": ["events-page"]
+						},
+						"description": "Etkinlik sayfası: page_banner, saloons (images dahil)"
+					},
+					"response": []
+				},
+				{
+					"name": "Contact Page",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/contact-page",
+							"host": ["{{base_url}}"],
+							"path": ["contact-page"]
+						},
+						"description": "İletişim sayfası: page_banner, company_contacts"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🛏️ Rooms (CRUD)",
+			"item": [
+				{
+					"name": "Tüm Odaları Listele",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rooms",
+							"host": ["{{base_url}}"],
+							"path": ["rooms"]
+						},
+						"description": "Tüm odaları görselleriyle birlikte listeler."
+					},
+					"response": []
+				},
+				{
+					"name": "Tek Oda Getir",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rooms/3",
+							"host": ["{{base_url}}"],
+							"path": ["rooms", "3"]
+						},
+						"description": "ID'ye göre tek oda getirir."
+					},
+					"response": []
+				},
+				{
+					"name": "Yeni Oda Ekle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Yeni Test Odası\",\n    \"description\": \"Bu bir test odasıdır.\",\n    \"amenities\": [\"Wi-Fi\", \"TV\", \"Minibar\"],\n    \"images\": [\n        {\n            \"image_url\": \"https://aliguvenotel.vercel.app/assets/images/room_1.jpg\",\n            \"is_main\": 1\n        },\n        {\n            \"image_url\": \"https://aliguvenotel.vercel.app/assets/images/room_2.jpg\",\n            \"is_main\": 0\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rooms",
+							"host": ["{{base_url}}"],
+							"path": ["rooms"]
+						},
+						"description": "Yeni oda ekler. Görseller de aynı istekte gönderilebilir."
+					},
+					"response": []
+				},
+				{
+					"name": "Oda Güncelle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Güncellenmiş Oda\",\n    \"description\": \"Güncellenmiş açıklama.\",\n    \"amenities\": [\"Wi-Fi\", \"TV\", \"Minibar\", \"Klima\"],\n    \"images\": [\n        {\n            \"image_url\": \"https://aliguvenotel.vercel.app/assets/images/room_1.jpg\",\n            \"is_main\": 1\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rooms/3",
+							"host": ["{{base_url}}"],
+							"path": ["rooms", "3"]
+						},
+						"description": "Mevcut odayı günceller. Görseller gönderilirse eski görseller silinip yenileri eklenir."
+					},
+					"response": []
+				},
+				{
+					"name": "Oda Sil",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rooms/3",
+							"host": ["{{base_url}}"],
+							"path": ["rooms", "3"]
+						},
+						"description": "Odayı siler. İlişkili görseller CASCADE ile otomatik silinir."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🏛️ Saloons (CRUD)",
+			"item": [
+				{
+					"name": "Tüm Salonları Listele",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/saloons",
+							"host": ["{{base_url}}"],
+							"path": ["saloons"]
+						},
+						"description": "Tüm salonları görselleriyle birlikte listeler."
+					},
+					"response": []
+				},
+				{
+					"name": "Tek Salon Getir",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/saloons/1",
+							"host": ["{{base_url}}"],
+							"path": ["saloons", "1"]
+						},
+						"description": "ID'ye göre tek salon getirir."
+					},
+					"response": []
+				},
+				{
+					"name": "Yeni Salon Ekle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Yeni Test Salonu\",\n    \"description\": \"Bu bir test salonudur.\",\n    \"amenities\": [\"Ses Sistemi\", \"Projeksiyon\", \"Klima\"],\n    \"images\": [\n        {\n            \"image_url\": \"https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg\",\n            \"is_main\": 1\n        },\n        {\n            \"image_url\": \"https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg\",\n            \"is_main\": 0\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/saloons",
+							"host": ["{{base_url}}"],
+							"path": ["saloons"]
+						},
+						"description": "Yeni salon ekler."
+					},
+					"response": []
+				},
+				{
+					"name": "Salon Güncelle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Güncellenmiş Salon\",\n    \"description\": \"Güncellenmiş salon açıklaması.\",\n    \"amenities\": [\"Ses Sistemi\", \"Projeksiyon\", \"Klima\", \"Sahne\"],\n    \"images\": [\n        {\n            \"image_url\": \"https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg\",\n            \"is_main\": 1\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/saloons/1",
+							"host": ["{{base_url}}"],
+							"path": ["saloons", "1"]
+						},
+						"description": "Mevcut salonu günceller."
+					},
+					"response": []
+				},
+				{
+					"name": "Salon Sil",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/saloons/1",
+							"host": ["{{base_url}}"],
+							"path": ["saloons", "1"]
+						},
+						"description": "Salonu ve ilişkili görselleri siler."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🖼️ Home Hero (CRUD)",
+			"item": [
+				{
+					"name": "Tüm Hero Listele",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-hero",
+							"host": ["{{base_url}}"],
+							"path": ["home-hero"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tek Hero Getir",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-hero/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-hero", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Yeni Hero Ekle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"image_url\": \"https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg\",\n    \"title\": \"Yeni Hero Başlığı\",\n    \"description\": \"Yeni hero açıklaması.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/home-hero",
+							"host": ["{{base_url}}"],
+							"path": ["home-hero"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hero Güncelle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"image_url\": \"https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg\",\n    \"title\": \"Güncellenmiş Hero Başlığı\",\n    \"description\": \"Güncellenmiş hero açıklaması.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/home-hero/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-hero", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hero Sil",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-hero/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-hero", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🔢 Home Counters (CRUD)",
+			"item": [
+				{
+					"name": "Tüm Sayaçları Listele",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-counters",
+							"host": ["{{base_url}}"],
+							"path": ["home-counters"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tek Sayaç Getir",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-counters/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-counters", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Yeni Sayaç Ekle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"icon\": \"coffee\",\n    \"count\": 50,\n    \"name\": \"Kahve Çeşidi\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/home-counters",
+							"host": ["{{base_url}}"],
+							"path": ["home-counters"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sayaç Güncelle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"icon\": \"bed\",\n    \"count\": 35,\n    \"name\": \"Oda\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/home-counters/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-counters", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sayaç Sil",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-counters/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-counters", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "⭐ Home Features (CRUD)",
+			"item": [
+				{
+					"name": "Tüm Özellikleri Listele",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-features",
+							"host": ["{{base_url}}"],
+							"path": ["home-features"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tek Özellik Getir",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-features/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-features", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Yeni Özellik Ekle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"icon\": \"wifi\",\n    \"title\": \"Ücretsiz Wi-Fi\",\n    \"description\": \"Tüm alanlarda yüksek hızlı internet erişimi.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/home-features",
+							"host": ["{{base_url}}"],
+							"path": ["home-features"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Özellik Güncelle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"icon\": \"sparkles\",\n    \"title\": \"Güncellenmiş Özellik\",\n    \"description\": \"Güncellenmiş açıklama.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/home-features/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-features", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Özellik Sil",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-features/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-features", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "👤 Home Founder (Update Only)",
+			"item": [
+				{
+					"name": "Kurucu Bilgisi Getir",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/home-founder",
+							"host": ["{{base_url}}"],
+							"path": ["home-founder"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kurucu Bilgisi Güncelle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"image_url\": \"https://aliguvenotel.vercel.app/assets/images/ali_guven.png\",\n    \"title\": \"Ali Güven Kimdir?\",\n    \"content\": \"Güncellenmiş kurucu içeriği.\",\n    \"special_text\": \"Güncellenmiş özel metin.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/home-founder/1",
+							"host": ["{{base_url}}"],
+							"path": ["home-founder", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🍽️ Restaurant (Update Only)",
+			"item": [
+				{
+					"name": "Restoran Bilgisi Güncelle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"intro_text\": \"Güncellenmiş restoran tanıtım metni.\",\n    \"warning_text\": \"Güncellenmiş uyarı metni.\",\n    \"menu_pdf_url\": \"https://aliguvenotel.vercel.app/assets/files/nisan-ayi-menu.pdf\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/restaurant-page/1",
+							"host": ["{{base_url}}"],
+							"path": ["restaurant-page", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📞 Company Contacts (Update Only)",
+			"item": [
+				{
+					"name": "İletişim Bilgisi Getir",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/company-contacts",
+							"host": ["{{base_url}}"],
+							"path": ["company-contacts"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "İletişim Bilgisi Güncelle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"address\": \"Uluönder Mahallesi Şehit Rüstem Demirbaş Sk No:8 26190 Tepebaşı/Eskişehir\",\n    \"landline_phone\": \"0 (222) 330 03 26\",\n    \"mobile_phone\": \"0 553 209 47 57\",\n    \"whatsapp_number\": \"544 330 03 43\",\n    \"email\": \"bilgi@aliguvenuygulamaoteli.com\",\n    \"fax\": \"0 (222) 330 05 06\",\n    \"instagram\": \"https://instagram.com/aliguvenotel\",\n    \"facebook\": \"https://facebook.com/aliguvenotel\",\n    \"twitter\": null,\n    \"linkedin\": null,\n    \"pinterest\": null,\n    \"youtube\": null\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/company-contacts/1",
+							"host": ["{{base_url}}"],
+							"path": ["company-contacts", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

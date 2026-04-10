@@ -1,172 +1,83 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
+/**
+ * Ali Güven Otel CMS API
+ * Ana giriş noktası
+ */
+
+// CORS headers
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+header("Access-Control-Allow-Origin: $origin");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json; charset=UTF-8");
+
+// Preflight request handling
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-require 'db.php';
+// Composer autoload
+require_once __DIR__ . '/vendor/autoload.php';
 
-$request_uri = $_SERVER['REQUEST_URI'];
-$path = parse_url($request_uri, PHP_URL_PATH);
-$method = $_SERVER['REQUEST_METHOD'];
+// .env dosyasını yükle
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
 
-// Sadece /api/... formatındaki isteklere izin ver
-if (strpos($path, '/api') === false) {
-    http_response_code(404);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Gecersiz endpoint formati. Lutfen istekleri /api/[rota] formatinda yapin.'
-    ]);
-    exit;
+// Config ve dosyalar
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/middleware/AuthMiddleware.php';
+require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/controllers/PageController.php';
+require_once __DIR__ . '/controllers/RoomController.php';
+require_once __DIR__ . '/controllers/SaloonController.php';
+require_once __DIR__ . '/controllers/HomeHeroController.php';
+require_once __DIR__ . '/controllers/HomeCounterController.php';
+require_once __DIR__ . '/controllers/HomeFeatureController.php';
+require_once __DIR__ . '/controllers/HomeFounderController.php';
+require_once __DIR__ . '/controllers/RestaurantController.php';
+require_once __DIR__ . '/controllers/ContactController.php';
+require_once __DIR__ . '/controllers/NavigationController.php';
+require_once __DIR__ . '/controllers/HomeOverviewController.php';
+require_once __DIR__ . '/routes/Router.php';
+
+// DB bağlantısı
+$database = new Database();
+$db = $database->getConnection();
+
+// URL ve Method parsing
+$requestMethod = $_SERVER['REQUEST_METHOD'];
+$requestUri = $_SERVER['REQUEST_URI'];
+
+// Base path çıkar (alt dizinde çalışıyorsa)
+$scriptName = dirname($_SERVER['SCRIPT_NAME']);
+$uri = parse_url($requestUri, PHP_URL_PATH);
+
+if ($scriptName !== '/' && $scriptName !== '\\') {
+    $uri = substr($uri, strlen($scriptName));
 }
 
-// URL'den /api/ sonrasını al ve parçala
-// Örn: /api/rooms/3 => ['rooms', '3']
-$apiPath = '';
-if (preg_match('#/api/(.+)#', $path, $matches)) {
-    $apiPath = trim($matches[1], '/');
-} elseif (isset($_GET['route'])) {
-    $apiPath = trim($_GET['route'], '/');
+$uri = '/' . trim($uri, '/');
+
+// URI parçala
+$uriParts = explode('/', trim($uri, '/'));
+
+// "api" prefix'i varsa yoksay
+if (isset($uriParts[0]) && $uriParts[0] === 'api') {
+    array_shift($uriParts);
 }
 
-$segments = $apiPath ? explode('/', $apiPath) : [];
-$segmentCount = count($segments);
+$resource = $uriParts[0] ?? '';
+$subResource = $uriParts[1] ?? null;
+$resourceId = ($subResource && is_numeric($subResource)) ? (int)$subResource : null;
 
-$response = [
-    'success' => true,
-    'data' => null
-];
-
+// Routing
 try {
-    // ─── CONTROLLERS ───────────────────────────────────
-    require_once 'controllers/PageController.php';
-    require_once 'controllers/AuthController.php';
-    require_once 'controllers/CrudController.php';
-    require_once 'middleware/AuthMiddleware.php';
-
-    // ─── AUTH ROTASI ────────────────────────────────────
-    // POST /api/auth/login
-    if ($segmentCount >= 2 && $segments[0] === 'auth' && $segments[1] === 'login') {
-        if ($method !== 'POST') {
-            http_response_code(405);
-            $response = ['success' => false, 'message' => 'Sadece POST metodu kabul edilir.'];
-        } else {
-            $response = handleLogin($pdo);
-        }
-        echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        exit;
-    }
-
-    // ─── SAYFA ROTALARI (Mevcut — Toplu veri getirme) ──
-    // GET /api/home, /api/contact, /api/rooms, /api/restaurant, /api/event
-    $pageRoutes = ['home', 'contact', 'rooms', 'restaurant', 'event'];
-    if ($segmentCount === 1 && in_array($segments[0], $pageRoutes) && $method === 'GET') {
-        switch ($segments[0]) {
-            case 'home':
-                $response['data'] = getHomeData($pdo);
-                break;
-            case 'contact':
-                $response['data'] = getContactData($pdo);
-                break;
-            case 'rooms':
-                $response['data'] = getRoomsData($pdo);
-                break;
-            case 'restaurant':
-                $response['data'] = getRestaurantData($pdo);
-                break;
-            case 'event':
-                $response['data'] = getEventData($pdo);
-                break;
-        }
-        echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        exit;
-    }
-
-    // ─── CRUD ROTALARI (Tablo başına ayrı) ──────────────
-    // Desteklenen tablolar
-    $crudTables = [
-        'contact_info', 'event_images', 'event_space',
-        'home_counters', 'home_features', 'home_founder', 'home_hero',
-        'page_banners', 'restaurant_images', 'restaurant_info',
-        'rooms', 'room_images'
-    ];
-
-    // URL'deki alt_çizgi (-) yerine (_) kullanımını destekle
-    // Örn: /api/contact-info => contact_info
-    $tableSlug = $segments[0] ?? '';
-    $tableName = str_replace('-', '_', $tableSlug);
-
-    if (in_array($tableName, $crudTables)) {
-        $id = $segments[1] ?? null;
-
-        switch ($method) {
-            // GET /api/{tablo}       => Tüm kayıtlar
-            // GET /api/{tablo}/{id}  => Tek kayıt
-            case 'GET':
-                if ($id) {
-                    $response = getById($pdo, $tableName, (int)$id);
-                } else {
-                    $response = getAll($pdo, $tableName);
-                }
-                break;
-
-            // POST /api/{tablo}      => Yeni kayıt (token gerekli)
-            case 'POST':
-                requireAuth();
-                $response = createRecord($pdo, $tableName);
-                break;
-
-            // PUT /api/{tablo}/{id}  => Güncelle (token gerekli)
-            case 'PUT':
-                if (!$id) {
-                    http_response_code(400);
-                    $response = ['success' => false, 'message' => 'Guncellemek icin ID gereklidir.'];
-                } else {
-                    requireAuth();
-                    $response = updateRecord($pdo, $tableName, (int)$id);
-                }
-                break;
-
-            // DELETE /api/{tablo}/{id} => Sil (token gerekli)
-            case 'DELETE':
-                if (!$id) {
-                    http_response_code(400);
-                    $response = ['success' => false, 'message' => 'Silmek icin ID gereklidir.'];
-                } else {
-                    requireAuth();
-                    $response = deleteRecord($pdo, $tableName, (int)$id);
-                }
-                break;
-
-            default:
-                http_response_code(405);
-                $response = ['success' => false, 'message' => 'Desteklenmeyen HTTP metodu.'];
-                break;
-        }
-
-        echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        exit;
-    }
-
-    // ─── BULUNAMADI ─────────────────────────────────────
-    http_response_code(404);
-    $response = [
-        'success' => false,
-        'message' => 'Gecersiz veya bulunamayan rota.'
-    ];
-
-} catch (PDOException $e) {
+    $router = new Router($db, $requestMethod, $resource, $subResource, $resourceId);
+    $router->dispatch();
+} catch (\Exception $e) {
     http_response_code(500);
-    $response = [
-        'success' => false,
-        'message' => 'Veritabani hatasi.',
-        'error_details' => $e->getMessage()
-    ];
+    echo json_encode(["success" => false, "message" => "Beklenmeyen sunucu hatası: " . $e->getMessage()]);
 }
-
-echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

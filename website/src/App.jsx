@@ -7,7 +7,7 @@ import Restaurant from './pages/Restaurant'
 import Events from './pages/Events'
 import Meetings from './pages/Meetings'
 import Contact from './pages/Contact'
-import RoomDetail from './pages/RoomDetail'
+import SpaceDetails from './pages/SpaceDetails'
 import ScrollToTop from './components/ScrollToTop'
 
 const App = () => {
@@ -23,7 +23,7 @@ const App = () => {
           <Route path="/events" element={<Events />} />
           <Route path="/meetings" element={<Meetings />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/room-detail" element={<RoomDetail />} />
+          <Route path="/event-detail/:type/:id" element={<SpaceDetails />} />
         </Routes>
       </main>
       <Footer />

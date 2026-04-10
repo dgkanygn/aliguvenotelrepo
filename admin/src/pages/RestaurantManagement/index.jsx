@@ -4,6 +4,7 @@ import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
 import { useRestaurant } from './hooks/useRestaurant';
 import ImageUploader from '../../components/ImageUploader';
+import FileUploader from '../../components/FileUploader';
 import { FORM_LIMITS } from '../../utils/formLimits';
 import { Save, Utensils, FileText, AlertTriangle, FileDown, Trash2 } from 'lucide-react';
 
@@ -84,19 +85,18 @@ const RestaurantManagement = () => {
                     </div>
                  </div>
 
-                 <div className="pt-4 border-t border-white/5">
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Menü PDF Dosyası (URL)</label>
-                    <div className="flex gap-3">
-                       <div className="flex-1 relative">
-                          <FileDown size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-                          <input 
-                            type="text" 
-                            value={formData.menu_pdf_url}
-                            onChange={(e) => setFormData({...formData, menu_pdf_url: e.target.value})}
-                            className="w-full bg-[#0F172A] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white text-sm focus:outline-none border-dashed"
-                          />
-                       </div>
-                    </div>
+                 <div className="pt-6 border-t border-white/5">
+                    <FileUploader 
+                      label="Menü PDF Dosyası" 
+                      accept=".pdf"
+                      maxFileSize={10} 
+                      onFileSelect={(file) => setFormData({...formData, menu_pdf_url: file.name})} 
+                    />
+                    {formData.menu_pdf_url && (
+                       <p className="text-[10px] text-slate-500 mt-2 px-1">
+                         Mevcut dosya: <span className="text-[#C5A059] italic">{formData.menu_pdf_url}</span>
+                       </p>
+                    )}
                  </div>
                </div>
             </div>

@@ -1,0 +1,40 @@
+<?php
+
+class NavigationController
+{
+    private $db;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
+
+    public function getMenus()
+    {
+        try {
+            // Odaları id ve title ile çek
+            $queryRooms = "SELECT id, title FROM rooms ORDER BY id ASC";
+            $stmtRooms = $this->db->prepare($queryRooms);
+            $stmtRooms->execute();
+            $rooms = $stmtRooms->fetchAll(PDO::FETCH_ASSOC);
+
+            // Salonları id ve title ile çek
+            $querySaloons = "SELECT id, title FROM saloons ORDER BY id ASC";
+            $stmtSaloons = $this->db->prepare($querySaloons);
+            $stmtSaloons->execute();
+            $saloons = $stmtSaloons->fetchAll(PDO::FETCH_ASSOC);
+
+            http_response_code(200);
+            echo json_encode([
+                "success" => true,
+                "data" => [
+                    "rooms" => $rooms,
+                    "saloons" => $saloons
+                ]
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        } catch (\PDOException $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Veritabanı hatası: " . $e->getMessage()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        }
+    }
+}

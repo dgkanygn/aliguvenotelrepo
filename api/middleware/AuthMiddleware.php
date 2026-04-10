@@ -1,83 +1,43 @@
 <?php
 
-/**
- * Authorization header'dan Bearer token'ı çıkarır.
- */
-function getBearerToken() {
-    $headers = '';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
-    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-        $headers = $_SERVER['HTTP_AUTHORIZATION'];
-    } elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
-        $headers = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
-    } elseif (function_exists('apache_request_headers')) {
-        $requestHeaders = apache_request_headers();
-        if (isset($requestHeaders['Authorization'])) {
-            $headers = $requestHeaders['Authorization'];
+class AuthMiddleware
+{
+    /**
+     * JWT token doğrulama.
+     * Geçerli bir token yoksa 401 döner ve script sonlanır.
+     * Geçerli ise decoded payload döner.
+     */
+    public static function authenticate()
+    {
+        $token = '';
+
+        // 1. Önce HttpOnly Cookie kontrolü
+        if (isset($_COOKIE['auth_token']) && !empty($_COOKIE['auth_token'])) {
+            $token = $_COOKIE['auth_token'];
+        } else {
+            // 2. Geri uyumluluk için Headers kontrolü (eski frontend vb. için)
+            $headers = getallheaders();
+            $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+            $token = str_replace('Bearer ', '', $authHeader);
+        }
+
+        if (empty($token)) {
+            http_response_code(401);
+            echo json_encode(["success" => false, "message" => "Token bulunamadı."]);
+            exit;
+        }
+
+        try {
+            $secret = $_ENV['JWT_SECRET'] ?? 'aliguvenotel_jwt_secret_key_2026_change_this';
+            $decoded = JWT::decode($token, new Key($secret, 'HS256'));
+            return $decoded;
+        } catch (\Exception $e) {
+            http_response_code(401);
+            echo json_encode(["success" => false, "message" => "Geçersiz veya süresi dolmuş token."]);
+            exit;
         }
     }
-
-    if (!empty($headers) && preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-        return $matches[1];
-    }
-
-    return null;
-}
-
-/**
- * JWT tokenını doğrular ve süresinin geçip geçmediğini (exp) kontrol eder.
- */
-function verifyJWT($token, $secret) {
-    if (!$token) return false;
-
-    $parts = explode('.', $token);
-    if (count($parts) !== 3) return false;
-
-    list($header, $payload, $signatureProvided) = $parts;
-
-    $signature = hash_hmac('sha256', $header . "." . $payload, $secret, true);
-    $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-
-    // İmza doğrulaması
-    if (!hash_equals($base64UrlSignature, $signatureProvided)) {
-        return false; // Token tahrif edilmiş
-    }
-
-    // Token içeriğini kontrol et
-    $payloadObj = json_decode(base64_decode(str_replace(['-', '_'], ['+', '/'], $payload)));
-    if (!$payloadObj) return false;
-
-    // Süre dolmuş mu kontrolü
-    if (isset($payloadObj->exp) && $payloadObj->exp < time()) {
-        return false; // Token süresi dolmuş
-    }
-
-    return $payloadObj;
-}
-
-/**
- * Route isteklerinde Yetki doğrulama middleware fonkiyonu. 
- * Token boşsa, imzası hatalıysa veya süresi geçmişse reddeder.
- */
-function requireAuth() {
-    $token = getBearerToken();
-    if (!$token) {
-        http_response_code(401);
-        echo json_encode(['success' => false, 'message' => 'Erişim engellendi: Token bulunamadı.']);
-        exit;
-    }
-
-    $env_file = __DIR__ . '/../.env';
-    $env = file_exists($env_file) ? parse_ini_file($env_file) : [];
-    $jwtSecret = $env['JWT_SECRET'] ?? 'default_secret_key_dont_use_in_prod';
-
-    $payload = verifyJWT($token, $jwtSecret);
-
-    if (!$payload) {
-        http_response_code(401);
-        echo json_encode(['success' => false, 'message' => 'Yetkisiz erişim: Token geçersiz veya süresi dolmuş.']);
-        exit;
-    }
-
-    return $payload; // Devam eden işlemler için payload dönebilir.
 }

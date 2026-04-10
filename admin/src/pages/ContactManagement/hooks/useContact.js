@@ -6,8 +6,15 @@ export const useContact = () => {
     address: 'Uluönder Mahallesi Şehit Rüstem Demirbaş Sk No:8 26190 Tepebaşı/Eskişehir',
     landline_phone: '0 (222) 330 03 26',
     mobile_phone: '0 553 209 47 57',
+    whatsapp_number: '544 330 03 43',
     email: 'bilgi@aliguvenuygulamaoteli.com',
-    fax: '0 (222) 330 05 06'
+    fax: '0 (222) 330 05 06',
+    instagram: '',
+    facebook: '',
+    twitter: '',
+    linkedin: '',
+    pinterest: '',
+    youtube: ''
   });
 
   const [isLoading, setIsLoading] = useState(false);

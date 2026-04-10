@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Home, 
-  Bed, 
-  Users, 
-  Settings, 
-  LogOut, 
-  ChevronLeft, 
+import {
+  Home,
+  Bed,
+  Users,
+  Settings,
+  LogOut,
+  ChevronLeft,
   Menu,
   Image as ImageIcon,
   Layout,
@@ -26,6 +26,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }) => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const scrollRef = useRef(null);
+
+  // Restore scroll position on mount
+  useEffect(() => {
+    const savedScrollPos = localStorage.getItem('sidebar-scroll-pos');
+    if (savedScrollPos && scrollRef.current) {
+      scrollRef.current.scrollTop = parseInt(savedScrollPos);
+    }
+  }, []);
+
+  const handleScroll = (e) => {
+    localStorage.setItem('sidebar-scroll-pos', e.target.scrollTop);
+  };
 
   const showLabels = !isCollapsed || isOpen;
   const sidebarWidth = (isCollapsed && !isOpen) ? 'w-20' : 'w-72';
@@ -42,7 +55,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }) => {
       items: [
         { title: 'Hero Yönetimi', icon: <Layout size={20} />, id: 'hero', path: '/hero' },
         { title: 'Sayaç', icon: <Timer size={20} />, id: 'counter', path: '/counter' },
-        { title: 'Kurucu Bilgisi', icon: <Info size={20} />, id: 'founder', path: '/founder' },
+        // { title: 'Kurucu Bilgisi', icon: <Info size={20} />, id: 'founder', path: '/founder' },
+        { title: 'Otel Özet', icon: <Info size={20} />, id: 'overview', path: '/overview' },
         { title: 'Özellikler', icon: <Star size={20} />, id: 'features', path: '/features' },
       ]
     },
@@ -78,8 +92,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }) => {
         key={item.id}
         onClick={() => handleNavigate(item.path)}
         className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-xl transition-all group cursor-pointer relative
-          ${isActive 
-            ? 'text-white bg-[#C5A059]/10 border border-[#C5A059]/10' 
+          ${isActive
+            ? 'text-white bg-[#C5A059]/10 border border-[#C5A059]/10'
             : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'}
           ${!showLabels ? 'justify-center' : ''}
         `}
@@ -105,13 +119,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }) => {
     <>
       {/* Mobile Overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      <aside 
+      <aside
         className={`bg-[#0F172A] border-r border-white/5 h-screen transition-all duration-300 flex flex-col fixed inset-y-0 left-0 z-50 lg:sticky lg:top-0
           ${sidebarWidth}
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -120,22 +134,22 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }) => {
         {/* Header */}
         <div className={`p-6 flex items-center ${!showLabels ? 'justify-center' : 'justify-between'}`}>
           {showLabels && (
-            <span 
+            <span
               onClick={() => handleNavigate('/dashboard')}
               className="text-[#C5A059] font-bold text-xl tracking-tight overflow-hidden whitespace-nowrap cursor-pointer"
             >
               ALİ GÜVEN
             </span>
           )}
-          
-          <button 
+
+          <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="hidden lg:flex p-2 rounded-lg hover:bg-white/5 text-slate-400 cursor-pointer"
           >
             {!showLabels ? <Menu size={18} /> : <ChevronLeft size={18} />}
           </button>
 
-          <button 
+          <button
             onClick={() => setIsOpen(false)}
             className="lg:hidden p-2 rounded-lg hover:bg-white/5 text-slate-400 cursor-pointer"
           >
@@ -144,7 +158,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }) => {
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 custom-scrollbar">
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto px-3 py-4 space-y-6 custom-scrollbar"
+        >
           {categories.map((category, idx) => (
             <div key={idx} className="space-y-1">
               {showLabels && (
@@ -162,32 +180,44 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }) => {
           ))}
         </div>
 
-        {/* Profile summary */}
-        {showLabels && (
-          <div className="px-6 py-6 border-t border-white/5 mt-auto">
-            <div className="flex items-center gap-3">
+        {/* Profile & Logout Section */}
+        <div className="px-4 py-6 border-t border-white/5 mt-auto">
+          <div className={`flex items-center ${showLabels ? 'justify-between' : 'justify-center'} gap-2`}>
+            {/* User Info */}
+            <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-9 h-9 rounded-full bg-[#C5A059]/10 flex items-center justify-center text-[#C5A059] font-bold border border-[#C5A059]/20 shrink-0">
                 {user?.name?.charAt(0) || 'A'}
               </div>
-              <div className="overflow-hidden">
-                <p className="text-white text-[13px] font-medium truncate">{user?.name}</p>
-                <p className="text-slate-500 text-[11px] truncate">Admin Sorumlu</p>
-              </div>
+              {showLabels && (
+                <span className="text-white text-[13px] font-medium truncate">{user?.name}</span>
+              )}
             </div>
-          </div>
-        )}
 
-        {/* Logout */}
-        <div className="p-3 border-t border-white/5">
-          <button
-            onClick={logout}
-            className={`w-full flex items-center gap-4 px-3 py-2.5 rounded-xl text-red-400/70 hover:text-red-400 hover:bg-red-400/5 transition-all cursor-pointer
-              ${!showLabels ? 'justify-center' : ''}
-            `}
-          >
-            <LogOut size={18} />
-            {showLabels && <span className="text-sm font-medium">Çıkış Yap</span>}
-          </button>
+            {/* Logout Button (Icon Only) */}
+            {showLabels && (
+              <button
+                onClick={logout}
+                title="Çıkış Yap"
+                className="p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-400/5 transition-all cursor-pointer border border-transparent hover:border-rose-400/10 shrink-0"
+              >
+                <LogOut size={18} />
+              </button>
+            )}
+          </div>
+
+          {/* If collapsed, show logout icon below if needed, or handle differently. 
+              The user asked for it to be on the right, which implies expanded state.
+              In collapsed state, we can just show the logout icon below the avatar or have it visible.
+          */}
+          {!showLabels && (
+            <button
+              onClick={logout}
+              title="Çıkış Yap"
+              className="mt-4 w-10 h-10 mx-auto flex items-center justify-center rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-400/5 transition-all cursor-pointer border border-transparent hover:border-rose-400/10"
+            >
+              <LogOut size={18} />
+            </button>
+          )}
         </div>
       </aside>
     </>

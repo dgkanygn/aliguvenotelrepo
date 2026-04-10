@@ -9,18 +9,18 @@ const Restaurant = () => {
   if (loading) return <div className="loading-state h-screen flex items-center justify-center">Yükleniyor...</div>;
   if (error) return <div className="error-state h-screen flex items-center justify-center">Hata: {error}</div>;
 
-  const info = data?.restaurant_info?.[0];
+  const info = data?.restaurant_info;
   const images = data?.restaurant_images?.map(img => img.image_url) || [];
 
   return (
     <section className="restaurant-page">
       <div
         className="restaurant-hero"
-        style={{ backgroundImage: `url('${data?.banner?.image_url || '/images/restaurant.jpg'}')` }}
+        style={{ backgroundImage: `url('${data?.page_banner?.image_url || '/images/restaurant.jpg'}')` }}
       >
         <div className="container container-hero-restaurant">
-          <span className="section-subtitle">{data?.banner?.top_title || 'Gastronomi'}</span>
-          <h1 className="page-title">{data?.banner?.page_title || 'Restoranımız'}</h1>
+          <span className="section-subtitle">{data?.page_banner?.top_title || 'Gastronomi'}</span>
+          <h1 className="page-title">{data?.page_banner?.page_title || 'Restoranımız'}</h1>
         </div>
       </div>
 

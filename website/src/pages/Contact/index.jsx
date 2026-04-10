@@ -8,14 +8,14 @@ const Contact = () => {
   if (loading) return <div className="loading-state h-screen flex items-center justify-center">Yükleniyor...</div>;
   if (error) return <div className="error-state h-screen flex items-center justify-center">Hata: {error}</div>;
 
-  const info = data?.info;
+  const info = data?.company_contacts;
 
   return (
     <section className="contact-page">
-      <div className="contact-hero" style={{ backgroundImage: `url('${data?.banner?.image_url || '/images/room_1.jpg'}')` }}>
+      <div className="contact-hero" style={{ backgroundImage: `url('${data?.page_banner?.image_url || '/images/room_1.jpg'}')` }}>
         <div className="container container-hero-contact">
-          <span className="section-subtitle">{data?.banner?.top_title || 'Bize Ulaşın'}</span>
-          <h1 className="page-title">{data?.banner?.page_title || 'İletişim'}</h1>
+          <span className="section-subtitle">{data?.page_banner?.top_title || 'Bize Ulaşın'}</span>
+          <h1 className="page-title">{data?.page_banner?.page_title || 'İletişim'}</h1>
         </div>
       </div>
 
@@ -98,7 +98,7 @@ const Contact = () => {
             <h2>Bizimle İletişime Geçin</h2>
             <p>Tüm konaklama ve organizasyon talepleriniz için bize WhatsApp üzerinden anında ulaşabilirsiniz. Profesyonel ekibimiz size en kısa sürede dönüş yapacaktır.</p>
             <a
-              href="https://wa.me/902223300326"
+              href={`https://wa.me/90${info?.whatsapp_number ? info.whatsapp_number.replace(/[^\d]/g, '') : '2223300326'}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary whatsapp-cta-btn cursor-pointer"

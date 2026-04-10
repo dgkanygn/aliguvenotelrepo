@@ -11,6 +11,7 @@ import RestaurantManagement from './pages/RestaurantManagement';
 import EventManagement from './pages/EventManagement';
 import ContactManagement from './pages/ContactManagement';
 import BannerManagement from './pages/BannerManagement';
+import OverviewManagement from './pages/OverviewManagement';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
       <Route path="/hero" element={<ProtectedRoute><HeroManagement /></ProtectedRoute>} />
       <Route path="/counter" element={<ProtectedRoute><CounterManagement /></ProtectedRoute>} />
       <Route path="/founder" element={<ProtectedRoute><FounderManagement /></ProtectedRoute>} />
+      <Route path="/overview" element={<ProtectedRoute><OverviewManagement /></ProtectedRoute>} />
       <Route path="/features" element={<ProtectedRoute><FeatureManagement /></ProtectedRoute>} />
       
       {/* Content Management Section */}

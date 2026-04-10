@@ -1,73 +1,78 @@
 <?php
 
-/**
- * JWT (JSON Web Token) üretir. Geçerlilik süresi default olarak 2 saattir.
- */
-function createJWT($payload, $secret) {
-    if (!isset($payload['exp'])) {
-        $payload['exp'] = time() + (2 * 60 * 60); // 2 saat geçerli
+use Firebase\JWT\JWT;
+
+class AuthController
+{
+    private $db;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
     }
 
-    $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
-    $payloadJson = json_encode($payload);
+    /**
+     * POST /auth/login
+     * username ve password ile giriş, JWT token döner.
+     */
+    public function handleLogin()
+    {
+        $data = json_decode(file_get_contents("php://input"), true);
 
-    $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-    $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payloadJson));
+        if (empty($data['username']) || empty($data['password'])) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "Kullanıcı adı ve şifre gereklidir."]);
+            return;
+        }
 
-    $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $secret, true);
-    $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
+        $username = trim($data['username']);
+        $password = $data['password'];
 
-    return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
-}
+        try {
+            $stmt = $this->db->prepare("SELECT id, username, password FROM admins WHERE username = :username LIMIT 1");
+            $stmt->bindParam(':username', $username);
+            $stmt->execute();
+            $admin = $stmt->fetch();
 
-/**
- * Admin girişi — Veritabanındaki 'admins' tablosunu kontrol eder, eşleşirse JWT üretir.
- */
-function handleLogin($pdo) {
-    // 1. Gelen JSON verisini al (usename, password)
-    $input = json_decode(file_get_contents('php://input'), true);
+            if (!$admin) {
+                http_response_code(401);
+                echo json_encode(["success" => false, "message" => "Geçersiz kullanıcı adı veya şifre."]);
+                return;
+            }
 
-    if (!$input || !isset($input['username']) || !isset($input['password'])) {
-        http_response_code(400);
-        return [
-            'success' => false,
-            'message' => 'Kullanıcı adı ve şifre gereklidir.'
-        ];
+            if (!password_verify($password, $admin['password'])) {
+                http_response_code(401);
+                echo json_encode(["success" => false, "message" => "Geçersiz kullanıcı adı veya şifre."]);
+                return;
+            }
+
+            $secret = $_ENV['JWT_SECRET'] ?? 'aliguvenotel_jwt_secret_key_2026_change_this';
+            $payload = [
+                'iss' => 'aliguvenotel',
+                'iat' => time(),
+                'exp' => time() + (60 * 60 * 24), // 24 saat
+                'sub' => $admin['id'],
+                'username' => $admin['username']
+            ];
+
+            $token = JWT::encode($payload, $secret, 'HS256');
+
+            setcookie("auth_token", $token, [
+                'expires' => time() + (60 * 60 * 24),
+                'path' => '/',
+                // 'secure' => true, // Eğer üretimde HTTPS üzerinde çalışacaksanız aktif edin.
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+
+            http_response_code(200);
+            echo json_encode([
+                "success" => true,
+                "message" => "Giriş başarılı."
+            ]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Sunucu hatası: " . $e->getMessage()]);
+        }
     }
-
-
-
-    // 3. Veritabanından kullanıcıyı sorgula
-    $stmt = $pdo->prepare("SELECT * FROM admins WHERE username = ? LIMIT 1");
-    $stmt->execute([$input['username']]);
-    $user = $stmt->fetch();
-
-    if (!$user || !password_verify($input['password'], $user['password'])) {
-        http_response_code(401);
-        return [
-            'success' => false,
-            'message' => 'Geçersiz kullanıcı adı veya şifre.'
-        ];
-    }
-
-    // 4. ENV dosyasından JWT Şifresini al ve üretime başla
-    $env_file = __DIR__ . '/../.env';
-    $env = file_exists($env_file) ? parse_ini_file($env_file) : [];
-    $jwtSecret = $env['JWT_SECRET'] ?? 'default_secret_key_dont_use_in_prod';
-
-    $payload = [
-        'id' => $user['id'],
-        'username' => $user['username']
-    ];
-
-    $token = createJWT($payload, $jwtSecret);
-
-    return [
-        'success' => true,
-        'data' => [
-            'token' => $token,
-            'expires_in' => 7200, // saniye cinsinden
-            'message' => 'Giriş başarılı.'
-        ]
-    ];
 }
