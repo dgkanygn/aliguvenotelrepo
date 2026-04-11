@@ -33,7 +33,7 @@ const ContactManagement = () => {
           <Icon size={18} />
         </div>
         {isTextArea ? (
-           <textarea 
+          <textarea
             value={value}
             maxLength={maxLength}
             onChange={(e) => onChange(e.target.value)}
@@ -42,8 +42,8 @@ const ContactManagement = () => {
             className="w-full bg-[#0F172A] border border-white/10 rounded-[24px] pl-14 pr-6 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all resize-none leading-relaxed"
           />
         ) : (
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={value}
             maxLength={maxLength}
             onChange={(e) => onChange(e.target.value)}
@@ -57,13 +57,13 @@ const ContactManagement = () => {
 
   return (
     <div className="flex min-h-screen bg-[#020617] text-slate-300 font-inter">
-      <Sidebar 
-        isCollapsed={isSidebarCollapsed} 
-        setIsCollapsed={setIsSidebarCollapsed} 
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
         isOpen={isMobileMenuOpen}
         setIsOpen={setIsMobileMenuOpen}
       />
-      
+
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar onToggleMobileMenu={toggleMobileMenu} />
 
@@ -74,7 +74,7 @@ const ContactManagement = () => {
               <h1 className="text-3xl font-bold text-white tracking-tight">İletişim Bilgileri</h1>
               <p className="text-slate-500 mt-2">Web sitesinde görüntülenen tüm iletişim kanallarını buradan yönetebilirsiniz.</p>
             </div>
-            <button 
+            <button
               onClick={onSave}
               disabled={isLoading}
               className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
@@ -89,10 +89,10 @@ const ContactManagement = () => {
               {/* Basic Information */}
               <div className="bg-[#1E293B]/30 border border-white/5 rounded-[40px] p-8 sm:p-10 space-y-8">
                 <div className="flex items-center gap-3 mb-2">
-                   <div className="p-2 bg-[#C5A059]/10 rounded-lg text-[#C5A059]">
-                      <Phone size={20} />
-                   </div>
-                   <h2 className="text-xl font-bold text-white">Genel İletişim</h2>
+                  <div className="p-2 bg-[#C5A059]/10 rounded-lg text-[#C5A059]">
+                    <Phone size={20} />
+                  </div>
+                  <h2 className="text-xl font-bold text-white">Genel İletişim</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
@@ -152,29 +152,15 @@ const ContactManagement = () => {
                     placeholder="bilgi@..."
                   />
                 </div>
-
-                <div className="pt-8 border-t border-white/5">
-                  <div className="bg-[#C5A059]/5 border border-[#C5A059]/10 p-6 rounded-3xl flex items-start gap-4">
-                    <div className="p-3 bg-[#C5A059]/10 rounded-2xl text-[#C5A059]">
-                      <MapPin size={24} />
-                    </div>
-                    <div>
-                      <h4 className="text-white font-bold mb-1 italic">Harita Görünümü</h4>
-                      <p className="text-slate-500 text-sm leading-relaxed">
-                        Adres değişikliği web sitesindeki harita işaretçisini otomatik olarak etkilemez.
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               {/* Social Media Links */}
               <div className="bg-[#1E293B]/30 border border-white/5 rounded-[40px] p-8 sm:p-10 space-y-8">
                 <div className="flex items-center gap-3 mb-2">
-                   <div className="p-2 bg-[#C5A059]/10 rounded-lg text-[#C5A059]">
-                      <Share2 size={20} />
-                   </div>
-                   <h2 className="text-xl font-bold text-white">Sosyal Medya</h2>
+                  <div className="p-2 bg-[#C5A059]/10 rounded-lg text-[#C5A059]">
+                    <Share2 size={20} />
+                  </div>
+                  <h2 className="text-xl font-bold text-white">Sosyal Medya</h2>
                 </div>
 
                 <div className="space-y-6">
@@ -222,7 +208,7 @@ const ContactManagement = () => {
                     maxLength={FORM_LIMITS.contact.social}
                     placeholder="https://youtube.com/..."
                   />
-                  
+
                   <InputField
                     label="Pinterest"
                     icon={Share2}

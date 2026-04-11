@@ -13,6 +13,7 @@ import ContactManagement from './pages/ContactManagement';
 import BannerManagement from './pages/BannerManagement';
 import OverviewManagement from './pages/OverviewManagement';
 import SaloonManagement from './pages/SaloonManagement';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -38,6 +39,8 @@ function App() {
       <Route path="/contact" element={<ProtectedRoute><ContactManagement /></ProtectedRoute>} />
       <Route path="/banners" element={<ProtectedRoute><BannerManagement /></ProtectedRoute>} />
       
+      <Route path="/404" element={<NotFound />} />
+      <Route path="*" element={<Navigate to="/404" replace />} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );

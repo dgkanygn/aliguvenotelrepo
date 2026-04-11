@@ -14,7 +14,7 @@ const RestaurantManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
   const { info, images, setImages, isLoading, isFetching, updateInfo } = useRestaurant();
   const [formData, setFormData] = useState(null);
-  
+
   const [pdfFile, setPdfFile] = useState(null);
   const [newImages, setNewImages] = useState([]);
 
@@ -51,12 +51,12 @@ const RestaurantManagement = () => {
           newImages.map(file => uploadService.uploadFile(file))
         );
         toast.dismiss(imgToast);
-        
+
         const validUrls = uploadedImgUrls.filter(url => url);
         if (validUrls.length !== newImages.length) {
-            toast.error("Bazı resimler yüklenemedi");
+          toast.error("Bazı resimler yüklenemedi");
         }
-        
+
         finalImages = [
           ...finalImages,
           ...validUrls.map((url, i) => ({ id: `new_${Date.now()}_${i}`, image_url: url }))
@@ -68,7 +68,7 @@ const RestaurantManagement = () => {
         menu_pdf_url: finalPdfUrl,
         restaurant_images: finalImages
       });
-      
+
       setPdfFile(null);
       setNewImages([]);
     } catch (err) {
@@ -79,19 +79,19 @@ const RestaurantManagement = () => {
   if (isFetching || !formData) {
     return (
       <div className="flex min-h-screen bg-[#020617] text-slate-300 font-inter">
-        <Sidebar 
-          isCollapsed={isSidebarCollapsed} 
-          setIsCollapsed={setIsSidebarCollapsed} 
+        <Sidebar
+          isCollapsed={isSidebarCollapsed}
+          setIsCollapsed={setIsSidebarCollapsed}
           isOpen={isMobileMenuOpen}
           setIsOpen={setIsMobileMenuOpen}
         />
         <div className="flex-1 flex flex-col min-w-0">
           <Navbar onToggleMobileMenu={toggleMobileMenu} />
           <main className="flex-1 flex items-center justify-center">
-             <div className="text-[#C5A059] flex items-center gap-3">
-               <div className="w-5 h-5 rounded-full border-2 border-[#C5A059] border-t-transparent animate-spin"></div>
-               <span className="font-medium">Restoran bilgileri yükleniyor...</span>
-             </div>
+            <div className="text-[#C5A059] flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full border-2 border-[#C5A059] border-t-transparent animate-spin"></div>
+              <span className="font-medium">Restoran bilgileri yükleniyor...</span>
+            </div>
           </main>
         </div>
       </div>
@@ -100,13 +100,13 @@ const RestaurantManagement = () => {
 
   return (
     <div className="flex min-h-screen bg-[#020617] text-slate-300 font-inter">
-      <Sidebar 
-        isCollapsed={isSidebarCollapsed} 
-        setIsCollapsed={setIsSidebarCollapsed} 
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
         isOpen={isMobileMenuOpen}
         setIsOpen={setIsMobileMenuOpen}
       />
-      
+
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar onToggleMobileMenu={toggleMobileMenu} />
 
@@ -116,7 +116,7 @@ const RestaurantManagement = () => {
               <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Gastronomi</p>
               <h1 className="text-3xl font-bold text-white tracking-tight">Restoran Yönetimi</h1>
             </div>
-            <button 
+            <button
               onClick={onSave}
               disabled={isLoading}
               className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
@@ -129,100 +129,95 @@ const RestaurantManagement = () => {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
             {/* General Info */}
             <div className="space-y-8">
-               <div className="bg-[#1E293B]/30 border border-white/5 rounded-3xl p-8 space-y-6">
-                 <h3 className="text-white font-bold flex items-center gap-2 mb-2">
-                   <FileText size={20} className="text-[#C5A059]" />
-                   Genel Bilgiler
-                 </h3>
-                 
-                 <div>
-                    <div className="flex justify-between items-center mb-2 px-1">
-                       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Giriş Metni</label>
-                       <span className={`text-[9px] font-bold ${formData.intro_text.length >= FORM_LIMITS.restaurant.intro_text ? 'text-rose-500' : 'text-slate-600'}`}>{formData.intro_text.length}/{FORM_LIMITS.restaurant.intro_text}</span>
-                    </div>
-                    <textarea 
-                      value={formData.intro_text}
-                      maxLength={FORM_LIMITS.restaurant.intro_text}
-                      onChange={(e) => setFormData({...formData, intro_text: e.target.value})}
-                      rows={6}
-                      className="w-full bg-[#0F172A] border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all resize-none leading-relaxed"
-                    />
-                 </div>
+              <div className="bg-[#1E293B]/30 border border-white/5 rounded-3xl p-8 space-y-6">
+                <h3 className="text-white font-bold flex items-center gap-2 mb-2">
+                  <FileText size={20} className="text-[#C5A059]" />
+                  Genel Bilgiler
+                </h3>
 
-                 <div>
-                    <div className="flex justify-between items-center mb-2 px-1">
-                       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-rose-400">Uyarı / Önemli Not</label>
-                       <span className={`text-[9px] font-bold ${formData.warning_text.length >= FORM_LIMITS.restaurant.warning_text ? 'text-rose-500' : 'text-rose-400/60'}`}>{formData.warning_text.length}/{FORM_LIMITS.restaurant.warning_text}</span>
-                    </div>
-                    <div className="relative">
-                       <AlertTriangle size={16} className="absolute left-4 top-4 text-rose-500" />
-                       <textarea 
-                        value={formData.warning_text}
-                        maxLength={FORM_LIMITS.restaurant.warning_text}
-                        onChange={(e) => setFormData({...formData, warning_text: e.target.value})}
-                        rows={3}
-                        className="w-full bg-rose-500/5 border border-rose-500/20 rounded-2xl pl-12 pr-5 py-4 text-rose-200 focus:outline-none focus:border-rose-500/50 transition-all resize-none text-sm"
-                      />
-                    </div>
-                 </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2 px-1">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Giriş Metni</label>
+                    <span className={`text-[9px] font-bold ${formData.intro_text.length >= FORM_LIMITS.restaurant.intro_text ? 'text-rose-500' : 'text-slate-600'}`}>{formData.intro_text.length}/{FORM_LIMITS.restaurant.intro_text}</span>
+                  </div>
+                  <textarea
+                    value={formData.intro_text}
+                    maxLength={FORM_LIMITS.restaurant.intro_text}
+                    onChange={(e) => setFormData({ ...formData, intro_text: e.target.value })}
+                    rows={6}
+                    className="w-full bg-[#0F172A] border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all resize-none leading-relaxed"
+                  />
+                </div>
 
-                 <div className="pt-6 border-t border-white/5">
-                    <FileUploader 
-                      label="Menü PDF Dosyası" 
-                      accept=".pdf"
-                      maxFileSize={10} 
-                      onFileSelect={(file) => {
-                         setPdfFile(file);
-                         setFormData({...formData, menu_pdf_url: file.name});
-                      }} 
+                <div>
+                  <div className="flex justify-between items-center mb-2 px-1">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-rose-400">Uyarı / Önemli Not</label>
+                    <span className={`text-[9px] font-bold ${formData.warning_text.length >= FORM_LIMITS.restaurant.warning_text ? 'text-rose-500' : 'text-rose-400/60'}`}>{formData.warning_text.length}/{FORM_LIMITS.restaurant.warning_text}</span>
+                  </div>
+                  <div className="relative">
+                    <AlertTriangle size={16} className="absolute left-4 top-4 text-rose-500" />
+                    <textarea
+                      value={formData.warning_text}
+                      maxLength={FORM_LIMITS.restaurant.warning_text}
+                      onChange={(e) => setFormData({ ...formData, warning_text: e.target.value })}
+                      rows={3}
+                      className="w-full bg-rose-500/5 border border-rose-500/20 rounded-2xl pl-12 pr-5 py-4 text-rose-200 focus:outline-none focus:border-rose-500/50 transition-all resize-none text-sm"
                     />
-                    {formData.menu_pdf_url && (
-                       <p className="text-[10px] text-slate-500 mt-2 px-1">
-                         Mevcut dosya: <span className="text-[#C5A059] italic">{formData.menu_pdf_url}</span>
-                       </p>
-                    )}
-                 </div>
-               </div>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-white/5">
+                  <FileUploader
+                    label="Menü PDF Dosyası"
+                    accept=".pdf"
+                    maxFileSize={10}
+                    onFileSelect={(file) => {
+                      setPdfFile(file);
+                      setFormData({ ...formData, menu_pdf_url: file.name });
+                    }}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Images */}
             <div className="space-y-8">
-               <div className="bg-[#1E293B]/30 border border-white/5 rounded-3xl p-8 space-y-6">
-                 <div className="flex justify-between items-center mb-2">
-                   <h3 className="text-white font-bold flex items-center gap-2">
-                     <Utensils size={20} className="text-[#C5A059]" />
-                     Restoran Görselleri
-                   </h3>
-                   <span className={`text-[9px] font-bold ${(images.length + newImages.length) >= FORM_LIMITS.restaurant.maxPhotos ? 'text-rose-500' : 'text-slate-600'}`}>{(images.length + newImages.length)}/{FORM_LIMITS.restaurant.maxPhotos}</span>
-                 </div>
+              <div className="bg-[#1E293B]/30 border border-white/5 rounded-3xl p-8 space-y-6">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-white font-bold flex items-center gap-2">
+                    <Utensils size={20} className="text-[#C5A059]" />
+                    Restoran Görselleri
+                  </h3>
+                  <span className={`text-[9px] font-bold ${(images.length + newImages.length) >= FORM_LIMITS.restaurant.maxPhotos ? 'text-rose-500' : 'text-slate-600'}`}>{(images.length + newImages.length)}/{FORM_LIMITS.restaurant.maxPhotos}</span>
+                </div>
 
-                 <div className="grid grid-cols-2 gap-4">
-                    {images.map((img) => (
-                      <div key={img.id} className="relative aspect-video rounded-2xl overflow-hidden group border border-white/10">
-                        <img src={img.image_url || img.url} alt="restaurant" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                           <button 
-                            onClick={() => removeImage(img.id)}
-                            className="p-2.5 bg-rose-500 text-white rounded-xl hover:scale-110 transition-transform cursor-pointer"
-                           >
-                             <Trash2 size={18} />
-                           </button>
-                        </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {images.map((img) => (
+                    <div key={img.id} className="relative aspect-video rounded-2xl overflow-hidden group border border-white/10">
+                      <img src={img.image_url || img.url} alt="restaurant" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button
+                          onClick={() => removeImage(img.id)}
+                          className="p-2.5 bg-rose-500 text-white rounded-xl hover:scale-110 transition-transform cursor-pointer"
+                        >
+                          <Trash2 size={18} />
+                        </button>
                       </div>
-                    ))}
-                 </div>
+                    </div>
+                  ))}
+                </div>
 
-                 <div className="pt-4 border-t border-white/5">
-                    {(images.length + newImages.length) < FORM_LIMITS.restaurant.maxPhotos && (
-                      <ImageUploader 
-                        multiple={true} 
-                        maxFileSize={2} 
-                        label="Yeni Görsel Yükle" 
-                        onChange={(files) => setNewImages(files)}
-                      />
-                    )}
-                 </div>
-               </div>
+                <div className="pt-4 border-t border-white/5">
+                  {(images.length + newImages.length) < FORM_LIMITS.restaurant.maxPhotos && (
+                    <ImageUploader
+                      multiple={true}
+                      maxFileSize={2}
+                      label="Yeni Görsel Yükle"
+                      onChange={(files) => setNewImages(files)}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </main>

@@ -187,10 +187,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }) => {
             {/* User Info */}
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-9 h-9 rounded-full bg-[#C5A059]/10 flex items-center justify-center text-[#C5A059] font-bold border border-[#C5A059]/20 shrink-0">
-                {user?.name?.charAt(0) || 'A'}
+                {user?.username?.charAt(0)?.toUpperCase() || 'A'}
               </div>
               {showLabels && (
-                <span className="text-white text-[13px] font-medium truncate">{user?.name}</span>
+                <span className="text-white text-[13px] font-medium truncate">{user?.username}</span>
               )}
             </div>
 
