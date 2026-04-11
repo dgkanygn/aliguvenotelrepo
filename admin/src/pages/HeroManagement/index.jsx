@@ -4,28 +4,54 @@ import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
 import { useHero } from './hooks/useHero';
 import ImageUploader from '../../components/ImageUploader';
+import ConfirmModal from '../../components/ConfirmModal';
 import { FORM_LIMITS } from '../../utils/formLimits';
 import { Edit2, Trash2, Save, X, Plus } from 'lucide-react';
+import { uploadService } from '../../services/upload.service';
 
 const HeroManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
-  const { heroes, isLoading, handleUpdate } = useHero();
+  const { heroes, isLoading, isFetching, handleUpdate, addHero, deleteHero } = useHero();
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
+  const [newFile, setNewFile] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
   const startEdit = (hero) => {
     setEditingId(hero.id);
-    setEditData(hero);
+    setEditData({...hero});
+    setNewFile(null);
   };
 
   const cancelEdit = () => {
     setEditingId(null);
     setEditData({});
+    setNewFile(null);
   };
 
   const onSave = async (id) => {
-    await handleUpdate(id, editData);
+    let imageUrl = editData.image_url;
+    if (newFile) {
+       try {
+         const res = await uploadService.uploadFiles([newFile], 'home_hero');
+         if(res && res.success && res.data.length > 0) {
+            imageUrl = res.data[0];
+         }
+       } catch(err) {
+         console.error(err);
+       }
+    }
+    
+    await handleUpdate(id, { ...editData, image_url: imageUrl });
     setEditingId(null);
+    setNewFile(null);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteId) {
+      await deleteHero(deleteId);
+      setDeleteId(null);
+    }
   };
 
   return (
@@ -48,7 +74,11 @@ const HeroManagement = () => {
               <p className="text-slate-500 mt-2">Maksimum {FORM_LIMITS.hero.maxItems} slayt eklenebilir. ({heroes.length}/{FORM_LIMITS.hero.maxItems})</p>
             </div>
             {heroes.length < FORM_LIMITS.hero.maxItems && (
-              <button className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10">
+              <button 
+                onClick={addHero}
+                disabled={isLoading}
+                className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10 disabled:opacity-50"
+              >
                 <Plus size={18} />
                 Yeni Slayt Ekle
               </button>
@@ -56,22 +86,41 @@ const HeroManagement = () => {
           </header>
 
           <div className="grid grid-cols-1 gap-8">
-            {heroes.map((hero) => (
+            {isFetching ? (
+              <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                <div className="w-10 h-10 border-4 border-[#C5A059]/30 border-t-[#C5A059] rounded-full animate-spin mb-4" />
+                <p>Slaytlar yükleniyor...</p>
+              </div>
+            ) : heroes.map((hero) => (
               <div key={hero.id} className="bg-[#1E293B]/30 border border-white/5 rounded-3xl overflow-hidden group">
                 <div className="flex flex-col lg:flex-row">
                   {/* Image Section */}
-                  <div className="lg:w-1/3 relative h-64 lg:h-auto overflow-hidden">
-                    <img 
-                      src={hero.image_url} 
-                      alt={hero.title} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
+                  <div className="lg:w-1/3 relative h-64 lg:h-auto overflow-hidden bg-black flex items-center justify-center">
+                    {editData.image_url || hero.image_url ? (
+                       <img 
+                         src={editData.image_url || hero.image_url} 
+                         alt={hero.title} 
+                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                       />
+                    ) : (
+                       <span className="text-slate-500 text-sm">Resim Bulunamadı</span>
+                    )}
                     {editingId === hero.id && (
                       <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-6">
                         <ImageUploader 
                           maxFileSize={2} 
+                          multiple={false}
                           idealResolution={{ width: 1920, height: 1080 }} 
                           label="Fotoğrafı Değiştir"
+                          onChange={(files) => {
+                             if(files && files.length > 0) {
+                               setNewFile(files[0]);
+                               setEditData({...editData, image_url: files[0].preview});
+                             } else {
+                               setNewFile(null);
+                               setEditData({...editData, image_url: hero.image_url});
+                             }
+                          }}
                         />
                       </div>
                     )}
@@ -140,6 +189,7 @@ const HeroManagement = () => {
                             Düzenle
                           </button>
                           <button 
+                            onClick={() => setDeleteId(hero.id)}
                             className="flex items-center gap-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer border border-rose-500/10"
                           >
                             <Trash2 size={18} />
@@ -153,6 +203,15 @@ const HeroManagement = () => {
               </div>
             ))}
           </div>
+          
+          <ConfirmModal 
+            isOpen={!!deleteId}
+            onClose={() => setDeleteId(null)}
+            onConfirm={confirmDelete}
+            isLoading={isLoading}
+            title="Slaytı Sil"
+            message="Bu slaytı silmek istediğinize emin misiniz?"
+          />
         </main>
       </div>
     </div>

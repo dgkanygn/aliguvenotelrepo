@@ -57,12 +57,16 @@ class HomeHeroController
     public function store()
     {
         try {
-            $data = json_decode(file_get_contents("php://input"), true);
+            $data = json_decode(file_get_contents("php://input"), true) ?? [];
+
+            $imageUrl = $data['image_url'] ?? null;
+            $title = $data['title'] ?? null;
+            $description = $data['description'] ?? null;
 
             $stmt = $this->db->prepare("INSERT INTO home_hero (image_url, title, description) VALUES (:image_url, :title, :description)");
-            $stmt->bindParam(':image_url', $data['image_url']);
-            $stmt->bindParam(':title', $data['title']);
-            $stmt->bindParam(':description', $data['description']);
+            $stmt->bindParam(':image_url', $imageUrl);
+            $stmt->bindParam(':title', $title);
+            $stmt->bindParam(':description', $description);
             $stmt->execute();
 
             $newId = $this->db->lastInsertId();
@@ -76,27 +80,32 @@ class HomeHeroController
     }
 
     /**
-     * PUT /home-hero/{id}
+     * PUT|POST /home-hero/{id}
      */
     public function update($id)
     {
         try {
-            $checkStmt = $this->db->prepare("SELECT id FROM home_hero WHERE id = :id");
+            $checkStmt = $this->db->prepare("SELECT * FROM home_hero WHERE id = :id");
             $checkStmt->bindParam(':id', $id);
             $checkStmt->execute();
+            $oldItem = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
-            if (!$checkStmt->fetch()) {
+            if (!$oldItem) {
                 http_response_code(404);
                 echo json_encode(["success" => false, "message" => "Hero bulunamadı."]);
                 return;
             }
 
-            $data = json_decode(file_get_contents("php://input"), true);
+            $data = json_decode(file_get_contents("php://input"), true) ?? [];
+
+            $imageUrl = $data['image_url'] ?? $oldItem['image_url'];
+            $title = $data['title'] ?? $oldItem['title'];
+            $description = $data['description'] ?? $oldItem['description'];
 
             $stmt = $this->db->prepare("UPDATE home_hero SET image_url = :image_url, title = :title, description = :description WHERE id = :id");
-            $stmt->bindParam(':image_url', $data['image_url']);
-            $stmt->bindParam(':title', $data['title']);
-            $stmt->bindParam(':description', $data['description']);
+            $stmt->bindParam(':image_url', $imageUrl);
+            $stmt->bindParam(':title', $title);
+            $stmt->bindParam(':description', $description);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 

@@ -6,18 +6,41 @@ import { useOverview } from './hooks/useOverview';
 import ImageUploader from '../../components/ImageUploader';
 import { FORM_LIMITS } from '../../utils/formLimits';
 import { Save, Layout, FileText, Tag, ListPlus, X } from 'lucide-react';
+import { uploadService } from '../../services/upload.service';
 
 const OverviewManagement = () => {
     const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
-    const { overview, isLoading, handleUpdate } = useOverview();
-    const [formData, setFormData] = useState(overview);
+    const { overview, isLoading, isFetching, handleUpdate } = useOverview();
+    const [formData, setFormData] = useState({
+        image_url: '',
+        tagline: '',
+        title: '',
+        summary: '',
+        feature_list: []
+    });
+    const [newFile, setNewFile] = useState(null);
 
     useEffect(() => {
-        setFormData(overview);
+        if(overview) {
+            setFormData(overview);
+        }
     }, [overview]);
 
     const onSave = async () => {
-        await handleUpdate(formData);
+        let imageUrl = formData.image_url;
+        if(newFile) {
+           try {
+             const res = await uploadService.uploadFiles([newFile], 'home_overview');
+             if(res && res.success && res.data.length > 0) {
+               imageUrl = res.data[0];
+             }
+           } catch(err) {
+             console.error(err);
+           }
+        }
+        
+        await handleUpdate({ ...formData, image_url: imageUrl });
+        setNewFile(null);
     };
 
     const addFeature = () => {
@@ -66,7 +89,7 @@ const OverviewManagement = () => {
                         </div>
                         <button
                             onClick={onSave}
-                            disabled={isLoading}
+                            disabled={isLoading || isFetching}
                             className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
                         >
                             {isLoading ? 'Güncelleniyor...' : 'Değişiklikleri Kaydet'}
@@ -74,18 +97,34 @@ const OverviewManagement = () => {
                         </button>
                     </header>
 
+                    {isFetching ? (
+                        <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                            <div className="w-10 h-10 border-4 border-[#C5A059]/30 border-t-[#C5A059] rounded-full animate-spin mb-4" />
+                            <p>İçerik yükleniyor...</p>
+                        </div>
+                    ) : (
                     <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                         {/* Left Column: Image */}
                         <div className="xl:col-span-1 space-y-6">
                             <div className="bg-[#1E293B]/30 border border-white/5 rounded-3xl p-6">
                                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Görsel</label>
                                 <div className="aspect-video rounded-2xl overflow-hidden border border-white/5 mb-6 bg-white/5">
-                                    <img src={formData.image_url} alt="Overview" className="w-full h-full object-cover" />
+                                    <img src={formData.image_url || overview?.image_url} alt="Overview" className="w-full h-full object-cover" />
                                 </div>
                                 <ImageUploader
                                     maxFileSize={2}
+                                    multiple={false}
                                     idealResolution={{ width: 1200, height: 800 }}
                                     label="Görseli Güncelle"
+                                    onChange={(files) => {
+                                        if(files && files.length > 0) {
+                                            setNewFile(files[0]);
+                                            setFormData({...formData, image_url: files[0].preview});
+                                        } else {
+                                            setNewFile(null);
+                                            setFormData({...formData, image_url: overview?.image_url || ''});
+                                        }
+                                    }}
                                 />
                             </div>
                         </div>
@@ -188,6 +227,7 @@ const OverviewManagement = () => {
                             </div>
                         </div>
                     </div>
+                    )}
                 </main>
             </div>
         </div>

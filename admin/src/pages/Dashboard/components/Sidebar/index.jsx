@@ -64,19 +64,20 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }) => {
       label: 'İçerik Yönetimi',
       items: [
         { title: 'Odalar', icon: <Bed size={20} />, id: 'rooms', path: '/rooms' },
+        { title: 'Salonlar', icon: <Layout size={20} />, id: 'saloons', path: '/saloons' },
         { title: 'Restoran', icon: <Utensils size={20} />, id: 'restaurant', path: '/restaurant' },
-        { title: 'Düğün & Organizasyon', icon: <Heart size={20} />, id: 'wedding', path: '/wedding' },
+        // { title: 'Düğün & Organizasyon', icon: <Heart size={20} />, id: 'wedding', path: '/wedding' },
         { title: 'İletişim', icon: <Mail size={20} />, id: 'contact', path: '/contact' },
         { title: 'Sayfa Banner\'ları', icon: <Flag size={20} />, id: 'banners', path: '/banners' },
       ]
     },
-    {
-      label: 'Sistem',
-      items: [
-        { title: 'Admin Yönetimi', icon: <ShieldCheck size={20} />, id: 'admins', path: '/admins' },
-        { title: 'Ayarlar', icon: <Settings size={20} />, id: 'settings', path: '/settings' },
-      ]
-    }
+    // {
+    //   label: 'Sistem',
+    //   items: [
+    //     { title: 'Admin Yönetimi', icon: <ShieldCheck size={20} />, id: 'admins', path: '/admins' },
+    //     { title: 'Ayarlar', icon: <Settings size={20} />, id: 'settings', path: '/settings' },
+    //   ]
+    // }
   ];
 
   const handleNavigate = (path) => {

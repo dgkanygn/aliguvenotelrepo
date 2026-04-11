@@ -4,17 +4,26 @@ import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
 import { useFeatures } from './hooks/useFeatures';
 import IconSelector from '../../components/IconSelector';
+import ConfirmModal from '../../components/ConfirmModal';
 import { ICONS } from '../../utils/iconList';
 import { FORM_LIMITS } from '../../utils/formLimits';
-import { Edit2, Save, X, LayoutGrid, Type, AlignLeft } from 'lucide-react';
+import { Edit2, Save, X, LayoutGrid, Type, AlignLeft, Plus, Trash2 } from 'lucide-react';
 
 const FeatureManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
-  const { features, isLoading, handleUpdate } = useFeatures();
+  const { features, isLoading, handleUpdate, addFeature, removeFeature } = useFeatures();
   
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const confirmDelete = async () => {
+    if (deleteId) {
+      await removeFeature(deleteId);
+      setDeleteId(null);
+    }
+  };
 
   const startEdit = (feature) => {
     setEditingId(feature.id);
@@ -49,15 +58,40 @@ const FeatureManagement = () => {
         <Navbar onToggleMobileMenu={toggleMobileMenu} />
 
         <main className="flex-1 overflow-x-hidden p-6 sm:p-10">
-          <header className="mb-10">
-            <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Ana Sayfa</p>
-            <h1 className="text-3xl font-bold text-white tracking-tight">Özellik Yönetimi</h1>
-            <p className="text-slate-500 mt-2">Bu bölümde sabit 3 özellik bulunmaktadır. İkonlarını ve metinlerini güncelleyebilirsiniz.</p>
+          <header className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Ana Sayfa</p>
+              <h1 className="text-3xl font-bold text-white tracking-tight">Özellik Yönetimi</h1>
+              <p className="text-slate-500 mt-2">Maksimum 6 adet özellik ekleyebilirsiniz. ({features.length}/6)</p>
+            </div>
+
+            {features.length < 6 && (
+              <button 
+                onClick={addFeature}
+                disabled={isLoading}
+                className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-lg shadow-[#C5A059]/10"
+              >
+                <Plus size={18} />
+                Yeni Özellik Ekle
+              </button>
+            )}
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature) => (
-              <div key={feature.id} className="bg-[#1E293B]/40 border border-white/5 rounded-[40px] p-10 group flex flex-col items-center text-center transition-all duration-300 hover:bg-[#1E293B]/60">
+              <div key={feature.id} className="bg-[#1E293B]/40 border border-white/5 rounded-[40px] p-10 group flex flex-col items-center text-center transition-all duration-300 hover:bg-[#1E293B]/60 relative">
+                
+                {!editingId && editingId !== feature.id && (
+                  <div className="absolute top-6 right-6">
+                    <button 
+                      onClick={() => setDeleteId(feature.id)}
+                      className="p-3 rounded-xl bg-rose-500/5 text-rose-500/60 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer border border-rose-500/5"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                )}
+
                 {editingId === feature.id ? (
                   <div className="w-full space-y-6">
                     {/* Icon Selection Trigger */}
@@ -128,7 +162,7 @@ const FeatureManagement = () => {
                   </div>
                 ) : (
                   <>
-                    <div className="w-24 h-24 bg-[#C5A059]/10 rounded-[32px] flex items-center justify-center text-[#C5A059] mb-8 group-hover:scale-110 transition-transform duration-500 shadow-xl shadow-[#C5A059]/0 group-hover:shadow-[#C5A059]/10">
+                    <div className="w-24 h-24 bg-[#C5A059]/10 rounded-[32px] flex items-center justify-center text-[#C5A059] mb-8 mt-5 group-hover:scale-110 transition-transform duration-500 shadow-xl shadow-[#C5A059]/0 group-hover:shadow-[#C5A059]/10">
                       {renderIcon(feature.icon)}
                     </div>
                     <h3 className="text-2xl font-bold text-white mb-4 tracking-tight italic">{feature.title}</h3>
@@ -145,6 +179,27 @@ const FeatureManagement = () => {
               </div>
             ))}
           </div>
+
+          {features.length === 0 && (
+            <div className="text-center py-20 bg-[#1E293B]/20 rounded-[32px] border border-dashed border-white/10 mt-8">
+              <p className="text-slate-500">Henüz hiç özellik eklenmemiş.</p>
+              <button 
+                onClick={addFeature}
+                className="mt-4 text-[#C5A059] font-bold hover:underline cursor-pointer"
+              >
+                İlk özelliği ekle
+              </button>
+            </div>
+          )}
+
+          <ConfirmModal 
+            isOpen={!!deleteId}
+            onClose={() => setDeleteId(null)}
+            onConfirm={confirmDelete}
+            isLoading={isLoading}
+            title="Özelliği Sil"
+            message="Bu özelliği silmek istediğinize emin misiniz?"
+          />
         </main>
       </div>
 

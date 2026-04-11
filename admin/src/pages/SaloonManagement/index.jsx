@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import Sidebar from '../Dashboard/components/Sidebar';
 import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
-import { useRooms } from './hooks/useRooms';
+import { useSaloons } from './hooks/useSaloons';
 import ImageUploader from '../../components/ImageUploader';
 import ConfirmModal from '../../components/ConfirmModal';
 import { FORM_LIMITS } from '../../utils/formLimits';
-import { Edit2, Trash2, Plus, Save, X, Bed, Check, LayoutGrid, Star } from 'lucide-react';
+import { Edit2, Trash2, Plus, Save, X, Check, LayoutGrid, Star } from 'lucide-react';
 import { uploadService } from '../../services/upload.service';
 
-const RoomManagement = () => {
+const SaloonManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
-  const { rooms, isLoading, isFetching, handleUpdate, addRoom, deleteRoom } = useRooms();
+  const { saloons, isLoading, isFetching, handleUpdate, addSaloon, deleteSaloon } = useSaloons();
   
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
@@ -19,9 +19,9 @@ const RoomManagement = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [newFiles, setNewFiles] = useState([]);
 
-  const startEdit = (room) => {
-    setEditingId(room.id);
-    setEditData({ ...room, images: room.images || [] });
+  const startEdit = (saloon) => {
+    setEditingId(saloon.id);
+    setEditData({ ...saloon, images: saloon.images || [] });
     setNewFiles([]);
   };
 
@@ -50,7 +50,7 @@ const RoomManagement = () => {
     let uploadedUrls = [];
     if(newFiles && newFiles.length > 0) {
       try {
-        const res = await uploadService.uploadFiles(newFiles, 'rooms');
+        const res = await uploadService.uploadFiles(newFiles, 'saloons');
         if(res && res.success) {
           uploadedUrls = res.data;
         }
@@ -90,7 +90,7 @@ const RoomManagement = () => {
 
   const confirmDelete = async () => {
     if (deleteId) {
-      await deleteRoom(deleteId);
+      await deleteSaloon(deleteId);
       setDeleteId(null);
     }
   };
@@ -110,44 +110,44 @@ const RoomManagement = () => {
         <main className="flex-1 overflow-x-hidden p-6 sm:p-10">
           <header className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Konaklama</p>
-              <h1 className="text-3xl font-bold text-white tracking-tight">Oda Yönetimi</h1>
-              <p className="text-slate-500 mt-2">Maksimum {FORM_LIMITS.rooms.maxItems} oda tipi eklenebilir. ({rooms.length}/{FORM_LIMITS.rooms.maxItems})</p>
+              <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Organizasyon</p>
+              <h1 className="text-3xl font-bold text-white tracking-tight">Salon Yönetimi</h1>
+              <p className="text-slate-500 mt-2">Maksimum {FORM_LIMITS.saloons.maxItems} salon eklenebilir. ({saloons.length}/{FORM_LIMITS.saloons.maxItems})</p>
             </div>
-            {rooms.length < FORM_LIMITS.rooms.maxItems && (
+            {saloons.length < FORM_LIMITS.saloons.maxItems && (
               <button 
-                onClick={addRoom}
+                onClick={addSaloon}
                 disabled={isLoading}
                 className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10 disabled:opacity-50"
               >
                 <Plus size={18} />
-                Yeni Oda Ekle
+                Yeni Salon Ekle
               </button>
             )}
           </header>
 
           <div className="space-y-8">
             {isFetching ? (
-              <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-                <div className="w-10 h-10 border-4 border-[#C5A059]/30 border-t-[#C5A059] rounded-full animate-spin mb-4" />
-                <p>Odalar yükleniyor...</p>
-              </div>
-            ) : rooms.map((room) => (
-              <div key={room.id} className="bg-[#1E293B]/30 border border-white/5 rounded-[32px] overflow-hidden">
+               <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                  <div className="w-10 h-10 border-4 border-[#C5A059]/30 border-t-[#C5A059] rounded-full animate-spin mb-4" />
+                  <p>Salonlar yükleniyor...</p>
+               </div>
+            ) : saloons.map((saloon) => (
+              <div key={saloon.id} className="bg-[#1E293B]/30 border border-white/5 rounded-[32px] overflow-hidden">
                 <div className="flex flex-col lg:flex-row">
                   {/* Images Section */}
                   <div className="lg:w-1/3 p-6 border-b lg:border-b-0 lg:border-r border-white/5 space-y-4">
                     <div className="flex justify-between items-center px-1">
-                       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Oda Fotoğrafları</label>
-                       <span className={`text-[9px] font-bold ${((editingId === room.id ? editData.images?.length : room.images?.length) || 0) + newFiles.length >= FORM_LIMITS.rooms.maxPhotos ? 'text-rose-500' : 'text-slate-600'}`}>{((editingId === room.id ? editData.images?.length : room.images?.length) || 0) + newFiles.length}/{FORM_LIMITS.rooms.maxPhotos}</span>
+                       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Salon Fotoğrafları</label>
+                       <span className={`text-[9px] font-bold ${((editingId === saloon.id ? editData.images?.length : saloon.images?.length) || 0) + newFiles.length >= FORM_LIMITS.saloons.maxPhotos ? 'text-rose-500' : 'text-slate-600'}`}>{((editingId === saloon.id ? editData.images?.length : saloon.images?.length) || 0) + newFiles.length}/{FORM_LIMITS.saloons.maxPhotos}</span>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-3">
-                      {(editingId === room.id ? editData.images : room.images)?.map((img, idx) => (
+                      {(editingId === saloon.id ? editData.images : saloon.images)?.map((img, idx) => (
                         <div key={img.id || idx} className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group">
-                          <img src={img.image_url} className="w-full h-full object-cover" alt="room" />
-                          <div className={`absolute inset-0 bg-black/50 opacity-0 ${editingId === room.id ? 'group-hover:opacity-100' : ''} transition-opacity flex flex-col items-center justify-center gap-2`}>
-                            {editingId === room.id && (
+                          <img src={img.image_url} className="w-full h-full object-cover" alt="saloon" />
+                          <div className={`absolute inset-0 bg-black/50 opacity-0 ${editingId === saloon.id ? 'group-hover:opacity-100' : ''} transition-opacity flex flex-col items-center justify-center gap-2`}>
+                            {editingId === saloon.id && (
                               <>
                                 <button onClick={() => setMainImage(idx)} className="p-1.5 bg-[#C5A059] text-white rounded-lg hover:scale-110 transition-transform">
                                   <Star size={14} fill={img.is_main == 1 ? "currentColor" : "none"} />
@@ -163,7 +163,7 @@ const RoomManagement = () => {
                           )}
                         </div>
                       ))}
-                      {editingId === room.id && ((editData.images?.length || 0) + newFiles.length) < FORM_LIMITS.rooms.maxPhotos && (
+                      {editingId === saloon.id && ((editData.images?.length || 0) + newFiles.length) < FORM_LIMITS.saloons.maxPhotos && (
                         <div className="col-span-2 mt-2">
                            <ImageUploader 
                               multiple={true} 
@@ -178,17 +178,17 @@ const RoomManagement = () => {
 
                   {/* Content Section */}
                   <div className="flex-1 p-8">
-                    {editingId === room.id ? (
+                    {editingId === saloon.id ? (
                       <div className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="col-span-2">
                             <div className="flex justify-between items-center mb-2 px-1">
-                               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Oda Başlığı</label>
-                               <span className={`text-[9px] font-bold ${editData.title.length >= FORM_LIMITS.rooms.title ? 'text-rose-500' : 'text-slate-600'}`}>{editData.title.length}/{FORM_LIMITS.rooms.title}</span>
+                               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Salon Başlığı</label>
+                               <span className={`text-[9px] font-bold ${editData.title.length >= FORM_LIMITS.saloons.title ? 'text-rose-500' : 'text-slate-600'}`}>{editData.title.length}/{FORM_LIMITS.saloons.title}</span>
                             </div>
                             <input 
                               type="text" 
-                              maxLength={FORM_LIMITS.rooms.title}
+                              maxLength={FORM_LIMITS.saloons.title}
                               value={editData.title}
                               onChange={(e) => setEditData({...editData, title: e.target.value})}
                               className="w-full bg-[#0F172A] border border-white/10 rounded-2xl px-5 py-3 text-white focus:outline-none focus:border-[#C5A059] transition-all"
@@ -198,11 +198,11 @@ const RoomManagement = () => {
                           <div className="col-span-2">
                              <div className="flex justify-between items-center mb-2 px-1">
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Açıklama</label>
-                                <span className={`text-[9px] font-bold ${editData.description.length >= FORM_LIMITS.rooms.description ? 'text-rose-500' : 'text-slate-600'}`}>{editData.description.length}/{FORM_LIMITS.rooms.description}</span>
+                                <span className={`text-[9px] font-bold ${editData.description.length >= FORM_LIMITS.saloons.description ? 'text-rose-500' : 'text-slate-600'}`}>{editData.description.length}/{FORM_LIMITS.saloons.description}</span>
                              </div>
                             <textarea 
                               value={editData.description}
-                              maxLength={FORM_LIMITS.rooms.description}
+                              maxLength={FORM_LIMITS.saloons.description}
                               onChange={(e) => setEditData({...editData, description: e.target.value})}
                               rows={3}
                               className="w-full bg-[#0F172A] border border-white/10 rounded-2xl px-5 py-3 text-white focus:outline-none focus:border-[#C5A059] transition-all resize-none leading-relaxed text-sm"
@@ -211,8 +211,8 @@ const RoomManagement = () => {
 
                           <div className="col-span-2">
                             <div className="flex justify-between items-center mb-2 px-1">
-                               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Oda Özellikleri (Max {FORM_LIMITS.rooms.maxAmenities})</label>
-                               <span className={`text-[9px] font-bold ${editData.amenities.length >= FORM_LIMITS.rooms.maxAmenities ? 'text-rose-500' : 'text-slate-600'}`}>{editData.amenities.length}/{FORM_LIMITS.rooms.maxAmenities}</span>
+                               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Salon Özellikleri (Max {FORM_LIMITS.saloons.maxAmenities})</label>
+                               <span className={`text-[9px] font-bold ${editData.amenities.length >= FORM_LIMITS.saloons.maxAmenities ? 'text-rose-500' : 'text-slate-600'}`}>{editData.amenities.length}/{FORM_LIMITS.saloons.maxAmenities}</span>
                             </div>
                             <div className="flex flex-wrap gap-2 mb-3">
                                {editData.amenities.map((amenity, idx) => (
@@ -222,14 +222,14 @@ const RoomManagement = () => {
                                  </div>
                                ))}
                             </div>
-                            {editData.amenities.length < FORM_LIMITS.rooms.maxAmenities && (
+                            {editData.amenities.length < FORM_LIMITS.saloons.maxAmenities && (
                               <div className="flex gap-2">
                                 <input 
                                   type="text" 
                                   value={newAmenity}
                                   onChange={(e) => setNewAmenity(e.target.value)}
                                   onKeyPress={(e) => e.key === 'Enter' && addAmenity()}
-                                  placeholder="Örn: Klima"
+                                  placeholder="Örn: Profesyonel Ses Sistemi"
                                   className="flex-1 bg-[#0F172A] border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-[#C5A059]"
                                 />
                                 <button 
@@ -246,7 +246,7 @@ const RoomManagement = () => {
                         <div className="flex items-center gap-3 pt-6 border-t border-white/5">
                           <button 
                             disabled={isLoading}
-                            onClick={() => onSave(room.id)}
+                            onClick={() => onSave(saloon.id)}
                             className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-2xl text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-lg shadow-emerald-500/10"
                           >
                             <Save size={18} />
@@ -264,18 +264,18 @@ const RoomManagement = () => {
                       <div className="h-full flex flex-col">
                         <div className="flex justify-between items-start mb-4">
                            <div>
-                              <h2 className="text-2xl font-bold text-white mb-2">{room.title}</h2>
-                              <p className="text-slate-500 text-sm leading-relaxed max-w-2xl">{room.description}</p>
+                              <h2 className="text-2xl font-bold text-white mb-2">{saloon.title}</h2>
+                              <p className="text-slate-500 text-sm leading-relaxed max-w-2xl">{saloon.description}</p>
                            </div>
                            <div className="flex gap-2">
                               <button 
-                                onClick={() => startEdit(room)}
+                                onClick={() => startEdit(saloon)}
                                 className="p-3 bg-white/5 hover:bg-white/10 text-[#C5A059] rounded-2xl transition-all border border-white/5 cursor-pointer"
                               >
                                 <Edit2 size={20} />
                               </button>
                               <button 
-                                onClick={() => setDeleteId(room.id)}
+                                onClick={() => setDeleteId(saloon.id)}
                                 className="p-3 bg-rose-500/5 hover:bg-rose-500/10 text-rose-500 rounded-2xl transition-all border border-rose-500/5 cursor-pointer"
                               >
                                 <Trash2 size={20} />
@@ -284,9 +284,9 @@ const RoomManagement = () => {
                         </div>
 
                         <div className="mt-6">
-                           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Oda Donanımları</p>
+                           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Salon Olanakları</p>
                            <div className="flex flex-wrap gap-2">
-                              {room.amenities.map((item, idx) => (
+                              {saloon.amenities.map((item, idx) => (
                                 <div key={idx} className="flex items-center gap-2 bg-white/5 text-slate-400 px-3 py-1.5 rounded-lg text-xs font-medium border border-white/5">
                                   <Check size={12} className="text-[#C5A059]" />
                                   {item}
@@ -307,8 +307,8 @@ const RoomManagement = () => {
             onClose={() => setDeleteId(null)}
             onConfirm={confirmDelete}
             isLoading={isLoading}
-            title="Odayı Sil"
-            message="Bu oda tipini silmek istediğinize emin misiniz?"
+            title="Salonu Sil"
+            message="Bu salonu silmek istediğinize emin misiniz?"
           />
         </main>
       </div>
@@ -316,4 +316,4 @@ const RoomManagement = () => {
   );
 };
 
-export default RoomManagement;
+export default SaloonManagement;

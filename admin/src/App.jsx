@@ -12,6 +12,7 @@ import EventManagement from './pages/EventManagement';
 import ContactManagement from './pages/ContactManagement';
 import BannerManagement from './pages/BannerManagement';
 import OverviewManagement from './pages/OverviewManagement';
+import SaloonManagement from './pages/SaloonManagement';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
       
       {/* Content Management Section */}
       <Route path="/rooms" element={<ProtectedRoute><RoomManagement /></ProtectedRoute>} />
+      <Route path="/saloons" element={<ProtectedRoute><SaloonManagement /></ProtectedRoute>} />
       <Route path="/restaurant" element={<ProtectedRoute><RestaurantManagement /></ProtectedRoute>} />
       <Route path="/wedding" element={<ProtectedRoute><EventManagement /></ProtectedRoute>} />
       <Route path="/contact" element={<ProtectedRoute><ContactManagement /></ProtectedRoute>} />

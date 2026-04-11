@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../Dashboard/components/Sidebar';
 import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
@@ -6,16 +6,97 @@ import { useRestaurant } from './hooks/useRestaurant';
 import ImageUploader from '../../components/ImageUploader';
 import FileUploader from '../../components/FileUploader';
 import { FORM_LIMITS } from '../../utils/formLimits';
+import { uploadService } from '../../services/upload.service';
 import { Save, Utensils, FileText, AlertTriangle, FileDown, Trash2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 const RestaurantManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
-  const { info, images, isLoading, updateInfo, removeImage } = useRestaurant();
-  const [formData, setFormData] = useState(info);
+  const { info, images, setImages, isLoading, isFetching, updateInfo } = useRestaurant();
+  const [formData, setFormData] = useState(null);
+  
+  const [pdfFile, setPdfFile] = useState(null);
+  const [newImages, setNewImages] = useState([]);
+
+  useEffect(() => {
+    if (info) {
+      setFormData(info);
+    }
+  }, [info]);
+
+  const removeImage = (id) => {
+    setImages(images.filter(img => img.id !== id));
+  };
 
   const onSave = async () => {
-    await updateInfo(formData);
+    let finalPdfUrl = formData.menu_pdf_url;
+    let finalImages = [...images];
+
+    try {
+      if (pdfFile) {
+        const pdfToast = toast.loading('PDF yükleniyor...');
+        const pdfUrl = await uploadService.uploadFile(pdfFile);
+        toast.dismiss(pdfToast);
+        if (pdfUrl) {
+          finalPdfUrl = pdfUrl;
+        } else {
+          toast.error("PDF yüklenemedi");
+          return; // Stop if PDF upload fails
+        }
+      }
+
+      if (newImages.length > 0) {
+        const imgToast = toast.loading('Resimler yükleniyor...');
+        const uploadedImgUrls = await Promise.all(
+          newImages.map(file => uploadService.uploadFile(file))
+        );
+        toast.dismiss(imgToast);
+        
+        const validUrls = uploadedImgUrls.filter(url => url);
+        if (validUrls.length !== newImages.length) {
+            toast.error("Bazı resimler yüklenemedi");
+        }
+        
+        finalImages = [
+          ...finalImages,
+          ...validUrls.map((url, i) => ({ id: `new_${Date.now()}_${i}`, image_url: url }))
+        ];
+      }
+
+      await updateInfo({
+        ...formData,
+        menu_pdf_url: finalPdfUrl,
+        restaurant_images: finalImages
+      });
+      
+      setPdfFile(null);
+      setNewImages([]);
+    } catch (err) {
+      toast.error('Kayıt işlemi başarısız oldu');
+    }
   };
+
+  if (isFetching || !formData) {
+    return (
+      <div className="flex min-h-screen bg-[#020617] text-slate-300 font-inter">
+        <Sidebar 
+          isCollapsed={isSidebarCollapsed} 
+          setIsCollapsed={setIsSidebarCollapsed} 
+          isOpen={isMobileMenuOpen}
+          setIsOpen={setIsMobileMenuOpen}
+        />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar onToggleMobileMenu={toggleMobileMenu} />
+          <main className="flex-1 flex items-center justify-center">
+             <div className="text-[#C5A059] flex items-center gap-3">
+               <div className="w-5 h-5 rounded-full border-2 border-[#C5A059] border-t-transparent animate-spin"></div>
+               <span className="font-medium">Restoran bilgileri yükleniyor...</span>
+             </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-[#020617] text-slate-300 font-inter">
@@ -90,7 +171,10 @@ const RestaurantManagement = () => {
                       label="Menü PDF Dosyası" 
                       accept=".pdf"
                       maxFileSize={10} 
-                      onFileSelect={(file) => setFormData({...formData, menu_pdf_url: file.name})} 
+                      onFileSelect={(file) => {
+                         setPdfFile(file);
+                         setFormData({...formData, menu_pdf_url: file.name});
+                      }} 
                     />
                     {formData.menu_pdf_url && (
                        <p className="text-[10px] text-slate-500 mt-2 px-1">
@@ -109,13 +193,13 @@ const RestaurantManagement = () => {
                      <Utensils size={20} className="text-[#C5A059]" />
                      Restoran Görselleri
                    </h3>
-                   <span className={`text-[9px] font-bold ${images.length >= FORM_LIMITS.restaurant.maxPhotos ? 'text-rose-500' : 'text-slate-600'}`}>{images.length}/{FORM_LIMITS.restaurant.maxPhotos}</span>
+                   <span className={`text-[9px] font-bold ${(images.length + newImages.length) >= FORM_LIMITS.restaurant.maxPhotos ? 'text-rose-500' : 'text-slate-600'}`}>{(images.length + newImages.length)}/{FORM_LIMITS.restaurant.maxPhotos}</span>
                  </div>
 
                  <div className="grid grid-cols-2 gap-4">
                     {images.map((img) => (
                       <div key={img.id} className="relative aspect-video rounded-2xl overflow-hidden group border border-white/10">
-                        <img src={img.url} alt="restaurant" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                        <img src={img.image_url || img.url} alt="restaurant" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                            <button 
                             onClick={() => removeImage(img.id)}
@@ -129,8 +213,13 @@ const RestaurantManagement = () => {
                  </div>
 
                  <div className="pt-4 border-t border-white/5">
-                    {images.length < FORM_LIMITS.restaurant.maxPhotos && (
-                      <ImageUploader multiple={true} maxFileSize={2} label="Yeni Görsel Yükle" />
+                    {(images.length + newImages.length) < FORM_LIMITS.restaurant.maxPhotos && (
+                      <ImageUploader 
+                        multiple={true} 
+                        maxFileSize={2} 
+                        label="Yeni Görsel Yükle" 
+                        onChange={(files) => setNewImages(files)}
+                      />
                     )}
                  </div>
                </div>

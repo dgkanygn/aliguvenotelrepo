@@ -1,37 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { restaurantService } from '../../../services/restaurant.service';
+import { toast } from 'react-hot-toast';
 
 export const useRestaurant = () => {
-  const [info, setInfo] = useState({
-    id: 1,
-    intro_text: 'Restoranımız tüm misafirlerimize hizmet vermektedir. Haftanın tüm günleri açık büfe kahvaltı servisimiz, hafta içi ise aylık oluşturduğumuz özel menülerimizle öğle yemeği hizmeti vermekteyiz. Gruplar ve özel davetler için menü içeriğini belirleyerek akşam yemeği servisimiz de bulunmaktadır.',
-    warning_text: 'Servis saatlerimiz 11.30 & 13.30 arasındadır ve menülerimizde değişiklik olabilir.',
-    menu_pdf_url: 'https://aliguvenotel.vercel.app/assets/files/nisan-ayi-menu.pdf'
-  });
-
-  const [images, setImages] = useState([
-    { id: 1, url: 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg' },
-    { id: 2, url: 'https://aliguvenotel.vercel.app/assets/images/room_2.jpg' },
-    { id: 3, url: 'https://aliguvenotel.vercel.app/assets/images/restaurant.jpg' }
-  ]);
-
+  const [info, setInfo] = useState(null);
+  const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
 
-  const updateInfo = async (data) => {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setInfo({ ...info, ...data });
-    setIsLoading(false);
+  useEffect(() => {
+    fetchRestaurant();
+  }, []);
+
+  const fetchRestaurant = async () => {
+    setIsFetching(true);
+    try {
+      const response = await restaurantService.getRestaurant();
+      if (response && response.success) {
+        setInfo(response.data.restaurant_info || {});
+        setImages(response.data.restaurant_images || []);
+      }
+    } catch (error) {
+      toast.error('Restoran bilgileri yüklenirken hata oluştu');
+    } finally {
+      setIsFetching(false);
+    }
   };
 
-  const removeImage = (id) => {
-    setImages(images.filter(img => img.id !== id));
+  const updateInfo = async (data) => {
+    if (!info) return;
+    setIsLoading(true);
+    try {
+      const res = await restaurantService.updateRestaurant(info.id, data);
+      if (res && res.success) {
+        setInfo({ ...info, ...res.data });
+        toast.success('Restoran bilgileri güncellendi');
+      }
+    } catch (error) {
+      toast.error('Güncelleme sırasında hata oluştu');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
     info,
     images,
+    setImages,
     isLoading,
-    updateInfo,
-    removeImage
+    isFetching,
+    updateInfo
   };
 };

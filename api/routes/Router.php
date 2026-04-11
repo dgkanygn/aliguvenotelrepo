@@ -35,6 +35,10 @@ class Router
                 $this->handleAuth();
                 break;
 
+            case 'upload':
+                $this->handleUploadRoute();
+                break;
+
             // ========================
             // PUBLIC PAGE ROUTES
             // ========================
@@ -117,6 +121,16 @@ class Router
     // HANDLER METOTLARı
     // ============================================================
 
+    private function handleUploadRoute()
+    {
+        AuthMiddleware::authenticate();
+        if ($this->method !== 'POST') {
+            $this->methodNotAllowed("Sadece POST desteklenmektedir.");
+        }
+        $controller = new UploadController();
+        $controller->store();
+    }
+
     /**
      * Auth rotalarını yönetir.
      */
@@ -190,6 +204,7 @@ class Router
                     $controller->show($this->resourceId);
                     break;
                 case 'PUT':
+                case 'POST': // Include POST so we can use multipart/form-data to update
                     $controller->update($this->resourceId);
                     break;
                 case 'DELETE':

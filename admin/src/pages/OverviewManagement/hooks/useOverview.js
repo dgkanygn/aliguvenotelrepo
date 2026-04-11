@@ -1,28 +1,50 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { homeService } from '../../../services/home.service';
+import { toast } from 'react-hot-toast';
 
 export const useOverview = () => {
-  const [overview, setOverview] = useState({
-    id: 1,
-    image_url: 'https://aliguvenotel.vercel.app/assets/images/hotel_room_1_1775384455722.png',
-    tagline: 'Konaklama',
-    title: 'Evinizdeki Rahatlığı Keşfedin',
-    summary: 'Ali Güven Uygulama Oteli olarak, misafirlerimize modern ve huzurlu bir konaklama deneyimi sunuyoruz. Öğrencilerimizin taze enerjisi ve profesyonel eğitmenlerimizin gözetiminde, her detayın titizlikle düşünüldüğü odalarımızda kendinizi evinizde hissedeceksiniz.',
-    feature_list: ["Modern & Ferah Oda Tasarımı", "Yüksek Hızlı Ücretsiz Wi-Fi"]
-  });
-
+  const [overview, setOverview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+
+  useEffect(() => {
+    fetchOverview();
+  }, []);
+
+  const fetchOverview = async () => {
+    setIsFetching(true);
+    try {
+      const response = await homeService.getOverview();
+      if (response && response.success) {
+        setOverview(response.data);
+      }
+    } catch (error) {
+      toast.error('Giriş yazısı yüklenirken hata oluştu');
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   const handleUpdate = async (data) => {
+    if (!overview) return;
     setIsLoading(true);
-    // Mock API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setOverview({ ...overview, ...data });
-    setIsLoading(false);
+    try {
+      const res = await homeService.updateOverview(overview.id, data);
+      if (res && res.success) {
+        setOverview({ ...overview, ...res.data });
+        toast.success('Giriş yazısı güncellendi');
+      }
+    } catch (error) {
+      toast.error('Güncelleme sırasında hata oluştu');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
     overview,
     isLoading,
+    isFetching,
     handleUpdate
   };
 };

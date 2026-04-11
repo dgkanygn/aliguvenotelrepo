@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Anamakine: 127.0.0.1
--- Üretim Zamanı: 10 Nis 2026, 23:37:00
+-- Üretim Zamanı: 11 Nis 2026, 17:53:23
 -- Sunucu sürümü: 10.4.32-MariaDB
 -- PHP Sürümü: 8.2.12
 
@@ -71,7 +71,7 @@ CREATE TABLE `company_contacts` (
 --
 
 INSERT INTO `company_contacts` (`id`, `address`, `landline_phone`, `mobile_phone`, `whatsapp_number`, `email`, `fax`, `instagram`, `facebook`, `twitter`, `linkedin`, `pinterest`, `youtube`, `updated_at`) VALUES
-(1, 'Uluönder Mahallesi Şehit Rüstem Demirbaş Sk No:8 26190 Tepebaşı/Eskişehir', '0 (222) 330 03 26', '0 553 209 47 57', '544 330 03 43', 'bilgi@aliguvenuygulamaoteli.com', '0 (222) 330 05 06', NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-10 16:55:26');
+(1, 'Uluönder Mahallesi Şehit Rüstem Demirbaş Sk No:8 26190 Tepebaşı/Eskişehir', '0 (222) 330 03 26', '0 553 209 47 57', '544 330 03 43', 'bilgi@aliguvenuygulamaoteli.comm', '0 (222) 330 05 06', 'https://instagram.com/aliguvenotel', 'https://facebook.com/aliguvenotel', '', '', '', '', '2026-04-10 22:43:44');
 
 -- --------------------------------------------------------
 
@@ -394,7 +394,7 @@ CREATE TABLE `saloons` (
 --
 
 INSERT INTO `saloons` (`id`, `title`, `description`, `amenities`) VALUES
-(1, '130 Kişilik Salon', 'Salonumuz 130 kişilik misafir kapasitesinde olup, çeşitli organizasyonlarınıza ev sahipliği yapabilmektedir. Nişan töreni-kına gecesi-Mevlid-i şerifleriniz için uygun ses sistemi düzeni ve dekorasyonu ile donatılmıştır.', '[\"Profesyonel Ses Sistemi\", \"Gelin Yolu ve Dekorasyon\", \"İklimlendirme / Klima\", \"Barkovizyon ve Projeksiyon\", \"Sahne ve Işıklandırma\"]'),
+(1, '130 Kişilik Salon', 'Salonumuz 130 kişilik misafir kapasitesinde olup, çeşitli organizasyonlarınıza ev sahipliği yapabilmektedir. Nişan töreni-kına gecesi-Mevlid-i şerifleriniz için uygun ses sistemi düzeni ve dekorasyonu ile donatılmıştır.', '[\"Profesyonel Ses Sistemi\",\"Gelin Yolu ve Dekorasyon\",\"\\u0130klimlendirme \\/ Klima\",\"Barkovizyon ve Projeksiyon\",\"Sahne ve I\\u015f\\u0131kland\\u0131rma\"]'),
 (2, 'Bahçe Salon', 'Salonumuz açık hava ferahlığını konforla buluşturan yapısıyla, doğa ile iç içe organizasyonlarınıza ev sahipliği yapabilmektedir. Kır düğünü konseptli etkinlikler, yaz davetleri ve açık hava kokteylleriniz için uygun peyzaj düzeni ve ışıklandırma sistemleri ile donatılmıştır.', '[\"Açık Hava Peyzaj Alanı\", \"Kır Düğünü Konsept Süsleme\", \"Dış Mekan Aydınlatma\", \"Jeneratör\", \"Çocuk Oyun Alanı\", \"Gelin Hazırlık Odası\"]'),
 (3, 'Restoran', 'Restoranımız seçkin menüsü ve nezih atmosferiyle, her türlü toplu yemek ve kurumsal davetlerinize ev sahipliği yapabilmektedir. İş yemekleri, aile buluşmaları ve özel kutlamalarınız için uygun sunum ekipmanları ve profesyonel mutfak düzeni ile donatılmıştır.', '[\"Profesyonel Mutfak Ekibi\", \"Toplu Yemek Sunum Ekipmanları\", \"Arka Plan Müziği Sistemi\", \"Yüksek Hızlı WiFi\", \"Bebek Bakım Odası\", \"Vale Hizmeti\"]');
 
@@ -416,15 +416,15 @@ CREATE TABLE `saloon_images` (
 --
 
 INSERT INTO `saloon_images` (`id`, `saloon_id`, `image_url`, `is_main`) VALUES
-(1, 1, 'https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg', 1),
-(2, 1, 'https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg', 0),
-(3, 1, 'https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg', 0),
 (4, 2, 'https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg', 1),
 (5, 2, 'https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg', 0),
 (6, 2, 'https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg', 0),
 (7, 3, 'https://aliguvenotel.vercel.app/assets/images/saloon_3.jpg', 1),
 (8, 3, 'https://aliguvenotel.vercel.app/assets/images/saloon_3.jpg', 0),
-(9, 3, 'https://aliguvenotel.vercel.app/assets/images/saloon_3.jpg', 0);
+(9, 3, 'https://aliguvenotel.vercel.app/assets/images/saloon_3.jpg', 0),
+(16, 1, 'https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg', 1),
+(17, 1, 'https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg', 0),
+(18, 1, 'https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg', 0);
 
 --
 -- Dökümü yapılmış tablolar için indeksler
@@ -579,7 +579,7 @@ ALTER TABLE `home_counters`
 -- Tablo için AUTO_INCREMENT değeri `home_features`
 --
 ALTER TABLE `home_features`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `home_founder`
@@ -591,7 +591,7 @@ ALTER TABLE `home_founder`
 -- Tablo için AUTO_INCREMENT değeri `home_hero`
 --
 ALTER TABLE `home_hero`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `home_overview`
@@ -633,13 +633,13 @@ ALTER TABLE `room_images`
 -- Tablo için AUTO_INCREMENT değeri `saloons`
 --
 ALTER TABLE `saloons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `saloon_images`
 --
 ALTER TABLE `saloon_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Dökümü yapılmış tablolar için kısıtlamalar

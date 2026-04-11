@@ -1,25 +1,25 @@
 import { useState, useEffect } from 'react';
-import { roomService } from '../../../services/room.service';
+import { saloonService } from '../../../services/saloon.service';
 import { toast } from 'react-hot-toast';
 
-export const useRooms = () => {
-  const [rooms, setRooms] = useState([]);
+export const useSaloons = () => {
+  const [saloons, setSaloons] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
-    fetchRooms();
+    fetchSaloons();
   }, []);
 
-  const fetchRooms = async () => {
+  const fetchSaloons = async () => {
     setIsFetching(true);
     try {
-      const response = await roomService.getRooms();
+      const response = await saloonService.getSaloons();
       if (response && response.success) {
-        setRooms(response.data || []);
+        setSaloons(response.data || []);
       }
     } catch (error) {
-      toast.error('Odalar yüklenirken hata oluştu');
+      toast.error('Salonlar yüklenirken hata oluştu');
     } finally {
       setIsFetching(false);
     }
@@ -28,10 +28,10 @@ export const useRooms = () => {
   const handleUpdate = async (id, data) => {
     setIsLoading(true);
     try {
-      const res = await roomService.updateRoom(id, data);
+      const res = await saloonService.updateSaloon(id, data);
       if (res.success) {
-        setRooms(rooms.map(r => r.id === id ? { ...r, ...res.data } : r));
-        toast.success('Oda güncellendi');
+        setSaloons(saloons.map(s => s.id === id ? { ...s, ...res.data } : s));
+        toast.success('Salon güncellendi');
       }
     } catch (error) {
       toast.error('Güncelleme sırasında hata oluştu');
@@ -40,19 +40,19 @@ export const useRooms = () => {
     }
   };
 
-  const addRoom = async () => {
+  const addSaloon = async () => {
     setIsLoading(true);
     try {
-      const newRoomData = {
-        title: 'Yeni Oda Tipi',
-        description: 'Oda açıklamasını buraya girin.',
+      const newSaloonData = {
+        title: 'Yeni Salon',
+        description: 'Salon açıklamasını buraya girin.',
         amenities: [],
         images: []
       };
-      const res = await roomService.createRoom(newRoomData);
+      const res = await saloonService.createSaloon(newSaloonData);
       if (res.success) {
-        setRooms([...rooms, res.data]);
-        toast.success('Yeni oda eklendi');
+        setSaloons([...saloons, res.data]);
+        toast.success('Yeni salon eklendi');
       }
     } catch (error) {
       toast.error('Eklerken hata oluştu');
@@ -61,13 +61,13 @@ export const useRooms = () => {
     }
   };
 
-  const deleteRoom = async (id) => {
+  const deleteSaloon = async (id) => {
     setIsLoading(true);
     try {
-      const res = await roomService.deleteRoom(id);
+      const res = await saloonService.deleteSaloon(id);
       if (res.success) {
-        setRooms(rooms.filter(r => r.id !== id));
-        toast.success('Oda silindi');
+        setSaloons(saloons.filter(s => s.id !== id));
+        toast.success('Salon silindi');
       }
     } catch (error) {
       toast.error('Silinirken hata oluştu');
@@ -77,11 +77,11 @@ export const useRooms = () => {
   };
 
   return {
-    rooms,
+    saloons,
     isLoading,
     isFetching,
     handleUpdate,
-    addRoom,
-    deleteRoom
+    addSaloon,
+    deleteSaloon
   };
 };

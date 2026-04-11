@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-export const useImageUploader = ({ multiple, maxFileSize, idealResolution }) => {
+export const useImageUploader = ({ multiple, maxFileSize, idealResolution, onChange }) => {
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState([]);
 
@@ -56,14 +56,16 @@ export const useImageUploader = ({ multiple, maxFileSize, idealResolution }) => 
     }
 
     setFiles(newFiles);
+    if(onChange) onChange(newFiles);
     setErrors(newErrors);
-  }, [files, multiple, maxFileSize, idealResolution]);
+  }, [files, multiple, maxFileSize, idealResolution, onChange]);
 
   const removeFile = (index) => {
     const newFiles = [...files];
     URL.revokeObjectURL(newFiles[index].preview);
     newFiles.splice(index, 1);
     setFiles(newFiles);
+    if(onChange) onChange(newFiles);
   };
 
   const clearErrors = () => setErrors([]);
@@ -71,7 +73,7 @@ export const useImageUploader = ({ multiple, maxFileSize, idealResolution }) => 
   return {
     files,
     errors,
-    onDrop,
+    onDropWrapper: onDrop,
     removeFile,
     clearErrors,
     setFiles

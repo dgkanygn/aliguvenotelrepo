@@ -4,6 +4,7 @@ import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
 import { useCounters } from './hooks/useCounters';
 import IconSelector from '../../components/IconSelector';
+import ConfirmModal from '../../components/ConfirmModal';
 import { ICONS } from '../../utils/iconList';
 import { FORM_LIMITS } from '../../utils/formLimits';
 import { Edit2, Save, X, Hash, Type, Plus, Trash2, LayoutGrid } from 'lucide-react';
@@ -15,6 +16,14 @@ const CounterManagement = () => {
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const confirmDelete = async () => {
+    if (deleteId) {
+      await removeCounter(deleteId);
+      setDeleteId(null);
+    }
+  };
 
   const startEdit = (counter) => {
     setEditingId(counter.id);
@@ -156,7 +165,7 @@ const CounterManagement = () => {
                           <Edit2 size={18} />
                         </button>
                         <button 
-                          onClick={() => removeCounter(counter.id)}
+                          onClick={() => setDeleteId(counter.id)}
                           className="p-3 rounded-xl bg-rose-500/5 text-rose-500/60 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer border border-rose-500/5"
                         >
                           <Trash2 size={18} />
@@ -194,6 +203,15 @@ const CounterManagement = () => {
               </button>
             </div>
           )}
+
+          <ConfirmModal 
+            isOpen={!!deleteId}
+            onClose={() => setDeleteId(null)}
+            onConfirm={confirmDelete}
+            isLoading={isLoading}
+            title="Sayacı Sil"
+            message="Bu sayacı silmek istediğinize emin misiniz?"
+          />
         </main>
       </div>
     </div>

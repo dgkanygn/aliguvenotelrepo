@@ -25,6 +25,13 @@ export const FORM_LIMITS = {
     description: 150,
     maxAmenities: 10
   },
+  saloons: {
+    maxItems: 10,
+    maxPhotos: 10,
+    title: 50,
+    description: 225,
+    maxAmenities: 10
+  },
   restaurant: {
     intro_text: 325,
     warning_text: 150,

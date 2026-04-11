@@ -42,6 +42,7 @@ require_once __DIR__ . '/controllers/ContactController.php';
 require_once __DIR__ . '/controllers/NavigationController.php';
 require_once __DIR__ . '/controllers/HomeOverviewController.php';
 require_once __DIR__ . '/controllers/PageBannerController.php';
+require_once __DIR__ . '/controllers/UploadController.php';
 require_once __DIR__ . '/routes/Router.php';
 
 // DB bağlantısı

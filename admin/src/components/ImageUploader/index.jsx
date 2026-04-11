@@ -6,12 +6,14 @@ const ImageUploader = ({
   multiple = false, 
   maxFileSize = 1, // MB
   idealResolution = { width: 1920, height: 1080 },
-  label = "Fotoğraf Yükle"
+  label = "Fotoğraf Yükle",
+  onChange = () => {}
 }) => {
-  const { files, errors, onDrop, removeFile, clearErrors } = useImageUploader({ 
+  const { files, errors, onDropWrapper, removeFile, clearErrors } = useImageUploader({ 
     multiple, 
     maxFileSize, 
-    idealResolution 
+    idealResolution,
+    onChange
   });
   
   const fileInputRef = useRef(null);
@@ -40,7 +42,7 @@ const ImageUploader = ({
       <div 
         onClick={handleContainerClick}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={onDrop}
+        onDrop={onDropWrapper}
         className={`
           relative border-2 border-dashed rounded-3xl p-10 
           transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center
@@ -50,7 +52,7 @@ const ImageUploader = ({
         <input 
           type="file" 
           ref={fileInputRef}
-          onChange={onDrop}
+          onChange={onDropWrapper}
           multiple={multiple}
           accept="image/*"
           className="hidden"

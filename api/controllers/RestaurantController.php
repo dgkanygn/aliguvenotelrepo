@@ -62,14 +62,38 @@ class RestaurantController
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 
+            if (isset($data['restaurant_images']) && is_array($data['restaurant_images'])) {
+                // Mevcut resimleri sil
+                $this->db->query("DELETE FROM restaurant_images");
+                
+                // Yeni resimleri ekle
+                if (!empty($data['restaurant_images'])) {
+                    $insertStmt = $this->db->prepare("INSERT INTO restaurant_images (image_url) VALUES (:url)");
+                    foreach ($data['restaurant_images'] as $imgObj) {
+                        $url = isset($imgObj['image_url']) ? $imgObj['image_url'] : (isset($imgObj['url']) ? $imgObj['url'] : $imgObj);
+                        $insertStmt->bindParam(':url', $url);
+                        $insertStmt->execute();
+                    }
+                }
+            }
+
             // Güncellenmiş veriyi döndür
             $stmt = $this->db->prepare("SELECT * FROM restaurant_info WHERE id = :id");
             $stmt->bindParam(':id', $id);
             $stmt->execute();
-            $updated = $stmt->fetch();
+            $updatedInfo = $stmt->fetch();
+
+            $imgStmt = $this->db->query("SELECT * FROM restaurant_images ORDER BY id ASC");
+            $updatedImages = $imgStmt->fetchAll();
 
             http_response_code(200);
-            echo json_encode(["success" => true, "data" => $updated]);
+            echo json_encode([
+                "success" => true, 
+                "data" => [
+                    "restaurant_info" => $updatedInfo,
+                    "restaurant_images" => $updatedImages
+                ]
+            ]);
         } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(["success" => false, "message" => "Sunucu hatası: " . $e->getMessage()]);

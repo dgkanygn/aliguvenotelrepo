@@ -6,27 +6,44 @@ import { useBanners } from './hooks/useBanners';
 import ImageUploader from '../../components/ImageUploader';
 import { FORM_LIMITS } from '../../utils/formLimits';
 import { Save, Edit2, X, Type, Layout, Image } from 'lucide-react';
+import { uploadService } from '../../services/upload.service';
 
 const BannerManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
-  const { banners, isLoading, handleUpdate } = useBanners();
+  const { banners, isLoading, isFetching, handleUpdate } = useBanners();
   
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
+  const [newFile, setNewFile] = useState(null);
 
   const startEdit = (banner) => {
     setEditingId(banner.id);
     setEditData({ ...banner });
+    setNewFile(null);
   };
 
   const cancelEdit = () => {
     setEditingId(null);
     setEditData({});
+    setNewFile(null);
   };
 
   const onSave = async (id) => {
-    await handleUpdate(id, editData);
+    let imageUrl = editData.image_url;
+    if(newFile) {
+       try {
+         const res = await uploadService.uploadFiles([newFile], 'page_banners');
+         if(res && res.success && res.data.length > 0) {
+            imageUrl = res.data[0];
+         }
+       } catch(err) {
+         console.error(err);
+       }
+    }
+    
+    await handleUpdate(id, { ...editData, image_url: imageUrl });
     setEditingId(null);
+    setNewFile(null);
   };
 
   return (
@@ -48,19 +65,39 @@ const BannerManagement = () => {
             <p className="text-slate-500 mt-2">Alt sayfalarda yer alan üst (banner) alanlarını buradan yönetebilirsiniz.</p>
           </header>
 
+          {isFetching ? (
+             <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+               <div className="w-10 h-10 border-4 border-[#C5A059]/30 border-t-[#C5A059] rounded-full animate-spin mb-4" />
+               <p>Bannerlar yükleniyor...</p>
+             </div>
+          ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {banners.map((banner) => (
               <div key={banner.id} className="bg-[#1E293B]/30 border border-white/5 rounded-[32px] overflow-hidden flex flex-col">
                 {/* Banner Preview */}
                 <div className="relative aspect-[21/9] overflow-hidden group">
-                   <img src={banner.image_url} alt="banner" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                   <img src={editingId === banner.id && editData.image_url ? editData.image_url : banner.image_url} alt="banner" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center p-6">
-                      <span className="text-[#C5A059] text-[10px] font-bold uppercase tracking-[4px] mb-1">{banner.top_title}</span>
-                      <h2 className="text-white text-3xl font-bold italic tracking-tight">{banner.page_title}</h2>
+                      <span className="text-[#C5A059] text-[10px] font-bold uppercase tracking-[4px] mb-1">{editingId === banner.id ? editData.top_title : banner.top_title}</span>
+                      <h2 className="text-white text-3xl font-bold italic tracking-tight">{editingId === banner.id ? editData.page_title : banner.page_title}</h2>
                    </div>
                    {editingId === banner.id && (
                      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6">
-                        <ImageUploader maxFileSize={2} idealResolution={{ width: 1920, height: 600 }} label="Banner Fotoğrafını Değiştir" />
+                        <ImageUploader 
+                          maxFileSize={2} 
+                          multiple={false}
+                          idealResolution={{ width: 1920, height: 600 }} 
+                          label="Banner Fotoğrafını Değiştir"
+                          onChange={(files) => {
+                             if(files && files.length > 0) {
+                               setNewFile(files[0]);
+                               setEditData({...editData, image_url: files[0].preview});
+                             } else {
+                               setNewFile(null);
+                               setEditData({...editData, image_url: banner.image_url});
+                             }
+                          }}
+                        />
                      </div>
                    )}
                    <div className="absolute top-4 right-4 bg-[#C5A059] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">
@@ -146,6 +183,7 @@ const BannerManagement = () => {
               </div>
             ))}
           </div>
+          )}
         </main>
       </div>
     </div>
