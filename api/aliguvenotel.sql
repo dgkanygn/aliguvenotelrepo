@@ -1,9 +1,9 @@
--- phpMyAdmin SQL Dump
+﻿-- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Anamakine: 127.0.0.1
--- Üretim Zamanı: 14 Nis 2026, 13:27:00
+-- Üretim Zamanı: 14 Nis 2026, 23:06:15
 -- Sunucu sürümü: 10.4.32-MariaDB
 -- PHP Sürümü: 8.2.12
 
@@ -51,6 +51,8 @@ INSERT INTO `admins` (`id`, `username`, `password`, `created_at`, `updated_at`) 
 
 CREATE TABLE `company_contacts` (
   `id` int(11) NOT NULL,
+  `site_logo` varchar(255) DEFAULT NULL,
+  `site_description` varchar(135) DEFAULT NULL,
   `address` text DEFAULT NULL,
   `landline_phone` varchar(20) DEFAULT NULL,
   `mobile_phone` varchar(20) DEFAULT NULL,
@@ -70,30 +72,8 @@ CREATE TABLE `company_contacts` (
 -- Tablo döküm verisi `company_contacts`
 --
 
-INSERT INTO `company_contacts` (`id`, `address`, `landline_phone`, `mobile_phone`, `whatsapp_number`, `email`, `fax`, `instagram`, `facebook`, `twitter`, `linkedin`, `pinterest`, `youtube`, `updated_at`) VALUES
-(1, 'Uluönder Mahallesi Şehit Rüstem Demirbaş Sk No:8 26190 Tepebaşı/Eskişehir', '0 (222) 330 03 26', '0 553 209 47 57', '544 330 03 43', 'bilgi@aliguvenuygulamaoteli.comm', '0 (222) 330 05 06', 'https://instagram.com/aliguvenotel', 'https://facebook.com/aliguvenotel', '', '', '', '', '2026-04-10 22:43:44');
-
--- --------------------------------------------------------
-
---
--- Tablo için tablo yapısı `contact_info`
---
-
-CREATE TABLE `contact_info` (
-  `id` int(11) NOT NULL,
-  `address` text DEFAULT NULL,
-  `landline_phone` varchar(50) DEFAULT NULL,
-  `mobile_phone` varchar(50) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `fax` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Tablo döküm verisi `contact_info`
---
-
-INSERT INTO `contact_info` (`id`, `address`, `landline_phone`, `mobile_phone`, `email`, `fax`) VALUES
-(1, 'Uluönder Mahallesi Şehit Rüstem Demirbaş Sk No:8 26190 Tepebaşı/Eskişehir', '0 (222) 330 03 26', '0 553 209 47 57', 'bilgi@aliguvenuygulamaoteli.com', '0 (222) 330 05 06');
+INSERT INTO `company_contacts` (`id`, `site_logo`, `site_description`, `address`, `landline_phone`, `mobile_phone`, `whatsapp_number`, `email`, `fax`, `instagram`, `facebook`, `twitter`, `linkedin`, `pinterest`, `youtube`, `updated_at`) VALUES
+(1, 'https://siteadi.com/assets/img/logo.png', 'Geleceğin turizmcilerinin yetiştiği, profesyonel hizmet anlayışıyla misafirlerini ağırlayan Eskişehir\'in öncü uygulama oteli.', 'Uluönder Mahallesi Şehit Rüstem Demirbaş Sk No:8 26190 Tepebaşı/Eskişehir', '0 (222) 330 03 26', '0 553 209 47 57', '544 330 03 43', 'bilgi@aliguvenuygulamaoteli.com', '0 (222) 330 05 06', 'https://instagram.com/aliguvenotel', 'https://facebook.com/aliguvenotel', '', '', '', '', '2026-04-14 20:50:34');
 
 -- --------------------------------------------------------
 
@@ -135,7 +115,7 @@ CREATE TABLE `event_space` (
 --
 
 INSERT INTO `event_space` (`id`, `intro_text`, `video_url`, `title`, `description`, `amenities`) VALUES
-(1, 'En özel günlerinizi ölümsüzleştirmek için Ali Güven Uygulama Oteli\'nin profesyonel organizasyon ekibi ve şık salonları ile yanınızdayız.', 'https://www.youtube.com/watch?v=pnDDWq4T4Fk', 'Küçük Salon - 130 Kişilik', 'Salonumuz 130 kişilik misafir kapasitesinde olup, çeşitli organizasyonlarınıza ev sahipliği yapabilmektedir. Nişan töreni-kına gecesi-Mevlid-i şerifleriniz için uygun ses sistemi düzeni ve dekorasyonu ile donatılmıştır.', '[\"Profesyonel Ses Sistemi\", \"Özel Dekorasyon Seçenekleri\", \"Nişan & Kına İçin İdeal\", \"130 Kişilik Kapasite\"]');
+(1, 'En özel günlerinizi ölümsüzleştirmek için Ali Güven Uygulama Oteli\'nin profesyonel organizasyon ekibi ve şık salonları ile yanınızdayız.', 'https://www.youtube.com/watch?v=pnDDWq4T4Fk', 'Küçük Salon - 130 Kişilik', 'Salonumuz 130 kişilik misafir kapasitesinde olup, çeşitli organizasyonlarınıza ev sahipliği yapabilmektedir. Nişan töreni-kına gecesi-Mevlid-i şerifleriniz için uygun ses sistemi düzeni ve dekorasyonu ile donatılmıştır.', '["Profesyonel Ses Sistemi", "Özel Dekorasyon Seçenekleri", "Nişan & Kına İçin İdeal", "130 Kişilik Kapasite"]');
 
 -- --------------------------------------------------------
 
@@ -159,8 +139,7 @@ INSERT INTO `home_counters` (`id`, `icon`, `count`, `name`) VALUES
 (2, 'utensils', 100, 'Kişilik Restoran'),
 (3, 'sun', 100, 'Kişilik Teras'),
 (4, 'graduation-cap', 250, 'Kişilik Okul Salonu'),
-(5, 'briefcase', 150, 'Kişilik Otel Salonu'),
-(6, 'trees', 30, 'Açık Hava Salon');
+(11, 'tv', 150, 'Kişilik Otel Salonu');
 
 -- --------------------------------------------------------
 
@@ -223,9 +202,9 @@ CREATE TABLE `home_hero` (
 --
 
 INSERT INTO `home_hero` (`id`, `image_url`, `title`, `description`) VALUES
-(1, 'https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg', 'Şehrin Kalbinde Huzurlu Bir Mola', 'Eskişehir\'in misafirperverliğini Ali Güven Uygulama Oteli\'nde keşfedin. Modern konfor ve kusursuz hizmet anlayışıyla sizi bekliyoruz.'),
+(1, 'https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg', 'Şehrin Kalbinde Huzurlu Bir Mola', 'Eskişehir''in misafirperverliğini Ali Güven Uygulama Oteli''nde keşfedin. Modern konfor ve kusursuz hizmet anlayışıyla sizi bekliyoruz.'),
 (2, 'https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg', 'Geleceğin Turizmcileriyle Tanışın', 'Genç yeteneklerin enerjisi ve profesyonel eğitmenlerin tecrübesiyle harmanlanmış, samimi bir konaklama deneyimine davetlisiniz.'),
-(3, 'https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg', 'Eskişehir Yolculuğunuz Burada Başlar', 'Tepebaşı\'nın merkezinde, ulaşım kolaylığı ve ev sıcaklığındaki odalarımızla seyahatlerinizi keyfe dönüştürüyoruz.');
+(3, 'https://aliguvenotel.vercel.app/assets/images/saloon_2.jpg', 'Eskişehir Yolculuğunuz Burada Başlar', 'Tepebaşı''nın merkezinde, ulaşım kolaylığı ve ev sıcaklığındaki odalarımızla seyahatlerinizi keyfe dönüştürüyoruz.');
 
 -- --------------------------------------------------------
 
@@ -247,7 +226,7 @@ CREATE TABLE `home_overview` (
 --
 
 INSERT INTO `home_overview` (`id`, `image_url`, `tagline`, `title`, `summary`, `feature_list`) VALUES
-(1, 'https://aliguvenotel.vercel.app/assets/images/hotel_room_1_1775384455722.png', 'Konaklama', 'Evinizdeki Rahatlığı Keşfedin', 'Ali Güven Uygulama Oteli olarak, misafirlerimize modern ve huzurlu bir konaklama deneyimi sunuyoruz. Öğrencilerimizin taze enerjisi ve profesyonel eğitmenlerimizin gözetiminde, her detayın titizlikle düşünüldüğü odalarımızda kendinizi evinizde hissedeceksiniz.', '[\"Modern & Ferah Oda Tasarımı\", \"Yüksek Hızlı Ücretsiz Wi-Fi\"]');
+(1, 'http://localhost:8000/uploads/home_overview/20260414_225621_2e8a8ef5ce567727.png', 'Konaklama', 'Evinizdeki Rahatlığı Keşfedin', 'Ali Güven Uygulama Oteli olarak, misafirlerimize modern ve huzurlu bir konaklama deneyimi sunuyoruz. Öğrencilerimizin taze enerjisi ve profesyonel eğitmenlerimizin gözetiminde, her detayın titizlikle düşünüldüğü odalarımızda kendinizi evinizde hissedeceksiniz.', '["Modern & Ferah Oda Tasarımı","Yüksek Hızlı Ücretsiz Wi-Fi"]');
 
 -- --------------------------------------------------------
 
@@ -271,9 +250,9 @@ INSERT INTO `page_banners` (`id`, `page_key`, `top_title`, `page_title`, `image_
 (1, 'rooms', 'Konaklama', 'Oda ve Süitlerimiz', 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg'),
 (2, 'room-detail', 'Oda Detayı', 'Konforlu Konaklama', 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg'),
 (3, 'restaurant', 'Gastronomi', 'Restoranımız', 'https://aliguvenotel.vercel.app/assets/images/restaurant.jpg'),
-(4, 'events', 'Organizasyon', 'Düğün & Davet', 'https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg'),
+(4, 'events', 'Organizasyon', 'Organizasyon & Düğün', 'https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg'),
 (5, 'contact', 'Bize Ulaşın', 'İletişim', 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg'),
-(6, 'meetings', 'Kurumsal', 'Toplantı & Etkinlik', 'https://aliguvenotel.vercel.app/assets/images/meeting_room.jpg');
+(6, 'meetings', 'Kurumsal', 'Toplantı & Etkinlik', 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg');
 
 -- --------------------------------------------------------
 
@@ -291,9 +270,9 @@ CREATE TABLE `restaurant_images` (
 --
 
 INSERT INTO `restaurant_images` (`id`, `image_url`) VALUES
-(1, 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg'),
-(2, 'https://aliguvenotel.vercel.app/assets/images/room_2.jpg'),
-(3, 'https://aliguvenotel.vercel.app/assets/images/restaurant.jpg');
+(25, 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg'),
+(26, 'https://aliguvenotel.vercel.app/assets/images/room_2.jpg'),
+(27, 'https://aliguvenotel.vercel.app/assets/images/restaurant.jpg');
 
 -- --------------------------------------------------------
 
@@ -313,7 +292,7 @@ CREATE TABLE `restaurant_info` (
 --
 
 INSERT INTO `restaurant_info` (`id`, `intro_text`, `warning_text`, `menu_pdf_url`) VALUES
-(1, 'Restoranımız tüm misafirlerimize hizmet vermektedir. Haftanın tüm günleri açık büfe kahvaltı servisimiz, hafta içi ise aylık oluşturduğumuz özel menülerimizle öğle yemeği hizmeti vermekteyiz. Gruplar ve özel davetler için menü içeriğini belirleyerek akşam yemeği servisimiz de bulunmaktadır.', 'Servis saatlerimiz 11.30 & 13.30 arasındadır ve menülerimizde değişiklik olabilir.', 'https://aliguvenotel.vercel.app/assets/files/nisan-ayi-menu.pdf');
+(1, 'Restoranımız tüm misafirlerimize hizmet vermektedir. Haftanın tüm günleri açık büfe kahvaltı servisimiz, hafta içi ise aylık oluşturduğumuz özel menülerimizle öğle yemeği hizmeti vermekteyiz. Gruplar ve özel davetler için menü içeriğini belirleyerek akşam yemeği servisimiz de bulunmaktadır.', 'Servis saatlerimiz 11.30 & 13.30 arasındadır ve menülerimizde değişiklik olabilir.', 'http://localhost:8000/uploads/general/20260414_225434_bfc3d96f07a85c0f.pdf');
 
 -- --------------------------------------------------------
 
@@ -333,12 +312,12 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`id`, `title`, `description`, `amenities`) VALUES
-(3, 'Tek Kişilik Oda', 'Tek misafirimizin konforu düşünülerek tasarlanan odamız, huzurlu bir konaklama deneyimi sunmaktadır. İş seyahatleriniz veya kısa süreli konaklamalarınız için ideal, fonksiyonel bir kullanım alanına sahiptir.', '[\"Tek Kişilik Yatak\", \"Ücretsiz WiFi\", \"Çalışma Masası\", \"Klima\", \"Mini Bar\"]'),
-(4, 'Çift Kişilik Oda', 'Modern dekorasyonu ve geniş yatağı ile çiftler için özel olarak hazırlanan bu odamız, konforu şıklıkla birleştiriyor. Ferah atmosferiyle kendinizi evinizde hissedeceğiniz tüm detaylarla donatılmıştır.', '[\"Çift Kişilik Yatak\", \"Ücretsiz WiFi\", \"LED TV\", \"Klima\", \"Saç Kurutma Makinesi\"]'),
-(5, 'Üç Kişilik Oda', 'Aileler veya arkadaş grupları için tasarlanan odamız, geniş kullanım alanı ve üç ayrı yatak kapasitesiyle rahat bir konaklama imkanı sağlar. Konforunuzdan ödün vermeden bir arada kalmanın keyfini çıkarın.', '[\"3 Adet Tek Kişilik Yatak\", \"Ücretsiz WiFi\", \"Geniş Gardırop\", \"Klima\", \"Kasa\"]'),
-(6, 'Dört Kişilik Oda', 'Kalabalık aileler için geniş ve ferah bir yaşam alanı sunan bu odamız, dört kişinin rahatça konaklayabileceği yatak düzenine ve modern ekipmanlara sahiptir.', '[\"2 Çift Kişilik Yatak\", \"Ücretsiz WiFi\", \"Kettle ve Çay Seti\", \"Klima\", \"Buzdolabı\"]'),
-(7, 'Beş Kişilik Oda', 'Geniş aile grupları için maksimum kapasite ve konforu bir arada sunan odamız, herkes için kişisel alan sağlayan yapısıyla uzun süreli konaklamalar için de oldukça uygundur.', '[\"Grup Yatak Düzeni\", \"Ücretsiz WiFi\", \"Ekstra Havlu\", \"Merkezi Isıtma\", \"Geniş Oturma Alanı\"]'),
-(8, 'Suit Oda', 'Otelimizin en özel konaklama birimi olan suit odamız; geniş oturma alanı, lüks detayları ve ayrıcalıklı hizmetleri ile unutulmaz bir deneyim arayan misafirlerimiz için tasarlandı.', '[\"King Size Yatak\", \"Jakuzi\", \"Oturma Grubu\", \"Nespresso Makinesi\", \"VIP Karşılama Paketi\", \"Bornoz Seti\"]');
+(3, 'Tek Kişilik Oda', 'Tek misafirimizin konforu düşünülerek tasarlanan odamız, huzurlu bir konaklama deneyimi sunmaktadır. İş seyahatleriniz veya kısa süreli konaklamalarınız için ideal, fonksiyonel bir kullanım alanına sahiptir.', '["Tek Kişilik Yatak", "Ücretsiz WiFi", "Çalışma Masası", "Klima", "Mini Bar"]'),
+(4, 'Çift Kişilik Oda', 'Modern dekorasyonu ve geniş yatağı ile çiftler için özel olarak hazırlanan bu odamız, konforu şıklıkla birleştiriyor. Ferah atmosferiyle kendinizi evinizde hissedeceğiniz tüm detaylarla donatılmıştır.', '["Çift Kişilik Yatak", "Ücretsiz WiFi", "LED TV", "Klima", "Saç Kurutma Makinesi"]'),
+(5, 'Üç Kişilik Oda', 'Aileler veya arkadaş grupları için tasarlanan odamız, geniş kullanım alanı ve üç ayrı yatak kapasitesiyle rahat bir konaklama imkanı sağlar. Konforunuzdan ödün vermeden bir arada kalmanın keyfini çıkarın.', '["3 Adet Tek Kişilik Yatak", "Ücretsiz WiFi", "Geniş Gardırop", "Klima", "Kasa"]'),
+(6, 'Dört Kişilik Oda', 'Kalabalık aileler için geniş ve ferah bir yaşam alanı sunan bu odamız, dört kişinin rahatça konaklayabileceği yatak düzenine ve modern ekipmanlara sahiptir.', '["2 Çift Kişilik Yatak", "Ücretsiz WiFi", "Kettle ve Çay Seti", "Klima", "Buzdolabı"]'),
+(7, 'Beş Kişilik Oda', 'Geniş aile grupları için maksimum kapasite ve konforu bir arada sunan odamız, herkes için kişisel alan sağlayan yapısıyla uzun süreli konaklamalar için de oldukça uygundur.', '["Grup Yatak Düzeni", "Ücretsiz WiFi", "Ekstra Havlu", "Merkezi Isıtma", "Geniş Oturma Alanı"]'),
+(8, 'Suit Oda', 'Otelimizin en özel konaklama birimi olan suit odamız; geniş oturma alanı, lüks detayları ve ayrıcalıklı hizmetleri ile unutulmaz bir deneyim arayan misafirlerimiz için tasarlandı.', '["King Size Yatak", "Jakuzi", "Oturma Grubu", "Nespresso Makinesi", "VIP Karşılama Paketi", "Bornoz Seti"]');
 
 -- --------------------------------------------------------
 
@@ -396,9 +375,9 @@ CREATE TABLE `saloons` (
 --
 
 INSERT INTO `saloons` (`id`, `title`, `description`, `amenities`, `category_keys`) VALUES
-(1, '130 Kişilik Salon', 'Salonumuz 130 kişilik misafir kapasitesinde olup, çeşitli organizasyonlarınıza ev sahipliği yapabilmektedir. Nişan töreni-kına gecesi-Mevlid-i şerifleriniz için uygun ses sistemi düzeni ve dekorasyonu ile donatılmıştır.', '[\"Profesyonel Ses Sistemi\",\"Gelin Yolu ve Dekorasyon\",\"\\u0130klimlendirme \\/ Klima\",\"Barkovizyon ve Projeksiyon\",\"Sahne ve I\\u015f\\u0131kland\\u0131rma\"]', '[\"events\", \"meetings\"]'),
-(2, 'Bahçe Salon', 'Salonumuz açık hava ferahlığını konforla buluşturan yapısıyla, doğa ile iç içe organizasyonlarınıza ev sahipliği yapabilmektedir. Kır düğünü konseptli etkinlikler, yaz davetleri ve açık hava kokteylleriniz için uygun peyzaj düzeni ve ışıklandırma sistemleri ile donatılmıştır.', '[\"Açık Hava Peyzaj Alanı\", \"Kır Düğünü Konsept Süsleme\", \"Dış Mekan Aydınlatma\", \"Jeneratör\", \"Çocuk Oyun Alanı\", \"Gelin Hazırlık Odası\"]', '[\"events\", \"meetings\"]'),
-(3, 'Restoran', 'Restoranımız seçkin menüsü ve nezih atmosferiyle, her türlü toplu yemek ve kurumsal davetlerinize ev sahipliği yapabilmektedir. İş yemekleri, aile buluşmaları ve özel kutlamalarınız için uygun sunum ekipmanları ve profesyonel mutfak düzeni ile donatılmıştır.', '[\"Profesyonel Mutfak Ekibi\", \"Toplu Yemek Sunum Ekipmanları\", \"Arka Plan Müziği Sistemi\", \"Yüksek Hızlı WiFi\", \"Bebek Bakım Odası\", \"Vale Hizmeti\"]', '[\"meetings\"]');
+(1, '130 Kişilik Salon', 'Salonumuz 130 kişilik misafir kapasitesinde olup, çeşitli organizasyonlarınıza ev sahipliği yapabilmektedir. Nişan töreni-kına gecesi-Mevlid-i şerifleriniz için uygun ses sistemi düzeni ve dekorasyonu ile donatılmıştır.', '["Profesyonel Ses Sistemi","Gelin Yolu ve Dekorasyon","İklimlendirme \\/ Klima","Barkovizyon ve Projeksiyon","Sahne ve Işıklandırma"]', '["events", "meetings"]'),
+(2, 'Bahçe Salon', 'Salonumuz açık hava ferahlığını konforla buluşturan yapısıyla, doğa ile iç içe organizasyonlarınıza ev sahipliği yapabilmektedir. Kır düğünü konseptli etkinlikler, yaz davetleri ve açık hava kokteylleriniz için uygun peyzaj düzeni ve ışıklandırma sistemleri ile donatılmıştır.', '["Açık Hava Peyzaj Alanı", "Kır Düğünü Konsept Süsleme", "Dış Mekan Aydınlatma", "Jeneratör", "Çocuk Oyun Alanı", "Gelin Hazırlık Odası"]', '["events", "meetings"]'),
+(3, 'Restoran', 'Restoranımız seçkin menüsü ve nezih atmosferiyle, her türlü toplu yemek ve kurumsal davetlerinize ev sahipliği yapabilmektedir. İş yemekleri, aile buluşmaları ve özel kutlamalarınız için uygun sunum ekipmanları ve profesyonel mutfak düzeni ile donatılmıştır.', '["Profesyonel Mutfak Ekibi", "Toplu Yemek Sunum Ekipmanları", "Arka Plan Müziği Sistemi", "Yüksek Hızlı WiFi", "Bebek Bakım Odası", "Vale Hizmeti"]', '["meetings"]');
 
 -- --------------------------------------------------------
 
@@ -443,12 +422,6 @@ ALTER TABLE `admins`
 -- Tablo için indeksler `company_contacts`
 --
 ALTER TABLE `company_contacts`
-  ADD PRIMARY KEY (`id`);
-
---
--- Tablo için indeksler `contact_info`
---
-ALTER TABLE `contact_info`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -554,12 +527,6 @@ ALTER TABLE `company_contacts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- Tablo için AUTO_INCREMENT değeri `contact_info`
---
-ALTER TABLE `contact_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- Tablo için AUTO_INCREMENT değeri `event_images`
 --
 ALTER TABLE `event_images`
@@ -575,13 +542,13 @@ ALTER TABLE `event_space`
 -- Tablo için AUTO_INCREMENT değeri `home_counters`
 --
 ALTER TABLE `home_counters`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `home_features`
 --
 ALTER TABLE `home_features`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `home_founder`
@@ -593,7 +560,7 @@ ALTER TABLE `home_founder`
 -- Tablo için AUTO_INCREMENT değeri `home_hero`
 --
 ALTER TABLE `home_hero`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `home_overview`
@@ -611,7 +578,7 @@ ALTER TABLE `page_banners`
 -- Tablo için AUTO_INCREMENT değeri `restaurant_images`
 --
 ALTER TABLE `restaurant_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `restaurant_info`
@@ -623,19 +590,19 @@ ALTER TABLE `restaurant_info`
 -- Tablo için AUTO_INCREMENT değeri `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `room_images`
 --
 ALTER TABLE `room_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `saloons`
 --
 ALTER TABLE `saloons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `saloon_images`

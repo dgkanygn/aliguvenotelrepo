@@ -22,8 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Composer autoload
 require_once __DIR__ . '/vendor/autoload.php';
 
-// .env dosyasını yükle
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+// Ortama göre .env dosyasını seç (Localhost için .env.development, uzak sunucu için .env.production)
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isLocalhost = (strpos($host, 'localhost') !== false || strpos($host, '127.0.0.1') !== false);
+$envFile = $isLocalhost ? '.env.development' : '.env.production';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__, $envFile);
 $dotenv->safeLoad();
 
 // Config ve dosyalar
