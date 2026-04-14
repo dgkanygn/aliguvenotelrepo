@@ -17,11 +17,12 @@ const ImageGallery = ({
     if (thumbnailsRef.current && showThumbnails) {
       const activeThumb = thumbnailsRef.current.querySelector('.thumbnail-item.active')
       if (activeThumb) {
-        activeThumb.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center'
-        })
+        const container = thumbnailsRef.current;
+        const scrollLeft = activeThumb.offsetLeft - (container.clientWidth / 2) + (activeThumb.clientWidth / 2);
+        container.scrollTo({
+          left: scrollLeft,
+          behavior: 'smooth'
+        });
       }
     }
   }, [currentIndex, showThumbnails])

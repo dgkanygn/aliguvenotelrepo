@@ -19,7 +19,7 @@ export const useOverview = () => {
         setOverview(response.data);
       }
     } catch (error) {
-      toast.error('Giriş yazısı yüklenirken hata oluştu');
+      toast.error('Sayfa yüklenirken hata oluştu');
     } finally {
       setIsFetching(false);
     }
@@ -32,7 +32,7 @@ export const useOverview = () => {
       const res = await homeService.updateOverview(overview.id, data);
       if (res && res.success) {
         setOverview({ ...overview, ...res.data });
-        toast.success('Giriş yazısı güncellendi');
+        toast.success('Sayfa başarıyla güncellendi');
       }
     } catch (error) {
       toast.error('Güncelleme sırasında hata oluştu');

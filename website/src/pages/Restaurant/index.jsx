@@ -1,5 +1,6 @@
 import { Clock } from 'lucide-react'
 import ImageGallery from '../../components/ImageGallery'
+import PageBanner from '../../components/PageBanner'
 import { useRestaurant } from './hooks/useRestaurant'
 import './styles/restaurant.css'
 
@@ -14,15 +15,12 @@ const Restaurant = () => {
 
   return (
     <section className="restaurant-page">
-      <div
-        className="restaurant-hero"
-        style={{ backgroundImage: `url('${data?.page_banner?.image_url || '/images/restaurant.jpg'}')` }}
-      >
-        <div className="container container-hero-restaurant">
-          <span className="section-subtitle">{data?.page_banner?.top_title || 'Gastronomi'}</span>
-          <h1 className="page-title">{data?.page_banner?.page_title || 'Restoranımız'}</h1>
-        </div>
-      </div>
+      <PageBanner
+        image={data?.page_banner?.image_url}
+        defaultImage="/images/restaurant.jpg"
+        topTitle={data?.page_banner?.top_title || 'Gastronomi'}
+        pageTitle={data?.page_banner?.page_title || 'Restoranımız'}
+      />
 
       <div className="container">
         <div className="restaurant-intro section-padding">

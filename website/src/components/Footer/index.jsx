@@ -1,24 +1,11 @@
-import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, Smartphone } from 'lucide-react'
 import { FaInstagram, FaFacebook, FaTwitter, FaYoutube, FaLinkedin } from 'react-icons/fa'
-import { fetchCompanyContacts } from '../../services/api'
+import { useSiteContext } from '../../context/SiteContext'
 import './styles/footer.css'
 
 const Footer = () => {
-  const [contactData, setContactData] = useState(null)
-
-  useEffect(() => {
-    const getContactData = async () => {
-      try {
-        const data = await fetchCompanyContacts()
-        setContactData(data)
-      } catch (error) {
-        console.error('Footer contact data fetch error:', error)
-      }
-    }
-    getContactData()
-  }, [])
+  const { contactData } = useSiteContext()
 
   return (
     <footer className="footer" id="contact">

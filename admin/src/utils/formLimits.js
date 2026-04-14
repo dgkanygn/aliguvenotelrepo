@@ -7,7 +7,7 @@ export const FORM_LIMITS = {
   counter: {
     countMaxDigits: 4, // XXXX format
     name: 20,
-    maxItems: 6
+    maxItems: 5
   },
   founder: {
     title: 20,

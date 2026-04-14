@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { MessageCircle } from 'lucide-react'
+import { useSiteContext } from '../../../../context/SiteContext'
 import './styles/hero.css'
 
 const Hero = ({ data = [] }) => {
+  const { contactData } = useSiteContext()
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const intervalRef = useRef(null)
@@ -54,7 +56,7 @@ const Hero = ({ data = [] }) => {
 
           <div className="hero-cta">
             <a
-              href="https://wa.me/902223300326"
+              href={`https://wa.me/90${contactData?.whatsapp_number ? contactData.whatsapp_number.replace(/[^\d]/g, '') : '2223300326'}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary hero-btn cursor-pointer"

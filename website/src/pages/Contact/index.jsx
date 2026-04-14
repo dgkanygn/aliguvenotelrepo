@@ -1,4 +1,5 @@
 import { MapPin, Phone, Smartphone, Mail, Printer, MessageCircle } from 'lucide-react'
+import PageBanner from '../../components/PageBanner'
 import { useContact } from './hooks/useContact'
 import './styles/contact.css'
 
@@ -12,12 +13,12 @@ const Contact = () => {
 
   return (
     <section className="contact-page">
-      <div className="contact-hero" style={{ backgroundImage: `url('${data?.page_banner?.image_url || '/images/room_1.jpg'}')` }}>
-        <div className="container container-hero-contact">
-          <span className="section-subtitle">{data?.page_banner?.top_title || 'Bize Ulaşın'}</span>
-          <h1 className="page-title">{data?.page_banner?.page_title || 'İletişim'}</h1>
-        </div>
-      </div>
+      <PageBanner
+        image={data?.page_banner?.image_url}
+        defaultImage="/images/room_1.jpg"
+        topTitle={data?.page_banner?.top_title || 'Bize Ulaşın'}
+        pageTitle={data?.page_banner?.page_title || 'İletişim'}
+      />
 
       <div className="container section-padding">
         <div className="contact-grid">

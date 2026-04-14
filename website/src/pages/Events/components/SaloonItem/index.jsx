@@ -1,8 +1,10 @@
 import { CheckCircle, ArrowRight, Info } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ImageGallery from '../../../../components/ImageGallery'
+import { useSiteContext } from '../../../../context/SiteContext'
 
 const SaloonItem = ({ saloon, index }) => {
+  const { contactData } = useSiteContext();
   let features = [];
   try {
     features = Array.isArray(saloon.amenities) ? saloon.amenities : (saloon.amenities ? JSON.parse(saloon.amenities) : []);
@@ -48,7 +50,7 @@ const SaloonItem = ({ saloon, index }) => {
             <Info size={18} /> Detayları Gör
           </Link>
           <a 
-            href="https://wa.me/902223300326" 
+            href={`https://wa.me/90${contactData?.whatsapp_number ? contactData.whatsapp_number.replace(/[^\d]/g, '') : '2223300326'}`} 
             target="_blank" 
             rel="noopener noreferrer" 
             className="btn btn-primary cursor-pointer"

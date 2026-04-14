@@ -1,5 +1,6 @@
 import { useMeetings } from './hooks/useMeetings'
 import SaloonItem from '../Events/components/SaloonItem'
+import PageBanner from '../../components/PageBanner'
 import '../Events/styles/events.css'
 
 const Meetings = () => {
@@ -13,15 +14,12 @@ const Meetings = () => {
 
   return (
     <section className="events-page">
-      <div
-        className="events-hero"
-        style={{ backgroundImage: `url('${data?.page_banner?.image_url || '/images/meeting_room.jpg'}')` }}
-      >
-        <div className="container container-hero-events">
-          <span className="section-subtitle">{data?.page_banner?.top_title || 'Kurumsal'}</span>
-          <h1 className="page-title">{data?.page_banner?.page_title || 'Toplantı & Etkinlik'}</h1>
-        </div>
-      </div>
+      <PageBanner
+        image={data?.page_banner?.image_url}
+        defaultImage="/images/meeting_room.jpg"
+        topTitle={data?.page_banner?.top_title || 'Kurumsal'}
+        pageTitle={data?.page_banner?.page_title || 'Toplantı & Etkinlik'}
+      />
 
       <div className="container">
         <div className="saloon-types section-padding">
