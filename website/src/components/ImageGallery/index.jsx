@@ -1,11 +1,30 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import './styles/image-gallery.css'
 
-const ImageGallery = ({ images = [], galleryId = 'default-gallery', isCompact = false }) => {
+const ImageGallery = ({ 
+  images = [], 
+  galleryId = 'default-gallery', 
+  isCompact = false,
+  showThumbnails = true 
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxSrc, setLightboxSrc] = useState('')
+  const thumbnailsRef = useRef(null)
+
+  useEffect(() => {
+    if (thumbnailsRef.current && showThumbnails) {
+      const activeThumb = thumbnailsRef.current.querySelector('.thumbnail-item.active')
+      if (activeThumb) {
+        activeThumb.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        })
+      }
+    }
+  }, [currentIndex, showThumbnails])
 
   const totalSlides = images.length
 
@@ -58,6 +77,20 @@ const ImageGallery = ({ images = [], galleryId = 'default-gallery', isCompact = 
           </div>
         </div>
       </div>
+
+      {showThumbnails && (
+        <div className="gallery-thumbnails" ref={thumbnailsRef}>
+          {images.map((img, index) => (
+            <div
+              key={index}
+              className={`thumbnail-item cursor-pointer ${index === currentIndex ? 'active' : ''}`}
+              onClick={() => setCurrentIndex(index)}
+            >
+              <img src={img} alt={`Thumbnail ${index + 1}`} />
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Lightbox */}
       <div

@@ -41,25 +41,21 @@ export const useCounters = () => {
     }
   };
 
-  const addCounter = async () => {
-    if (counters.length >= 6) return;
+  const createCounter = async (data) => {
     setIsLoading(true);
     try {
-      const newCounterData = {
-        icon: 'star',
-        count: 0,
-        name: 'Yeni Sayaç'
-      };
-      const res = await homeService.createCounter(newCounterData);
+      const res = await homeService.createCounter(data);
       if (res.success) {
         setCounters([...counters, res.data]);
         toast.success('Sayaç eklendi');
+        return true;
       }
     } catch (error) {
       toast.error('Eklerken hata oluştu');
     } finally {
       setIsLoading(false);
     }
+    return false;
   };
 
   const removeCounter = async (id) => {
@@ -82,7 +78,7 @@ export const useCounters = () => {
     isLoading,
     isFetching,
     handleUpdate,
-    addCounter,
+    createCounter,
     removeCounter
   };
 };

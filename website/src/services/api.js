@@ -68,6 +68,23 @@ export const fetchEventData = async () => {
     }
 };
 
+export const fetchMeetingsData = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/meetings-page`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        if (result.success) {
+            return result.data;
+        }
+        throw new Error(result.message || 'Error fetching data');
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+};
+
 export const fetchContactData = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/contact-page`);

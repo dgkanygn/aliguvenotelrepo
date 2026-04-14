@@ -62,6 +62,10 @@ class Router
                 $this->handlePublicPage('eventsPage');
                 break;
 
+            case 'meetings-page':
+                $this->handlePublicPage('meetingsPage');
+                break;
+
             case 'contact-page':
                 $this->handlePublicPage('contactPage');
                 break;

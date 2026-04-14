@@ -40,25 +40,21 @@ export const useSaloons = () => {
     }
   };
 
-  const addSaloon = async () => {
+  const createSaloon = async (data) => {
     setIsLoading(true);
     try {
-      const newSaloonData = {
-        title: 'Yeni Salon',
-        description: 'Salon açıklamasını buraya girin.',
-        amenities: [],
-        images: []
-      };
-      const res = await saloonService.createSaloon(newSaloonData);
+      const res = await saloonService.createSaloon(data);
       if (res.success) {
         setSaloons([...saloons, res.data]);
         toast.success('Yeni salon eklendi');
+        return true;
       }
     } catch (error) {
       toast.error('Eklerken hata oluştu');
     } finally {
       setIsLoading(false);
     }
+    return false;
   };
 
   const deleteSaloon = async (id) => {
@@ -81,7 +77,7 @@ export const useSaloons = () => {
     isLoading,
     isFetching,
     handleUpdate,
-    addSaloon,
+    createSaloon,
     deleteSaloon
   };
 };

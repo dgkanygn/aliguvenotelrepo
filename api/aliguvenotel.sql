@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Anamakine: 127.0.0.1
--- Üretim Zamanı: 11 Nis 2026, 17:53:23
+-- Üretim Zamanı: 14 Nis 2026, 13:27:00
 -- Sunucu sürümü: 10.4.32-MariaDB
 -- PHP Sürümü: 8.2.12
 
@@ -272,7 +272,8 @@ INSERT INTO `page_banners` (`id`, `page_key`, `top_title`, `page_title`, `image_
 (2, 'room-detail', 'Oda Detayı', 'Konforlu Konaklama', 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg'),
 (3, 'restaurant', 'Gastronomi', 'Restoranımız', 'https://aliguvenotel.vercel.app/assets/images/restaurant.jpg'),
 (4, 'events', 'Organizasyon', 'Düğün & Davet', 'https://aliguvenotel.vercel.app/assets/images/saloon_1.jpg'),
-(5, 'contact', 'Bize Ulaşın', 'İletişim', 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg');
+(5, 'contact', 'Bize Ulaşın', 'İletişim', 'https://aliguvenotel.vercel.app/assets/images/room_1.jpg'),
+(6, 'meetings', 'Kurumsal', 'Toplantı & Etkinlik', 'https://aliguvenotel.vercel.app/assets/images/meeting_room.jpg');
 
 -- --------------------------------------------------------
 
@@ -386,17 +387,18 @@ CREATE TABLE `saloons` (
   `id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
-  `amenities` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`amenities`))
+  `amenities` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`amenities`)),
+  `category_keys` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`category_keys`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Tablo döküm verisi `saloons`
 --
 
-INSERT INTO `saloons` (`id`, `title`, `description`, `amenities`) VALUES
-(1, '130 Kişilik Salon', 'Salonumuz 130 kişilik misafir kapasitesinde olup, çeşitli organizasyonlarınıza ev sahipliği yapabilmektedir. Nişan töreni-kına gecesi-Mevlid-i şerifleriniz için uygun ses sistemi düzeni ve dekorasyonu ile donatılmıştır.', '[\"Profesyonel Ses Sistemi\",\"Gelin Yolu ve Dekorasyon\",\"\\u0130klimlendirme \\/ Klima\",\"Barkovizyon ve Projeksiyon\",\"Sahne ve I\\u015f\\u0131kland\\u0131rma\"]'),
-(2, 'Bahçe Salon', 'Salonumuz açık hava ferahlığını konforla buluşturan yapısıyla, doğa ile iç içe organizasyonlarınıza ev sahipliği yapabilmektedir. Kır düğünü konseptli etkinlikler, yaz davetleri ve açık hava kokteylleriniz için uygun peyzaj düzeni ve ışıklandırma sistemleri ile donatılmıştır.', '[\"Açık Hava Peyzaj Alanı\", \"Kır Düğünü Konsept Süsleme\", \"Dış Mekan Aydınlatma\", \"Jeneratör\", \"Çocuk Oyun Alanı\", \"Gelin Hazırlık Odası\"]'),
-(3, 'Restoran', 'Restoranımız seçkin menüsü ve nezih atmosferiyle, her türlü toplu yemek ve kurumsal davetlerinize ev sahipliği yapabilmektedir. İş yemekleri, aile buluşmaları ve özel kutlamalarınız için uygun sunum ekipmanları ve profesyonel mutfak düzeni ile donatılmıştır.', '[\"Profesyonel Mutfak Ekibi\", \"Toplu Yemek Sunum Ekipmanları\", \"Arka Plan Müziği Sistemi\", \"Yüksek Hızlı WiFi\", \"Bebek Bakım Odası\", \"Vale Hizmeti\"]');
+INSERT INTO `saloons` (`id`, `title`, `description`, `amenities`, `category_keys`) VALUES
+(1, '130 Kişilik Salon', 'Salonumuz 130 kişilik misafir kapasitesinde olup, çeşitli organizasyonlarınıza ev sahipliği yapabilmektedir. Nişan töreni-kına gecesi-Mevlid-i şerifleriniz için uygun ses sistemi düzeni ve dekorasyonu ile donatılmıştır.', '[\"Profesyonel Ses Sistemi\",\"Gelin Yolu ve Dekorasyon\",\"\\u0130klimlendirme \\/ Klima\",\"Barkovizyon ve Projeksiyon\",\"Sahne ve I\\u015f\\u0131kland\\u0131rma\"]', '[\"events\", \"meetings\"]'),
+(2, 'Bahçe Salon', 'Salonumuz açık hava ferahlığını konforla buluşturan yapısıyla, doğa ile iç içe organizasyonlarınıza ev sahipliği yapabilmektedir. Kır düğünü konseptli etkinlikler, yaz davetleri ve açık hava kokteylleriniz için uygun peyzaj düzeni ve ışıklandırma sistemleri ile donatılmıştır.', '[\"Açık Hava Peyzaj Alanı\", \"Kır Düğünü Konsept Süsleme\", \"Dış Mekan Aydınlatma\", \"Jeneratör\", \"Çocuk Oyun Alanı\", \"Gelin Hazırlık Odası\"]', '[\"events\", \"meetings\"]'),
+(3, 'Restoran', 'Restoranımız seçkin menüsü ve nezih atmosferiyle, her türlü toplu yemek ve kurumsal davetlerinize ev sahipliği yapabilmektedir. İş yemekleri, aile buluşmaları ve özel kutlamalarınız için uygun sunum ekipmanları ve profesyonel mutfak düzeni ile donatılmıştır.', '[\"Profesyonel Mutfak Ekibi\", \"Toplu Yemek Sunum Ekipmanları\", \"Arka Plan Müziği Sistemi\", \"Yüksek Hızlı WiFi\", \"Bebek Bakım Odası\", \"Vale Hizmeti\"]', '[\"meetings\"]');
 
 -- --------------------------------------------------------
 
@@ -603,7 +605,7 @@ ALTER TABLE `home_overview`
 -- Tablo için AUTO_INCREMENT değeri `page_banners`
 --
 ALTER TABLE `page_banners`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `restaurant_images`
@@ -621,13 +623,13 @@ ALTER TABLE `restaurant_info`
 -- Tablo için AUTO_INCREMENT değeri `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `room_images`
 --
 ALTER TABLE `room_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `saloons`

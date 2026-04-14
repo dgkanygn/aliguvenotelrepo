@@ -1,5 +1,6 @@
 import { Utensils, Heart, ArrowRight } from 'lucide-react'
 import { BarChart3 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import './styles/services.css'
 
 const SERVICES = [
@@ -7,19 +8,22 @@ const SERVICES = [
     title: 'Restoran',
     description: 'Zarif bir atmosferde, usta şeflerimizin elinden çıkan geleneksel ve modern lezzetler.',
     image: '/images/hotel_restaurant_1_1775384478777.png',
-    Icon: Utensils
+    Icon: Utensils,
+    link: '/restaurant'
   },
   {
     title: 'Toplantı & Etkinlik',
     description: 'Profesyonel altyapımızla iş toplantılarınız ve kurumsal etkinlikleriniz için ideal çözümler.',
     image: '/images/hotel_meeting.png',
-    Icon: BarChart3
+    Icon: BarChart3,
+    link: '/meetings'
   },
   {
-    title: 'Düğün & Organizasyon',
+    title: 'Organizasyon & Düğün',
     description: 'En özel günlerinizde, hayallerinizdeki organizasyonu kusursuz bir şekilde gerçekleştiriyoruz.',
     image: '/images/hotel_ballroom_1_1775384517311_copy_1775384497629.png',
-    Icon: Heart
+    Icon: Heart,
+    link: '/events'
   }
 ]
 
@@ -46,9 +50,9 @@ const Services = () => {
               <div className="service-info">
                 <h3>{service.title}</h3>
                 <p>{service.description}</p>
-                <a href="#contact" className="service-link cursor-pointer">
+                <Link to={service.link} className="service-link cursor-pointer">
                   Detaylı Bilgi <ArrowRight size={16} />
-                </a>
+                </Link>
               </div>
             </div>
           ))}

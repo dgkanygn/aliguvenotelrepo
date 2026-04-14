@@ -1,12 +1,15 @@
+import { Link } from 'react-router-dom'
 import { CheckCircle } from 'lucide-react'
 import './styles/experience.css'
 
-const Experience = () => {
+const Experience = ({ data }) => {
+  if (!data) return null;
+
   return (
     <section className="experience section-padding" id="rooms">
       <div className="container experience-container">
         <div className="experience-image">
-          <img src="/images/hotel_room_1_1775384455722.png" alt="Konaklama Deneyimi" />
+          <img src={data.image_url} alt={data.title} />
           <div className="experience-stats">
             <div className="exp-stat-item">
               <span className="exp-val">4+</span>
@@ -20,20 +23,19 @@ const Experience = () => {
         </div>
 
         <div className="experience-content">
-          <span className="section-subtitle">Konaklama</span>
-          <h2 className="section-title">Evinizdeki Rahatlığı <br /> Keşfedin</h2>
+          <span className="section-subtitle">{data.tagline}</span>
+          <h2 className="section-title" dangerouslySetInnerHTML={{ __html: data.title }}></h2>
           <p className="experience-text">
-            Ali Güven Uygulama Oteli olarak, misafirlerimize modern ve huzurlu bir konaklama deneyimi sunuyoruz.
-            Öğrencilerimizin taze enerjisi ve profesyonel eğitmenlerimizin gözetiminde,
-            her detayın titizlikle düşünüldüğü odalarımızda kendinizi evinizde hissedeceksiniz.
+            {data.summary}
           </p>
           <ul className="experience-features">
-            <li><CheckCircle size={18} /> Modern &amp; Ferah Oda Tasarımı</li>
-            <li><CheckCircle size={18} /> Yüksek Hızlı Ücretsiz Wi-Fi</li>
+            {data.feature_list?.map((feature, index) => (
+              <li key={index}><CheckCircle size={18} /> {feature}</li>
+            ))}
           </ul>
-          <a href="https://wa.me/902223300326" className="btn btn-primary cursor-pointer">
+          <Link to="/rooms" className="btn btn-primary cursor-pointer">
             Oda Seçeneklerini Gör
-          </a>
+          </Link>
         </div>
       </div>
     </section>

@@ -11,12 +11,31 @@ import { Edit2, Save, X, LayoutGrid, Type, AlignLeft, Plus, Trash2 } from 'lucid
 
 const FeatureManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
-  const { features, isLoading, handleUpdate, addFeature, removeFeature } = useFeatures();
+  const { features, isLoading, handleUpdate, createFeature, removeFeature } = useFeatures();
   
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const startAdd = () => {
+    setEditData({ icon: 'box', title: '', description: '' });
+    setIsAddModalOpen(true);
+  };
+
+  const cancelAdd = () => {
+    setIsAddModalOpen(false);
+    setEditData({});
+  };
+
+  const onSaveNew = async () => {
+    const success = await createFeature(editData);
+    if (success) {
+      setIsAddModalOpen(false);
+      setEditData({});
+    }
+  };
 
   const confirmDelete = async () => {
     if (deleteId) {
@@ -67,7 +86,7 @@ const FeatureManagement = () => {
 
             {features.length < 6 && (
               <button 
-                onClick={addFeature}
+                onClick={startAdd}
                 disabled={isLoading}
                 className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-lg shadow-[#C5A059]/10"
               >
@@ -184,11 +203,84 @@ const FeatureManagement = () => {
             <div className="text-center py-20 bg-[#1E293B]/20 rounded-[32px] border border-dashed border-white/10 mt-8">
               <p className="text-slate-500">Henüz hiç özellik eklenmemiş.</p>
               <button 
-                onClick={addFeature}
+                onClick={startAdd}
                 className="mt-4 text-[#C5A059] font-bold hover:underline cursor-pointer"
               >
                 İlk özelliği ekle
               </button>
+            </div>
+          )}
+
+          {isAddModalOpen && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={!isLoading ? cancelAdd : undefined} />
+              <div className="relative w-full max-w-lg bg-[#0F172A] border border-white/10 rounded-[32px] p-8 shadow-2xl animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[90vh]">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-white">Yeni Özellik Ekle</h3>
+                  <button onClick={cancelAdd} className="text-slate-500 hover:text-white transition-colors cursor-pointer"><X size={24} /></button>
+                </div>
+                
+                <div className="w-full space-y-6">
+                    <div className="flex flex-col items-center gap-3">
+                       <button 
+                        onClick={() => setIsIconSelectorOpen(true)}
+                        className="w-24 h-24 bg-[#C5A059]/10 rounded-3xl flex items-center justify-center text-[#C5A059] border border-[#C5A059]/20 hover:bg-[#C5A059]/20 transition-all cursor-pointer relative group/icon"
+                       >
+                          {renderIcon(editData.icon)}
+                          <div className="absolute inset-0 bg-black/40 rounded-3xl opacity-0 group-hover/icon:opacity-100 flex items-center justify-center transition-opacity">
+                            <LayoutGrid size={24} className="text-white" />
+                          </div>
+                       </button>
+                       <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">İkonu Seç</span>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between items-center mb-1 px-1">
+                           <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-left">Başlık</label>
+                           <span className={`text-[9px] font-bold ${(editData.title?.length || 0) >= FORM_LIMITS.features.title ? 'text-rose-500' : 'text-slate-600'}`}>{(editData.title?.length || 0)}/{FORM_LIMITS.features.title}</span>
+                        </div>
+                        <div className="relative">
+                          <Type size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                          <input 
+                            type="text" 
+                            maxLength={FORM_LIMITS.features.title}
+                            value={editData.title || ''}
+                            onChange={(e) => setEditData({...editData, title: e.target.value})}
+                            className="w-full bg-[#1E293B] border border-white/10 rounded-2xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-[#C5A059] transition-all text-sm font-bold"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between items-center mb-1 px-1">
+                           <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-left">Açıklama</label>
+                           <span className={`text-[9px] font-bold ${(editData.description?.length || 0) >= FORM_LIMITS.features.description ? 'text-rose-500' : 'text-slate-600'}`}>{(editData.description?.length || 0)}/{FORM_LIMITS.features.description}</span>
+                        </div>
+                        <div className="relative">
+                          <AlignLeft size={14} className="absolute left-4 top-4 text-slate-500" />
+                          <textarea 
+                            value={editData.description || ''}
+                            maxLength={FORM_LIMITS.features.description}
+                            onChange={(e) => setEditData({...editData, description: e.target.value})}
+                            rows={4}
+                            className="w-full bg-[#1E293B] border border-white/10 rounded-2xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-[#C5A059] transition-all text-sm leading-relaxed resize-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center pt-4 border-t border-white/5">
+                      <button 
+                        disabled={isLoading}
+                        onClick={onSaveNew}
+                        className="w-full flex items-center justify-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white py-3 rounded-2xl text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-lg shadow-[#C5A059]/10"
+                      >
+                        <Save size={18} />
+                        {isLoading ? 'Ekleniyor...' : 'Ekle'}
+                      </button>
+                    </div>
+                </div>
+              </div>
             </div>
           )}
 

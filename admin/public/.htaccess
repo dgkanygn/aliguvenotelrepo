@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Dosya veya dizin varsa olduğu gibi sun
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Diğer tüm istekleri index.html'e yönlendir
+  RewriteRule ^ index.html [QSA,L]
+</IfModule>

@@ -40,24 +40,21 @@ export const useHero = () => {
     }
   };
 
-  const addHero = async () => {
+  const createHero = async (data) => {
     setIsLoading(true);
     try {
-      const newHeroData = {
-        title: 'Yeni Slayt Başlığı',
-        description: 'Yeni slayt açıklamasını buraya girin.',
-        image_url: '' // Will be updated when user edits
-      };
-      const res = await homeService.createHero(newHeroData);
+      const res = await homeService.createHero(data);
       if (res.success) {
         setHeroes([...heroes, res.data]);
         toast.success('Yeni slayt eklendi');
+        return true;
       }
     } catch (error) {
       toast.error('Eklerken hata oluştu');
     } finally {
       setIsLoading(false);
     }
+    return false;
   };
 
   const deleteHero = async (id) => {
@@ -80,7 +77,7 @@ export const useHero = () => {
     isLoading,
     isFetching,
     handleUpdate,
-    addHero,
+    createHero,
     deleteHero
   };
 };

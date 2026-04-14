@@ -4,6 +4,13 @@ import { Menu, X } from 'lucide-react'
 import './styles/navbar.css'
 import { useNavMenus } from './hooks/useNavMenus'
 
+const hasCategory = (saloon, category) => {
+  if (!saloon.category_keys) return true;
+  if (Array.isArray(saloon.category_keys)) return saloon.category_keys.includes(category);
+  if (typeof saloon.category_keys === 'string') return saloon.category_keys.includes(category);
+  return true;
+};
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -57,7 +64,15 @@ const Navbar = () => {
             <li className="has-dropdown">
               <Link to="/events">Organizasyon &amp; Düğün</Link>
               <ul className="dropdown-menu">
-                {menus.saloons.map(saloon => (
+                {menus.saloons.filter(s => hasCategory(s, 'events')).map(saloon => (
+                  <li key={saloon.id}><Link to={`/event-detail/saloons/${saloon.id}`}>{saloon.title}</Link></li>
+                ))}
+              </ul>
+            </li>
+            <li className="has-dropdown">
+              <Link to="/meetings">Toplantı &amp; Etkinlik</Link>
+              <ul className="dropdown-menu">
+                {menus.saloons.filter(s => hasCategory(s, 'meetings')).map(saloon => (
                   <li key={saloon.id}><Link to={`/event-detail/saloons/${saloon.id}`}>{saloon.title}</Link></li>
                 ))}
               </ul>
@@ -99,12 +114,19 @@ const Navbar = () => {
           <li className="mobile-has-dropdown">
             <span className="mobile-dropdown-label">Organizasyon &amp; Düğün</span>
             <ul className="mobile-dropdown">
-              {menus.saloons.map(saloon => (
+              {menus.saloons.filter(s => hasCategory(s, 'events')).map(saloon => (
                 <li key={saloon.id}><Link to={`/event-detail/saloons/${saloon.id}`} onClick={closeMenu}>{saloon.title}</Link></li>
               ))}
             </ul>
           </li>
-          <li><Link to="/meetings" onClick={closeMenu}>Toplantı &amp; Etkinlik</Link></li>
+          <li className="mobile-has-dropdown">
+            <span className="mobile-dropdown-label">Toplantı &amp; Etkinlik</span>
+            <ul className="mobile-dropdown">
+              {menus.saloons.filter(s => hasCategory(s, 'meetings')).map(saloon => (
+                <li key={saloon.id}><Link to={`/event-detail/saloons/${saloon.id}`} onClick={closeMenu}>{saloon.title}</Link></li>
+              ))}
+            </ul>
+          </li>
           <li><Link to="/contact" onClick={closeMenu}>İletişim</Link></li>
         </ul>
       </div>

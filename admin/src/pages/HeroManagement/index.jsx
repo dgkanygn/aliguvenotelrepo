@@ -11,11 +11,79 @@ import { uploadService } from '../../services/upload.service';
 
 const HeroManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
-  const { heroes, isLoading, isFetching, handleUpdate, addHero, deleteHero } = useHero();
+  const { heroes, isLoading, isFetching, handleUpdate, createHero, deleteHero } = useHero();
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [newFile, setNewFile] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const startAdd = () => {
+    setEditData({ title: '', description: '', image_url: '' });
+    setNewFile(null);
+    setIsAddModalOpen(true);
+  };
+
+  const cancelAdd = () => {
+    setIsAddModalOpen(false);
+    setEditData({});
+    setNewFile(null);
+  };
+
+  const onSaveNew = async () => {
+    let imageUrl = '';
+    if (newFile) {
+       try {
+         const res = await uploadService.uploadFiles([newFile], 'home_hero');
+         if(res && res.success && res.data.length > 0) {
+            imageUrl = res.data[0];
+         }
+       } catch(err) {
+         console.error(err);
+       }
+    }
+    
+    const success = await createHero({ ...editData, image_url: imageUrl });
+    if (success) {
+      setIsAddModalOpen(false);
+      setEditData({});
+      setNewFile(null);
+    }
+  };
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const startAdd = () => {
+    setEditData({ title: '', description: '', image_url: '' });
+    setNewFile(null);
+    setIsAddModalOpen(true);
+  };
+
+  const cancelAdd = () => {
+    setIsAddModalOpen(false);
+    setEditData({});
+    setNewFile(null);
+  };
+
+  const onSaveNew = async () => {
+    let imageUrl = '';
+    if (newFile) {
+       try {
+         const res = await uploadService.uploadFiles([newFile], 'home_hero');
+         if(res && res.success && res.data.length > 0) {
+            imageUrl = res.data[0];
+         }
+       } catch(err) {
+         console.error(err);
+       }
+    }
+    
+    const success = await createHero({ ...editData, image_url: imageUrl });
+    if (success) {
+      setIsAddModalOpen(false);
+      setEditData({});
+      setNewFile(null);
+    }
+  };
 
   const startEdit = (hero) => {
     setEditingId(hero.id);
@@ -75,7 +143,7 @@ const HeroManagement = () => {
             </div>
             {heroes.length < FORM_LIMITS.hero.maxItems && (
               <button 
-                onClick={addHero}
+                onClick={startAdd}
                 disabled={isLoading}
                 className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10 disabled:opacity-50"
               >
@@ -204,6 +272,87 @@ const HeroManagement = () => {
             ))}
           </div>
           
+          {isAddModalOpen && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={!isLoading ? cancelAdd : undefined} />
+              <div className="relative w-full max-w-2xl bg-[#0F172A] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
+                <div className="flex justify-between items-center p-6 border-b border-white/5">
+                  <h3 className="text-xl font-bold text-white">Yeni Slayt Ekle</h3>
+                  <button onClick={cancelAdd} className="text-slate-500 hover:text-white transition-colors cursor-pointer"><X size={24} /></button>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row h-full max-h-[80vh] overflow-y-auto">
+                  <div className="sm:w-1/2 relative bg-black flex items-center justify-center min-h-[200px]">
+                    {editData.image_url ? (
+                       <img 
+                         src={editData.image_url} 
+                         className="w-full h-full object-cover"
+                       />
+                    ) : (
+                       <span className="text-slate-500 text-sm">Resim Seçilmedi</span>
+                    )}
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-6">
+                      <ImageUploader 
+                        maxFileSize={2} 
+                        multiple={false}
+                        idealResolution={{ width: 1920, height: 1080 }} 
+                        label="Fotoğraf Seç"
+                        onChange={(files) => {
+                           if(files && files.length > 0) {
+                             setNewFile(files[0]);
+                             setEditData({...editData, image_url: files[0].preview});
+                           } else {
+                             setNewFile(null);
+                             setEditData({...editData, image_url: ''});
+                           }
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:w-1/2 p-6 flex flex-col space-y-6">
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Başlık</label>
+                         <span className={`text-[10px] font-bold ${(editData.title?.length || 0) >= FORM_LIMITS.hero.title ? 'text-rose-500' : 'text-slate-600'}`}>{(editData.title?.length || 0)}/{FORM_LIMITS.hero.title}</span>
+                      </div>
+                      <input 
+                        type="text" 
+                        maxLength={FORM_LIMITS.hero.title}
+                        value={editData.title || ''}
+                        onChange={(e) => setEditData({...editData, title: e.target.value})}
+                        className="w-full bg-[#1E293B] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#C5A059] transition-all"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Açıklama</label>
+                         <span className={`text-[10px] font-bold ${(editData.description?.length || 0) >= FORM_LIMITS.hero.description ? 'text-rose-500' : 'text-slate-600'}`}>{(editData.description?.length || 0)}/{FORM_LIMITS.hero.description}</span>
+                      </div>
+                      <textarea 
+                        value={editData.description || ''}
+                        maxLength={FORM_LIMITS.hero.description}
+                        onChange={(e) => setEditData({...editData, description: e.target.value})}
+                        rows={5}
+                        className="w-full bg-[#1E293B] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#C5A059] transition-all resize-none"
+                      />
+                    </div>
+                    <div className="mt-auto pt-4">
+                      <button 
+                        disabled={isLoading}
+                        onClick={onSaveNew}
+                        className="w-full flex items-center justify-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-lg shadow-[#C5A059]/10"
+                      >
+                        <Save size={18} />
+                        {isLoading ? 'Ekleniyor...' : 'Slaytı Ekle'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <ConfirmModal 
             isOpen={!!deleteId}
             onClose={() => setDeleteId(null)}

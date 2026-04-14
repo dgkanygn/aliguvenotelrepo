@@ -40,25 +40,21 @@ export const useRooms = () => {
     }
   };
 
-  const addRoom = async () => {
+  const createRoom = async (data) => {
     setIsLoading(true);
     try {
-      const newRoomData = {
-        title: 'Yeni Oda Tipi',
-        description: 'Oda açıklamasını buraya girin.',
-        amenities: [],
-        images: []
-      };
-      const res = await roomService.createRoom(newRoomData);
+      const res = await roomService.createRoom(data);
       if (res.success) {
         setRooms([...rooms, res.data]);
         toast.success('Yeni oda eklendi');
+        return true;
       }
     } catch (error) {
       toast.error('Eklerken hata oluştu');
     } finally {
       setIsLoading(false);
     }
+    return false;
   };
 
   const deleteRoom = async (id) => {
@@ -81,7 +77,7 @@ export const useRooms = () => {
     isLoading,
     isFetching,
     handleUpdate,
-    addRoom,
+    createRoom,
     deleteRoom
   };
 };

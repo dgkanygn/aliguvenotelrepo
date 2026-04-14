@@ -40,28 +40,21 @@ export const useFeatures = () => {
     }
   };
 
-  const addFeature = async () => {
-    if (features.length >= 6) { // Just a reasonable limit
-      toast.error('Maksimum özellik sayısına ulaştınız.');
-      return;
-    }
+  const createFeature = async (data) => {
     setIsLoading(true);
     try {
-      const newFeatureData = {
-        icon: 'box',
-        title: 'Yeni Özellik',
-        description: 'Özellik açıklaması buraya gelecek.'
-      };
-      const res = await homeService.createFeature(newFeatureData);
+      const res = await homeService.createFeature(data);
       if (res.success) {
         setFeatures([...features, res.data]);
         toast.success('Özellik eklendi');
+        return true;
       }
     } catch (error) {
       toast.error('Eklerken hata oluştu');
     } finally {
       setIsLoading(false);
     }
+    return false;
   };
 
   const removeFeature = async (id) => {
@@ -84,7 +77,7 @@ export const useFeatures = () => {
     isLoading,
     isFetching,
     handleUpdate,
-    addFeature,
+    createFeature,
     removeFeature
   };
 };

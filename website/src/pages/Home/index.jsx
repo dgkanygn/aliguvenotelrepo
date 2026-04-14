@@ -16,7 +16,7 @@ const Home = () => {
     <>
       <Hero data={data?.home_hero} />
       <Counter data={data?.home_counters} />
-      <Experience />
+      <Experience data={data?.home_overview} />
       {/* <Biography data={data?.home_founder} /> */}
       <Features data={data?.home_features} />
       <Services />

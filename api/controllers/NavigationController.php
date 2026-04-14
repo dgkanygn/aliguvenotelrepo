@@ -18,11 +18,17 @@ class NavigationController
             $stmtRooms->execute();
             $rooms = $stmtRooms->fetchAll(PDO::FETCH_ASSOC);
 
-            // Salonları id ve title ile çek
-            $querySaloons = "SELECT id, title FROM saloons ORDER BY id ASC";
+            // Salonları id, title ve category_keys ile çek
+            $querySaloons = "SELECT id, title, category_keys FROM saloons ORDER BY id ASC";
             $stmtSaloons = $this->db->prepare($querySaloons);
             $stmtSaloons->execute();
             $saloons = $stmtSaloons->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($saloons as &$saloon) {
+                if (!empty($saloon['category_keys'])) {
+                    $saloon['category_keys'] = json_decode($saloon['category_keys'], true);
+                }
+            }
 
             http_response_code(200);
             echo json_encode([

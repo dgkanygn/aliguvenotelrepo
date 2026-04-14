@@ -152,7 +152,7 @@ class PageController
             $banner = $this->getPageBanners('events');
 
             // saloons with their images
-            $stmt = $this->db->query("SELECT * FROM saloons ORDER BY id ASC");
+            $stmt = $this->db->query("SELECT * FROM saloons WHERE category_keys LIKE '%\"events\"%' ORDER BY id ASC");
             $saloons = $stmt->fetchAll();
 
             foreach ($saloons as &$saloon) {
@@ -161,9 +161,54 @@ class PageController
                 $imgStmt->execute();
                 $saloon['images'] = $imgStmt->fetchAll();
 
-                // amenities JSON parse
+                // amenities ve category_keys JSON parse
                 if (!empty($saloon['amenities'])) {
                     $saloon['amenities'] = json_decode($saloon['amenities'], true);
+                }
+                if (!empty($saloon['category_keys'])) {
+                    $saloon['category_keys'] = json_decode($saloon['category_keys'], true);
+                }
+            }
+
+            http_response_code(200);
+            echo json_encode([
+                "success" => true,
+                "data" => [
+                    "page_banner" => $banner,
+                    "saloons" => $saloons
+                ]
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "message" => "Sunucu hatası: " . $e->getMessage()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        }
+    }
+
+    /**
+     * GET /meetings-page
+     * Tablolar: saloons, saloon_images
+     */
+    public function meetingsPage()
+    {
+        try {
+            $banner = $this->getPageBanners('meetings');
+
+            // saloons with their images
+            $stmt = $this->db->query("SELECT * FROM saloons WHERE category_keys LIKE '%\"meetings\"%' ORDER BY id ASC");
+            $saloons = $stmt->fetchAll();
+
+            foreach ($saloons as &$saloon) {
+                $imgStmt = $this->db->prepare("SELECT * FROM saloon_images WHERE saloon_id = :saloon_id ORDER BY is_main DESC, id ASC");
+                $imgStmt->bindParam(':saloon_id', $saloon['id']);
+                $imgStmt->execute();
+                $saloon['images'] = $imgStmt->fetchAll();
+
+                // amenities ve category_keys JSON parse
+                if (!empty($saloon['amenities'])) {
+                    $saloon['amenities'] = json_decode($saloon['amenities'], true);
+                }
+                if (!empty($saloon['category_keys'])) {
+                    $saloon['category_keys'] = json_decode($saloon['category_keys'], true);
                 }
             }
 
