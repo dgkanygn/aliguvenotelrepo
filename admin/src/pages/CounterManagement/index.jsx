@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import Sidebar from '../Dashboard/components/Sidebar';
 import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
@@ -30,6 +31,10 @@ const CounterManagement = () => {
   };
 
   const onSaveNew = async () => {
+    if (!editData.name || editData.count === '' || editData.count === undefined) {
+      toast.error('Lütfen değer ve isim alanlarını doldurun.');
+      return;
+    }
     const success = await createCounter(editData);
     if (success) {
       setIsAddModalOpen(false);
@@ -55,6 +60,10 @@ const CounterManagement = () => {
   };
 
   const onSave = async (id) => {
+    if (!editData.name || editData.count === '' || editData.count === undefined) {
+      toast.error('Lütfen değer ve isim alanlarını doldurun.');
+      return;
+    }
     await handleUpdate(id, editData);
     setEditingId(null);
   };

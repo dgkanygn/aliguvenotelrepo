@@ -135,3 +135,21 @@ export const fetchNavMenusData = async () => {
         throw error;
     }
 };
+
+export const fetchCompanyContacts = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/company-contacts`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        if (result.success) {
+            return result.data;
+        }
+        throw new Error(result.message || 'Error fetching data');
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+};
+

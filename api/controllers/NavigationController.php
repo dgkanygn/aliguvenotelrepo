@@ -30,12 +30,19 @@ class NavigationController
                 }
             }
 
+            // Site logosunu çek
+            $queryLogo = "SELECT site_logo FROM company_contacts LIMIT 1";
+            $stmtLogo = $this->db->prepare($queryLogo);
+            $stmtLogo->execute();
+            $logoData = $stmtLogo->fetch(PDO::FETCH_ASSOC);
+
             http_response_code(200);
             echo json_encode([
                 "success" => true,
                 "data" => [
                     "rooms" => $rooms,
-                    "saloons" => $saloons
+                    "saloons" => $saloons,
+                    "site_logo" => $logoData['site_logo'] ?? null
                 ]
             ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         } catch (\PDOException $e) {

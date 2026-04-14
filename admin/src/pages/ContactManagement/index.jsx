@@ -10,6 +10,7 @@ const ContactManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
   const { contact, isLoading, handleUpdate } = useContact();
   const [formData, setFormData] = useState(contact);
+  const hasChanges = contact && formData ? JSON.stringify(contact) !== JSON.stringify(formData) : false;
 
   // Sync formData with contact when contact changes (e.g. after fetch)
   React.useEffect(() => {
@@ -74,14 +75,21 @@ const ContactManagement = () => {
               <h1 className="text-3xl font-bold text-white tracking-tight">İletişim Bilgileri</h1>
               <p className="text-slate-500 mt-2">Web sitesinde görüntülenen tüm iletişim kanallarını buradan yönetebilirsiniz.</p>
             </div>
-            <button
-              onClick={onSave}
-              disabled={isLoading}
-              className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
-            >
-              {isLoading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
-              {!isLoading && <Save size={18} />}
-            </button>
+            {hasChanges ? (
+              <button
+                onClick={onSave}
+                disabled={isLoading}
+                className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
+              >
+                {isLoading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
+                {!isLoading && <Save size={18} />}
+              </button>
+            ) : (
+              <div className="px-8 py-3 rounded-xl text-sm font-bold bg-[#1E293B] text-slate-500 border border-white/5 flex items-center gap-2">
+                 <Save size={18} />
+                 Değişiklik Yok
+              </div>
+            )}
           </header>
 
           <div className="max-w-6xl">

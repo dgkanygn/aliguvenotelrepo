@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import Sidebar from '../Dashboard/components/Sidebar';
 import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
@@ -30,6 +31,10 @@ const FeatureManagement = () => {
   };
 
   const onSaveNew = async () => {
+    if (!editData.title || !editData.description) {
+      toast.error('Lütfen başlık ve açıklama alanlarını doldurun.');
+      return;
+    }
     const success = await createFeature(editData);
     if (success) {
       setIsAddModalOpen(false);
@@ -55,6 +60,10 @@ const FeatureManagement = () => {
   };
 
   const onSave = async (id) => {
+    if (!editData.title || !editData.description) {
+      toast.error('Lütfen başlık ve açıklama alanlarını doldurun.');
+      return;
+    }
     await handleUpdate(id, editData);
     setEditingId(null);
   };

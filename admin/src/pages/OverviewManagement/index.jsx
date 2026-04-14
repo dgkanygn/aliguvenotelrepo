@@ -20,6 +20,8 @@ const OverviewManagement = () => {
     });
     const [newFile, setNewFile] = useState(null);
 
+    const hasChanges = overview && formData ? JSON.stringify(overview) !== JSON.stringify(formData) || newFile !== null : false;
+
     useEffect(() => {
         if(overview) {
             setFormData(overview);
@@ -87,14 +89,21 @@ const OverviewManagement = () => {
                             <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Ana Sayfa</p>
                             <h1 className="text-3xl font-bold text-white tracking-tight">Otel Özet Yönetimi</h1>
                         </div>
-                        <button
-                            onClick={onSave}
-                            disabled={isLoading || isFetching}
-                            className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
-                        >
-                            {isLoading ? 'Güncelleniyor...' : 'Değişiklikleri Kaydet'}
-                            {!isLoading && <Save size={18} />}
-                        </button>
+                        {hasChanges ? (
+                            <button
+                                onClick={onSave}
+                                disabled={isLoading || isFetching}
+                                className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
+                            >
+                                {isLoading ? 'Güncelleniyor...' : 'Değişiklikleri Kaydet'}
+                                {!isLoading && <Save size={18} />}
+                            </button>
+                        ) : (
+                            <div className="px-8 py-3 rounded-xl text-sm font-bold bg-[#1E293B] text-slate-500 border border-white/5 flex items-center gap-2">
+                               <Save size={18} />
+                               Değişiklik Yok
+                            </div>
+                        )}
                     </header>
 
                     {isFetching ? (

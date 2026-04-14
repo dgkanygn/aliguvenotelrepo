@@ -7,7 +7,7 @@ import ImageUploader from '../../components/ImageUploader';
 import FileUploader from '../../components/FileUploader';
 import { FORM_LIMITS } from '../../utils/formLimits';
 import { uploadService } from '../../services/upload.service';
-import { Save, Utensils, FileText, AlertTriangle, FileDown, Trash2 } from 'lucide-react';
+import { Save, Utensils, FileText, AlertTriangle, FileDown, Trash2, ExternalLink } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const RestaurantManagement = () => {
@@ -17,6 +17,16 @@ const RestaurantManagement = () => {
 
   const [pdfFile, setPdfFile] = useState(null);
   const [newImages, setNewImages] = useState([]);
+  const [hasDeletedImages, setHasDeletedImages] = useState(false);
+
+  const hasChanges = (() => {
+    if (!info || !formData) return false;
+    if (JSON.stringify(info) !== JSON.stringify(formData)) return true;
+    if (newImages.length > 0) return true;
+    if (pdfFile !== null) return true;
+    if (hasDeletedImages) return true;
+    return false;
+  })();
 
   useEffect(() => {
     if (info) {
@@ -26,6 +36,7 @@ const RestaurantManagement = () => {
 
   const removeImage = (id) => {
     setImages(images.filter(img => img.id !== id));
+    setHasDeletedImages(true);
   };
 
   const onSave = async () => {
@@ -71,6 +82,7 @@ const RestaurantManagement = () => {
 
       setPdfFile(null);
       setNewImages([]);
+      setHasDeletedImages(false);
     } catch (err) {
       toast.error('Kayıt işlemi başarısız oldu');
     }
@@ -116,14 +128,21 @@ const RestaurantManagement = () => {
               <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Gastronomi</p>
               <h1 className="text-3xl font-bold text-white tracking-tight">Restoran Yönetimi</h1>
             </div>
-            <button
-              onClick={onSave}
-              disabled={isLoading}
-              className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
-            >
-              {isLoading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
-              {!isLoading && <Save size={18} />}
-            </button>
+            {hasChanges ? (
+              <button
+                onClick={onSave}
+                disabled={isLoading}
+                className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
+              >
+                {isLoading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
+                {!isLoading && <Save size={18} />}
+              </button>
+            ) : (
+              <div className="px-8 py-3 rounded-xl text-sm font-bold bg-[#1E293B] text-slate-500 border border-white/5 flex items-center gap-2">
+                 <Save size={18} />
+                 Değişiklik Yok
+              </div>
+            )}
           </header>
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
@@ -166,9 +185,23 @@ const RestaurantManagement = () => {
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-white/5">
+                <div className="pt-6 border-t border-white/5 space-y-4">
+                  <div className="flex justify-between items-center px-1">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Menü PDF Dosyası</label>
+                    {info?.menu_pdf_url && (
+                        <a 
+                            href={info.menu_pdf_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-[#C5A059] hover:text-[#A68045] text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer"
+                        >
+                            <ExternalLink size={12} />
+                            Mevcut Menüyü Gör
+                        </a>
+                    )}
+                  </div>
                   <FileUploader
-                    label="Menü PDF Dosyası"
+                    label={info?.menu_pdf_url ? "Dosyayı Değiştir" : "Dosya Yükle"}
                     accept=".pdf"
                     maxFileSize={10}
                     onFileSelect={(file) => {
@@ -176,6 +209,12 @@ const RestaurantManagement = () => {
                       setFormData({ ...formData, menu_pdf_url: file.name });
                     }}
                   />
+                  {pdfFile && (
+                    <div className="flex items-center gap-2 px-3 py-2 bg-[#C5A059]/10 border border-[#C5A059]/20 rounded-xl">
+                        <FileDown size={14} className="text-[#C5A059]" />
+                        <span className="text-[11px] text-[#C5A059] font-medium truncate">Yeni dosya: {pdfFile.name}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -193,16 +232,14 @@ const RestaurantManagement = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   {images.map((img) => (
-                    <div key={img.id} className="relative aspect-video rounded-2xl overflow-hidden group border border-white/10">
-                      <img src={img.image_url || img.url} alt="restaurant" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button
-                          onClick={() => removeImage(img.id)}
-                          className="p-2.5 bg-rose-500 text-white rounded-xl hover:scale-110 transition-transform cursor-pointer"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
+                    <div key={img.id} className="relative aspect-video rounded-2xl overflow-hidden border border-white/10">
+                      <img src={img.image_url || img.url} alt="restaurant" className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => removeImage(img.id)}
+                        className="absolute top-2 right-2 p-2 bg-rose-500/90 text-white rounded-xl hover:bg-rose-500 hover:scale-105 transition-all shadow-lg cursor-pointer"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   ))}
                 </div>

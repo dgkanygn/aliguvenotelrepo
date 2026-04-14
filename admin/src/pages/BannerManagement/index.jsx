@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import Sidebar from '../Dashboard/components/Sidebar';
 import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
@@ -29,6 +30,10 @@ const BannerManagement = () => {
   };
 
   const onSave = async (id) => {
+    if (!editData.page_title || (!editData.image_url && !newFile)) {
+      toast.error('Lütfen fotoğraf ve sayfa başlığı alanlarını doldurun.');
+      return;
+    }
     let imageUrl = editData.image_url;
     if(newFile) {
        try {
@@ -81,25 +86,7 @@ const BannerManagement = () => {
                       <span className="text-[#C5A059] text-[10px] font-bold uppercase tracking-[4px] mb-1">{editingId === banner.id ? editData.top_title : banner.top_title}</span>
                       <h2 className="text-white text-3xl font-bold italic tracking-tight">{editingId === banner.id ? editData.page_title : banner.page_title}</h2>
                    </div>
-                   {editingId === banner.id && (
-                     <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6">
-                        <ImageUploader 
-                          maxFileSize={2} 
-                          multiple={false}
-                          idealResolution={{ width: 1920, height: 600 }} 
-                          label="Banner Fotoğrafını Değiştir"
-                          onChange={(files) => {
-                             if(files && files.length > 0) {
-                               setNewFile(files[0]);
-                               setEditData({...editData, image_url: files[0].preview});
-                             } else {
-                               setNewFile(null);
-                               setEditData({...editData, image_url: banner.image_url});
-                             }
-                          }}
-                        />
-                     </div>
-                   )}
+                   {/* Omitted the image uploader overlay from the preview */}
                    <div className="absolute top-4 right-4 bg-[#C5A059] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">
                       {banner.page_key}
                    </div>
@@ -109,6 +96,37 @@ const BannerManagement = () => {
                 <div className="p-8 flex-1">
                    {editingId === banner.id ? (
                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 gap-3">
+                           <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">Banner Fotoğrafı</label>
+                           {editData.image_url ? (
+                              <div className="relative aspect-[21/9] rounded-xl overflow-hidden border border-white/10 group">
+                                 <img src={editData.image_url} className="w-full h-full object-cover" alt="preview" />
+                                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                                    <button onClick={() => {
+                                       setNewFile(null);
+                                       setEditData({...editData, image_url: ''});
+                                    }} className="p-2 bg-rose-500 text-white rounded-lg hover:scale-110 transition-transform cursor-pointer">
+                                      <X size={16} />
+                                    </button>
+                                 </div>
+                              </div>
+                           ) : (
+                              <div className="col-span-1 border border-white/5 bg-black/20 rounded-xl">
+                                 <ImageUploader 
+                                    maxFileSize={2} 
+                                    multiple={false}
+                                    idealResolution={{ width: 1920, height: 600 }} 
+                                    label="Fotoğraf Seç"
+                                    onChange={(files) => {
+                                       if(files && files.length > 0) {
+                                         setNewFile(files[0]);
+                                         setEditData({...editData, image_url: files[0].preview});
+                                       }
+                                    }}
+                                 />
+                              </div>
+                           )}
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                            <div>
                               <div className="flex justify-between items-center mb-1 px-1">

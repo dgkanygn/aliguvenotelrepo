@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import Sidebar from '../Dashboard/components/Sidebar';
 import Navbar from '../Dashboard/components/Navbar';
 import { useDashboard } from '../Dashboard/hooks/useDashboard';
@@ -48,6 +49,10 @@ const SaloonManagement = () => {
   };
 
   const onSaveNew = async () => {
+    if (!editData.title || !editData.description || !editData.amenities?.length || newFiles.length === 0) {
+      toast.error('Lütfen fotoğraf, başlık, açıklama ve en az 1 özellik ekleyin.');
+      return;
+    }
     let uploadedUrls = [];
     if(newFiles && newFiles.length > 0) {
       try {
@@ -90,15 +95,12 @@ const SaloonManagement = () => {
     setEditData({ ...editData, images: updatedImages });
   };
 
-  const setMainImage = (index) => {
-    const updatedImages = editData.images.map((img, i) => ({
-      ...img,
-      is_main: i === index ? 1 : 0
-    }));
-    setEditData({ ...editData, images: updatedImages });
-  };
 
   const onSave = async (id) => {
+    if (!editData.title || !editData.description || !editData.amenities?.length || (editData.images?.length === 0 && newFiles.length === 0)) {
+      toast.error('Lütfen fotoğraf, başlık, açıklama ve en az 1 özellik ekleyin.');
+      return;
+    }
     let uploadedUrls = [];
     if(newFiles && newFiles.length > 0) {
       try {
@@ -112,13 +114,9 @@ const SaloonManagement = () => {
     }
 
     const payloadImages = [
-      ...(editData.images || []).map(img => ({ image_url: img.image_url, is_main: img.is_main })),
-      ...uploadedUrls.map((url, i) => ({ image_url: url, is_main: (editData.images.length === 0 && i === 0) ? 1 : 0 }))
-    ];
-
-    if (payloadImages.length > 0 && !payloadImages.find(img => img.is_main == 1)) {
-        payloadImages[0].is_main = 1;
-    }
+      ...(editData.images || []).map(img => ({ image_url: img.image_url })),
+      ...uploadedUrls.map((url) => ({ image_url: url }))
+    ].map((img, i) => ({ ...img, is_main: i === 0 ? 1 : 0 }));
 
     await handleUpdate(id, { ...editData, images: payloadImages });
     setEditingId(null);
@@ -196,22 +194,15 @@ const SaloonManagement = () => {
                     
                     <div className="grid grid-cols-2 gap-3">
                       {(editingId === saloon.id ? editData.images : saloon.images)?.map((img, idx) => (
-                        <div key={img.id || idx} className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group">
+                        <div key={img.id || idx} className="relative aspect-video rounded-xl overflow-hidden border border-white/10">
                           <img src={img.image_url} className="w-full h-full object-cover" alt="saloon" />
-                          <div className={`absolute inset-0 bg-black/50 opacity-0 ${editingId === saloon.id ? 'group-hover:opacity-100' : ''} transition-opacity flex flex-col items-center justify-center gap-2`}>
-                            {editingId === saloon.id && (
-                              <>
-                                <button onClick={() => setMainImage(idx)} className="p-1.5 bg-[#C5A059] text-white rounded-lg hover:scale-110 transition-transform">
-                                  <Star size={14} fill={img.is_main == 1 ? "currentColor" : "none"} />
-                                </button>
-                                <button onClick={() => removeExistingImage(idx)} className="p-1.5 bg-rose-500 text-white rounded-lg hover:scale-110 transition-transform">
-                                  <X size={14} />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                          {img.is_main == 1 && (
-                            <div className="absolute top-2 left-2 px-1.5 py-0.5 bg-[#C5A059] text-white text-[8px] font-bold rounded uppercase">Kapak</div>
+                          {editingId === saloon.id && (
+                            <button 
+                               onClick={() => removeExistingImage(idx)} 
+                               className="absolute top-2 right-2 p-1.5 bg-rose-500/90 text-white rounded-lg hover:bg-rose-500 hover:scale-110 transition-all shadow-md cursor-pointer"
+                            >
+                              <X size={14} />
+                            </button>
                           )}
                         </div>
                       ))}
@@ -393,20 +384,15 @@ const SaloonManagement = () => {
                     
                     <div className="grid grid-cols-2 gap-3">
                       {newFiles.map((file, idx) => (
-                        <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group">
+                        <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-white/10">
                           <img src={file.preview} className="w-full h-full object-cover" alt="preview" />
-                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                             <button onClick={() => {
-                                const newF = [...newFiles];
-                                newF.splice(idx, 1);
-                                setNewFiles(newF);
-                             }} className="p-1.5 bg-rose-500 text-white rounded-lg hover:scale-110 transition-transform">
-                               <X size={14} />
-                             </button>
-                          </div>
-                          {idx === 0 && (
-                            <div className="absolute top-2 left-2 px-1.5 py-0.5 bg-[#C5A059] text-white text-[8px] font-bold rounded uppercase">Kapak</div>
-                          )}
+                          <button onClick={() => {
+                             const newF = [...newFiles];
+                             newF.splice(idx, 1);
+                             setNewFiles(newF);
+                          }} className="absolute top-2 right-2 p-1.5 bg-rose-500/90 text-white rounded-lg hover:bg-rose-500 hover:scale-110 transition-all shadow-md cursor-pointer">
+                            <X size={14} />
+                          </button>
                         </div>
                       ))}
                       {newFiles.length < FORM_LIMITS.saloons.maxPhotos && (
