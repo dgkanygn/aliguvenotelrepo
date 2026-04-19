@@ -58,6 +58,8 @@ class ContactController
                     landline_phone = :landline_phone, 
                     mobile_phone = :mobile_phone, 
                     whatsapp_number = :whatsapp_number,
+                    accommodation_phone = :accommodation_phone,
+                    organization_phone = :organization_phone,
                     email = :email, 
                     fax = :fax, 
                     instagram = :instagram, 
@@ -73,6 +75,8 @@ class ContactController
             $stmt->bindParam(':landline_phone', $data['landline_phone']);
             $stmt->bindParam(':mobile_phone', $data['mobile_phone']);
             $stmt->bindParam(':whatsapp_number', $data['whatsapp_number']);
+            $stmt->bindParam(':accommodation_phone', $data['accommodation_phone']);
+            $stmt->bindParam(':organization_phone', $data['organization_phone']);
             $stmt->bindParam(':email', $data['email']);
             $stmt->bindParam(':fax', $data['fax']);
             $stmt->bindParam(':instagram', $data['instagram']);

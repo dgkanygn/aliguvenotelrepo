@@ -4,12 +4,13 @@ import Biography from './components/Biography'
 import Features from './components/Features'
 import Experience from './components/Experience'
 import Services from './components/Services'
+import Loading from '../../components/Loading'
 import { useHome } from './hooks/useHome'
 
 const Home = () => {
   const { data, loading, error } = useHome();
 
-  if (loading) return <div className="loading-state h-screen flex items-center justify-center">Yükleniyor...</div>;
+  if (loading) return <Loading />;
   if (error) return <div className="error-state h-screen flex items-center justify-center">Hata: {error}</div>;
 
   return (

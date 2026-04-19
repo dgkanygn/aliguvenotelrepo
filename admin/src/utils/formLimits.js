@@ -35,7 +35,10 @@ export const FORM_LIMITS = {
   restaurant: {
     intro_text: 325,
     warning_text: 150,
-    maxPhotos: 10
+    maxPhotos: 10,
+    menu_title: 50,
+    menu_price: 20,
+    maxMenuDishes: 10
   },
   events: {
     intro_text: 150,

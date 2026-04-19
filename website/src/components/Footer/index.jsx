@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail, Smartphone } from 'lucide-react'
 import { FaInstagram, FaFacebook, FaTwitter, FaYoutube, FaLinkedin } from 'react-icons/fa'
+import Logo from '../Logo'
 import { useSiteContext } from '../../context/SiteContext'
 import './styles/footer.css'
 
@@ -12,8 +13,7 @@ const Footer = () => {
       <div className="container footer-container">
         <div className="footer-brand">
           <div className="footer-logo">
-            <span className="logo-text">ALİ GÜVEN</span>
-            <span className="logo-subtext">UYGULAMA OTELİ</span>
+            <Logo />
           </div>
           <p className="footer-description">
             {contactData?.site_description}

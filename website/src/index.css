@@ -3,9 +3,12 @@
 /* ===== Design Tokens (CSS Variables) ===== */
 :root {
   --primary: #1A2B48;
-  --secondary: #C5A059;
-  --secondary-dark: #A68045;
-  --accent: #F9F6F0;
+  /* --secondary: #C5A059; */
+  /* --secondary-dark: #A68045; */
+  /* --accent: #F9F6F0; */
+  --secondary: #5bd9d9;
+  --secondary-dark: #48adad;
+  --accent: #eefbfb;
   --white: #FFFFFF;
   --black: #121212;
   --text: #333333;
@@ -29,7 +32,12 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Outfit', sans-serif;
   color: var(--primary);
   font-weight: 600;

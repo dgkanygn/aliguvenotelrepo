@@ -6,6 +6,41 @@ import { useContact } from './hooks/useContact';
 import { FORM_LIMITS } from '../../utils/formLimits';
 import { Save, MapPin, Phone, Mail, Printer, Smartphone, MessageCircle, Link as LinkIcon, Camera, Video, Share2, Globe } from 'lucide-react';
 
+const InputField = ({ label, icon: Icon, value = "", onChange, placeholder, isTextArea = false, maxLength }) => (
+  <div className="space-y-2">
+    <div className="flex justify-between items-center px-1">
+      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{label}</label>
+      {maxLength && (
+        <span className={`text-[9px] font-bold ${(value?.length || 0) >= maxLength ? 'text-rose-500' : 'text-slate-600'}`}>{(value?.length || 0)}/{maxLength}</span>
+      )}
+    </div>
+    <div className="relative">
+      <div className="absolute left-5 top-4 text-[#C5A059]">
+        <Icon size={18} />
+      </div>
+      {isTextArea ? (
+        <textarea
+          value={value}
+          maxLength={maxLength}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          rows={4}
+          className="w-full bg-[#0F172A] border border-white/10 rounded-[24px] pl-14 pr-6 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all resize-none leading-relaxed"
+        />
+      ) : (
+        <input
+          type="text"
+          value={value}
+          maxLength={maxLength}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className="w-full bg-[#0F172A] border border-white/10 rounded-full pl-14 pr-6 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all"
+        />
+      )}
+    </div>
+  </div>
+);
+
 const ContactManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
   const { contact, isLoading, handleUpdate } = useContact();
@@ -20,41 +55,6 @@ const ContactManagement = () => {
   const onSave = async () => {
     await handleUpdate(formData);
   };
-
-  const InputField = ({ label, icon: Icon, value, onChange, placeholder, isTextArea = false, maxLength }) => (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center px-1">
-        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{label}</label>
-        {maxLength && (
-          <span className={`text-[9px] font-bold ${value.length >= maxLength ? 'text-rose-500' : 'text-slate-600'}`}>{value.length}/{maxLength}</span>
-        )}
-      </div>
-      <div className="relative">
-        <div className="absolute left-5 top-4 text-[#C5A059]">
-          <Icon size={18} />
-        </div>
-        {isTextArea ? (
-          <textarea
-            value={value}
-            maxLength={maxLength}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder}
-            rows={4}
-            className="w-full bg-[#0F172A] border border-white/10 rounded-[24px] pl-14 pr-6 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all resize-none leading-relaxed"
-          />
-        ) : (
-          <input
-            type="text"
-            value={value}
-            maxLength={maxLength}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder}
-            className="w-full bg-[#0F172A] border border-white/10 rounded-full pl-14 pr-6 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all"
-          />
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex min-h-screen bg-[#020617] text-slate-300 font-inter">
@@ -159,6 +159,26 @@ const ContactManagement = () => {
                     maxLength={FORM_LIMITS.contact.email}
                     placeholder="bilgi@..."
                   />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InputField
+                      label="Konaklama Numarası"
+                      icon={Phone}
+                      value={formData.accommodation_phone}
+                      onChange={(val) => setFormData({ ...formData, accommodation_phone: val })}
+                      maxLength={FORM_LIMITS.contact.landline}
+                      placeholder="0 (222) ..."
+                    />
+
+                    <InputField
+                      label="Organizasyon Numarası"
+                      icon={Phone}
+                      value={formData.organization_phone}
+                      onChange={(val) => setFormData({ ...formData, organization_phone: val })}
+                      maxLength={FORM_LIMITS.contact.landline}
+                      placeholder="0 (222) ..."
+                    />
+                  </div>
                 </div>
               </div>
 

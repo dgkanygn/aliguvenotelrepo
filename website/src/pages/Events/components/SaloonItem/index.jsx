@@ -14,16 +14,16 @@ const SaloonItem = ({ saloon, index }) => {
 
   const saloonImages = Array.isArray(saloon.images)
     ? saloon.images
-        .sort((a, b) => b.is_main - a.is_main)
-        .map(img => img.image_url)
+      .sort((a, b) => b.is_main - a.is_main)
+      .map(img => img.image_url)
     : [];
 
   return (
     <div className={`saloon-item alternate ${index % 2 !== 0 ? 'reverse' : ''}`}>
       <div className="saloon-image">
-        <ImageGallery 
-          images={saloonImages} 
-          galleryId={`saloon-${saloon.id}`} 
+        <ImageGallery
+          images={saloonImages}
+          galleryId={`saloon-${saloon.id}`}
           isCompact={true}
         />
       </div>
@@ -32,7 +32,7 @@ const SaloonItem = ({ saloon, index }) => {
         <p className="saloon-text">
           {saloon.description}
         </p>
-        
+
         {features.length > 0 && (
           <ul className="saloon-features mb-4" style={{ marginBottom: '2rem' }}>
             {features.map((f, i) => (
@@ -42,17 +42,17 @@ const SaloonItem = ({ saloon, index }) => {
         )}
 
         <div className="saloon-actions" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <Link 
+          <Link
             to={`/event-detail/saloons/${saloon.id}`}
             className="btn btn-outline cursor-pointer"
             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
           >
             <Info size={18} /> Detayları Gör
           </Link>
-          <a 
-            href={`https://wa.me/90${contactData?.whatsapp_number ? contactData.whatsapp_number.replace(/[^\d]/g, '') : '2223300326'}`} 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href={`https://wa.me/90${contactData?.organization_phone ? contactData.organization_phone.replace(/[^\d]/g, '') : '2223300326'}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn btn-primary cursor-pointer"
             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
           >

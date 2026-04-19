@@ -1,17 +1,58 @@
 import { Clock } from 'lucide-react'
 import ImageGallery from '../../components/ImageGallery'
 import PageBanner from '../../components/PageBanner'
+import Loading from '../../components/Loading'
 import { useRestaurant } from './hooks/useRestaurant'
 import './styles/restaurant.css'
 
+const MenuCard = ({ menu }) => {
+  if (!menu) return null;
+
+  return (
+    <div className="menu-card single-menu">
+      <h2 className="menu-title">{menu.title || menu.baslik || 'Günün Menüsü'}</h2>
+      <div className="pricing-table-wrapper">
+        <table className="pricing-table">
+          <thead>
+            <tr>
+              <th>Yemekler</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(menu.dishes || menu.yemekler || [])?.map((yemek, index) => (
+              <tr key={index}>
+                <td>{yemek}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="menu-footer">
+        <div className="menu-price">
+          <span>Menü Fiyatı:</span>
+          <strong>{menu.price || menu.fiyat}</strong>
+        </div>
+        <p className="menu-note">Fiyatlarımıza KDV dahildir.</p>
+      </div>
+    </div>
+  )
+}
+
 const Restaurant = () => {
-  const { data, loading, error } = useRestaurant();
+  const { data, sampleMenu, loading, error } = useRestaurant()
 
-  if (loading) return <div className="loading-state h-screen flex items-center justify-center">Yükleniyor...</div>;
-  if (error) return <div className="error-state h-screen flex items-center justify-center">Hata: {error}</div>;
 
-  const info = data?.restaurant_info;
-  const images = data?.restaurant_images?.map(img => img.image_url) || [];
+
+  if (loading) return <Loading />
+  if (error)
+    return (
+      <div className="error-state h-screen flex items-center justify-center">
+        Hata: {error}
+      </div>
+    )
+
+  const info = data?.restaurant_info
+  const images = data?.restaurant_images?.map((img) => img.image_url) || []
 
   return (
     <section className="restaurant-page">
@@ -29,10 +70,10 @@ const Restaurant = () => {
               {info?.intro_text || 'Bilgi bulunamadı.'}
             </p>
             {info?.warning_text && (
-            <div className="service-notice">
-              <Clock size={24} />
-              <span>{info.warning_text}</span>
-            </div>
+              <div className="service-notice">
+                <Clock size={24} />
+                <span>{info.warning_text}</span>
+              </div>
             )}
           </div>
         </div>
@@ -40,59 +81,17 @@ const Restaurant = () => {
         <div className="menus-section">
           {info?.menu_pdf_url && (
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-              <a 
-                href={info.menu_pdf_url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href={info.menu_pdf_url}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn btn-primary cursor-pointer"
               >
                 Menüyü İncele (PDF)
               </a>
             </div>
           )}
-          <div className="menu-grid">
-            {/* Öğle Yemeği */}
-            <div className="menu-card">
-              <h2 className="menu-title">Öğle Yemeği Menüsü</h2>
-              <div className="pricing-table-wrapper">
-                <table className="pricing-table">
-                  <thead>
-                    <tr>
-                      <th>Günün Menüsü</th>
-                      <th>Fiyat</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>Süzme Mercimek Çorbası</td><td>0₺</td></tr>
-                    <tr><td>Tas Kebabı &amp; Pilav</td><td>0₺</td></tr>
-                    <tr><td>Mevsim Salatası</td><td>0₺</td></tr>
-                    <tr><td>Fırın Sütlaç</td><td>0₺</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Akşam Yemeği */}
-            <div className="menu-card">
-              <h2 className="menu-title">Akşam Yemeği Menüsü</h2>
-              <div className="pricing-table-wrapper">
-                <table className="pricing-table">
-                  <thead>
-                    <tr>
-                      <th>Özel Davet Menüsü</th>
-                      <th>Fiyat</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>Yayla Çorbası</td><td>0₺</td></tr>
-                    <tr><td>Hünkar Beğendi</td><td>0₺</td></tr>
-                    <tr><td>Meyhane Pilavı</td><td>0₺</td></tr>
-                    <tr><td>Ev Yapımı Baklava</td><td>0₺</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <MenuCard menu={sampleMenu} />
         </div>
 
         {/* Reusable Gallery */}
@@ -104,5 +103,6 @@ const Restaurant = () => {
     </section>
   )
 }
+
 
 export default Restaurant

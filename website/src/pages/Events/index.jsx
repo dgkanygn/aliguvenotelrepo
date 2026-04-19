@@ -1,12 +1,13 @@
 import { useEvents } from './hooks/useEvents'
 import SaloonItem from './components/SaloonItem'
 import PageBanner from '../../components/PageBanner'
+import Loading from '../../components/Loading'
 import './styles/events.css'
 
 const Events = () => {
   const { data, loading, error } = useEvents()
 
-  if (loading) return <div className="loading-state h-screen flex items-center justify-center">Yükleniyor...</div>;
+  if (loading) return <Loading />;
   if (error) return <div className="error-state h-screen flex items-center justify-center">Hata: {error}</div>;
 
   return (

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { MessageCircle } from 'lucide-react'
+import { Users, Bed } from 'lucide-react'
 import { useSiteContext } from '../../../../context/SiteContext'
 import './styles/hero.css'
 
@@ -55,14 +55,24 @@ const Hero = ({ data = [] }) => {
           </p>
 
           <div className="hero-cta">
+            <span className="hero-cta-info">Bizimle iletişime geçin</span>
             <a
-              href={`https://wa.me/90${contactData?.whatsapp_number ? contactData.whatsapp_number.replace(/[^\d]/g, '') : '2223300326'}`}
+              href={`https://wa.me/90${contactData?.accommodation_phone ? contactData.accommodation_phone.replace(/[^\d]/g, '') : '2223300326'}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-primary hero-btn cursor-pointer"
+              className="hero-btn cursor-pointer"
             >
-              <MessageCircle size={20} />
-              WhatsApp Rezervasyon
+              <Bed size={20} />
+              Konaklama için
+            </a>
+            <a
+              href={`https://wa.me/90${contactData?.organization_phone ? contactData.organization_phone.replace(/[^\d]/g, '') : '2223300326'}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-btn-secondary cursor-pointer"
+            >
+              <Users size={20} />
+              Organizasyon için
             </a>
           </div>
 

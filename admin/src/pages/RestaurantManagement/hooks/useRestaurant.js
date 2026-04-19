@@ -33,7 +33,12 @@ export const useRestaurant = () => {
     try {
       const res = await restaurantService.updateRestaurant(info.id, data);
       if (res && res.success) {
-        setInfo({ ...info, ...res.data });
+        if (res.data.restaurant_info) {
+          setInfo(res.data.restaurant_info);
+        }
+        if (res.data.restaurant_images) {
+          setImages(res.data.restaurant_images);
+        }
         toast.success('Restoran bilgileri güncellendi');
       }
     } catch (error) {

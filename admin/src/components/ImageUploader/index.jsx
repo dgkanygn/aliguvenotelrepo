@@ -2,20 +2,20 @@ import React, { useRef } from 'react';
 import { Upload, X, Image as ImageIcon, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useImageUploader } from './hooks/useImageUploader';
 
-const ImageUploader = ({ 
-  multiple = false, 
+const ImageUploader = ({
+  multiple = false,
   maxFileSize = 1, // MB
   idealResolution = { width: 1920, height: 1080 },
   label = "Fotoğraf Yükle",
-  onChange = () => {}
+  onChange = () => { }
 }) => {
-  const { files, errors, onDropWrapper, removeFile, clearErrors } = useImageUploader({ 
-    multiple, 
-    maxFileSize, 
+  const { files, errors, onDropWrapper, removeFile, clearErrors } = useImageUploader({
+    multiple,
+    maxFileSize,
     idealResolution,
     onChange
   });
-  
+
   const fileInputRef = useRef(null);
 
   const handleContainerClick = () => {
@@ -39,7 +39,7 @@ const ImageUploader = ({
       </div>
 
       {/* Upload Area */}
-      <div 
+      <div
         onClick={handleContainerClick}
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDropWrapper}
@@ -49,19 +49,19 @@ const ImageUploader = ({
           ${files.length > 0 ? 'border-[#C5A059]/30 bg-[#C5A059]/5' : 'border-white/10 bg-white/5 hover:border-[#C5A059]/50 hover:bg-[#C5A059]/5'}
         `}
       >
-        <input 
-          type="file" 
+        <input
+          type="file"
           ref={fileInputRef}
           onChange={onDropWrapper}
           multiple={multiple}
           accept="image/*"
           className="hidden"
         />
-        
+
         <div className="w-16 h-16 bg-[#C5A059]/10 rounded-2xl flex items-center justify-center text-[#C5A059] mb-4">
           <Upload size={28} />
         </div>
-        
+
         <p className="text-white font-medium">Tıklayın veya dosyaları buraya sürükleyin</p>
         <p className="text-slate-500 text-xs mt-2">PNG, JPG veya WEBP formatları desteklenir</p>
       </div>
@@ -75,7 +75,7 @@ const ImageUploader = ({
               <span>{error}</span>
             </div>
           ))}
-          <button 
+          <button
             onClick={clearErrors}
             className="text-rose-400 text-[10px] font-bold uppercase tracking-wider hover:underline"
           >
@@ -89,22 +89,17 @@ const ImageUploader = ({
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {files.map((file, idx) => (
             <div key={idx} className="relative group aspect-square rounded-2xl overflow-hidden border border-white/10 bg-white/5">
-              <img 
-                src={file.preview} 
-                className="w-full h-full object-cover" 
-                alt="preview" 
+              <img
+                src={file.preview}
+                className="w-full h-full object-cover"
+                alt="preview"
               />
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button 
-                  onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
-                  className="p-2 bg-rose-500 text-white rounded-xl hover:scale-110 transition-transform cursor-pointer"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-              <div className="absolute bottom-2 right-2 p-1 bg-emerald-500 text-white rounded-full">
-                <CheckCircle2 size={10} />
-              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
+                className="absolute top-2 right-2 p-2 bg-rose-500/90 text-white rounded-xl hover:bg-rose-500 hover:scale-105 transition-all shadow-lg cursor-pointer z-10"
+              >
+                <X size={16} />
+              </button>
             </div>
           ))}
         </div>

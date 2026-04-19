@@ -1,7 +1,7 @@
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { CheckCircle, Info, MessageCircle, ArrowLeft, Users, Zap, Maximize2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import ImageGallery from '../../components/ImageGallery'
+import Loading from '../../components/Loading'
 import { useSpaceDetails } from './hooks/useSpaceDetails'
 import { useSiteContext } from '../../context/SiteContext'
 import './styles/spaceDetails.css'
@@ -11,7 +11,7 @@ const SpaceDetails = () => {
     const { data, loading, error } = useSpaceDetails(type, id)
     const { contactData } = useSiteContext()
 
-    if (loading) return <div className="loading-state h-screen flex items-center justify-center">Yükleniyor...</div>;
+    if (loading) return <Loading />;
     if (error) return <div className="error-state h-screen flex items-center justify-center">Hata: {error}</div>;
 
     const { space, images } = data
@@ -116,7 +116,7 @@ const SpaceDetails = () => {
                             </div> */}
 
                             <a
-                                href={`https://wa.me/90${contactData?.whatsapp_number ? contactData.whatsapp_number.replace(/[^\d]/g, '') : '2223300326'}?text=${encodeURIComponent(`${space.title} hakkında bilgi almak istiyorum.`)}`}
+                                href={`https://wa.me/90${(type === 'rooms' ? contactData?.accommodation_phone : contactData?.organization_phone)?.replace(/[^\d]/g, '') || contactData?.whatsapp_number?.replace(/[^\d]/g, '') || '2223300326'}?text=${encodeURIComponent(`${space.title} hakkında bilgi almak istiyorum.`)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="btn btn-primary cursor-pointer"

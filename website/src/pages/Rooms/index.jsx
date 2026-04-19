@@ -2,6 +2,7 @@ import { ArrowRight, Info } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ImageGallery from '../../components/ImageGallery'
 import PageBanner from '../../components/PageBanner'
+import Loading from '../../components/Loading'
 import { useRooms } from './hooks/useRooms'
 import { useSiteContext } from '../../context/SiteContext'
 import './styles/rooms.css'
@@ -10,9 +11,8 @@ const Rooms = () => {
   const { data, loading, error } = useRooms();
   const { contactData } = useSiteContext();
 
-  console.log(data)
 
-  if (loading) return <div className="loading-state h-screen flex items-center justify-center">Yükleniyor...</div>;
+  if (loading) return <Loading />;
   if (error) return <div className="error-state h-screen flex items-center justify-center">Hata: {error}</div>;
 
   const getRoomImages = (roomImages) => {
@@ -23,7 +23,7 @@ const Rooms = () => {
   };
   return (
     <section className="rooms-page">
-      <PageBanner 
+      <PageBanner
         image={data?.page_banner?.image_url}
         defaultImage="/images/hotel_room_1_1775384455722.png"
         topTitle={data?.page_banner?.top_title || 'Konaklama'}
@@ -66,7 +66,7 @@ const Rooms = () => {
                       <Info size={18} /> Detayları Gör
                     </Link>
                     <a
-                      href={`https://wa.me/90${contactData?.whatsapp_number ? contactData.whatsapp_number.replace(/[^\d]/g, '') : '2223300326'}`}
+                      href={`https://wa.me/90${contactData?.accommodation_phone ? contactData.accommodation_phone.replace(/[^\d]/g, '') : '2223300326'}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-primary room-cta cursor-pointer"

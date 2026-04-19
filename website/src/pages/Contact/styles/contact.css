@@ -1,5 +1,3 @@
-
-
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -57,6 +55,11 @@
   flex-shrink: 0;
 }
 
+.info-text {
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
+}
+
 .info-text h4 {
   font-size: 1rem;
   margin-bottom: 0.2rem;
@@ -69,6 +72,7 @@
   font-size: 0.95rem;
   line-height: 1.5;
   text-decoration: none;
+  word-break: break-word; /* Prevents overflow of long links/emails */
 }
 
 .contact-map-container {
@@ -116,6 +120,8 @@
   border-radius: 50px;
   font-size: 1.1rem;
   transition: var(--transition);
+  max-width: 100%; /* Ensures button doesn't overflow */
+  justify-content: center;
 }
 
 .whatsapp-cta-btn:hover {
@@ -126,15 +132,53 @@
 @media (max-width: 992px) {
   .contact-grid {
     grid-template-columns: 1fr;
-    margin-top: 0;
-    padding-top: 2rem;
+    gap: 2rem;
   }
 
   .contact-map-container {
-    height: 350px;
+    height: 400px;
   }
 
   .cta-stylish-box {
-    padding: 2.5rem;
+    padding: 3rem 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-card {
+    padding: 2rem;
+  }
+
+  .cta-stylish-box {
+    padding: 2rem 1.5rem;
+  }
+
+  .cta-stylish-box h2 {
+    font-size: 1.8rem;
+  }
+
+  .cta-stylish-box p {
+    font-size: 1rem;
+  }
+
+  .whatsapp-cta-btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-subtitle {
+    font-size: 1.5rem;
+  }
+
+  .contact-card {
+    padding: 1.5rem;
+  }
+
+  .info-icon {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }

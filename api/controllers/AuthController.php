@@ -50,25 +50,20 @@ class AuthController
             $payload = [
                 'iss' => 'aliguvenotel',
                 'iat' => time(),
-                'exp' => time() + (60 * 60 * 24), // 24 saat
+                // 'exp' => time() + (60 * 60 * 24), // 24 saat
+                // 'exp' => time() + (60 * 2), // 2 dakika
+                'exp' => time() + 60, // 1 dakika
                 'sub' => $admin['id'],
                 'username' => $admin['username']
             ];
 
             $token = JWT::encode($payload, $secret, 'HS256');
 
-            setcookie("auth_token", $token, [
-                'expires' => time() + (60 * 60 * 24),
-                'path' => '/',
-                // 'secure' => true, // Eğer üretimde HTTPS üzerinde çalışacaksanız aktif edin.
-                'httponly' => true,
-                'samesite' => 'Lax'
-            ]);
-
             http_response_code(200);
             echo json_encode([
                 "success" => true,
-                "message" => "Giriş başarılı."
+                "message" => "Giriş başarılı.",
+                "token" => $token
             ]);
         } catch (\Exception $e) {
             http_response_code(500);
@@ -90,13 +85,6 @@ class AuthController
 
     public function handleLogout()
     {
-        setcookie("auth_token", "", [
-            'expires' => time() - 3600,
-            'path' => '/',
-            'httponly' => true,
-            'samesite' => 'Lax'
-        ]);
-
         http_response_code(200);
         echo json_encode([
             "success" => true,

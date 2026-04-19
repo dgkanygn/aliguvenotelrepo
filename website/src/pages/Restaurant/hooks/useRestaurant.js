@@ -22,5 +22,16 @@ export const useRestaurant = () => {
         loadData();
     }, []);
 
-    return { data, loading, error };
+    const sampleMenu = (() => {
+        try {
+            const menu = data?.restaurant_info?.sample_menu;
+            if (!menu) return null;
+            return typeof menu === 'string' ? JSON.parse(menu) : menu;
+        } catch (e) {
+            console.error('Menu parse error:', e);
+            return null;
+        }
+    })();
+
+    return { data, sampleMenu, loading, error };
 };

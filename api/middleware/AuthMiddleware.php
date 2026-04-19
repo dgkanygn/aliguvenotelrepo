@@ -14,15 +14,26 @@ class AuthMiddleware
     {
         $token = '';
 
-        // 1. Önce HttpOnly Cookie kontrolü
-        if (isset($_COOKIE['auth_token']) && !empty($_COOKIE['auth_token'])) {
-            $token = $_COOKIE['auth_token'];
-        } else {
-            // 2. Geri uyumluluk için Headers kontrolü (eski frontend vb. için)
-            $headers = getallheaders();
-            $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
-            $token = str_replace('Bearer ', '', $authHeader);
+        if (empty($_ENV['JWT_SECRET'])) { die("Secret anahtarı sunucuda yüklenemedi!"); }
+
+        $authHeader = '';
+        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $authHeader = trim($_SERVER['HTTP_AUTHORIZATION']);
+        } elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+            $authHeader = trim($_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
+        } elseif (function_exists('apache_request_headers')) {
+            $requestHeaders = apache_request_headers();
+            if (isset($requestHeaders['Authorization'])) {
+                $authHeader = trim($requestHeaders['Authorization']);
+            }
+        } elseif (function_exists('getallheaders')) {
+            $requestHeaders = getallheaders();
+            if (isset($requestHeaders['Authorization'])) {
+                $authHeader = trim($requestHeaders['Authorization']);
+            }
         }
+
+        $token = trim(str_ireplace('Bearer ', '', $authHeader));
 
         if (empty($token)) {
             http_response_code(401);

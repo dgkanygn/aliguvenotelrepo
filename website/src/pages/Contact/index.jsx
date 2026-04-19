@@ -1,12 +1,13 @@
 import { MapPin, Phone, Smartphone, Mail, Printer, MessageCircle } from 'lucide-react'
 import PageBanner from '../../components/PageBanner'
+import Loading from '../../components/Loading'
 import { useContact } from './hooks/useContact'
 import './styles/contact.css'
 
 const Contact = () => {
   const { data, loading, error } = useContact();
 
-  if (loading) return <div className="loading-state h-screen flex items-center justify-center">Yükleniyor...</div>;
+  if (loading) return <Loading />;
   if (error) return <div className="error-state h-screen flex items-center justify-center">Hata: {error}</div>;
 
   const info = data?.company_contacts;
@@ -81,7 +82,7 @@ const Contact = () => {
           {/* Google Map */}
           <div className="contact-map-container">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3059.8510839!2d29.9!3d39.7!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cc160!2sAli%20G%C3%BCven%20Uygulama%20Oteli!5e0!3m2!1str!2str!4v1700000000000!5m2!1str!2str"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d911.4769671778371!2d30.4794743613711!3d39.78835108088768!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cc142a99e8e47f%3A0x4502e72c0a86276a!2sAli%20G%C3%BCven%20Anadolu%20Otelcilik%20Ve%20Tml%20Uygulama%20Oteli!5e0!3m2!1str!2str!4v1776557475658!5m2!1str!2str"
               width="100%"
               height="100%"
               style={{ border: 0 }}

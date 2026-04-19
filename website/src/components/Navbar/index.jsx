@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
+import Logo from '../Logo'
 import './styles/navbar.css'
 import { useNavMenus } from './hooks/useNavMenus'
 
@@ -43,10 +44,7 @@ const Navbar = () => {
     <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="container navbar-container">
         <div className="navbar-logo">
-          <Link to="/">
-            <span className="logo-text">ALİ GÜVEN</span>
-            <span className="logo-subtext">UYGULAMA OTELİ</span>
-          </Link>
+          <Logo showText={false} />
         </div>
 
         <div className="navbar-right">
@@ -95,7 +93,7 @@ const Navbar = () => {
       {/* Mobile Menu Overlay */}
       <div className={`mobile-menu ${isMenuOpen ? 'active' : ''}`}>
         <div className="mobile-menu-header">
-          <span className="logo-text">ALİ GÜVEN</span>
+          <Logo onClick={closeMenu} showText={false} />
           <button className="mobile-menu-close cursor-pointer" onClick={closeMenu}>
             <X size={28} />
           </button>

@@ -112,6 +112,10 @@ class Router
                 $this->handleUpdateOnly(ContactController::class);
                 break;
 
+            case 'restaurant':
+                $this->handleUpdateOnly(RestaurantController::class);
+                break;
+
             // ========================
             // 404
             // ========================

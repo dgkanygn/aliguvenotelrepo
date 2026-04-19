@@ -9,6 +9,8 @@ export const useContact = () => {
     landline_phone: '',
     mobile_phone: '',
     whatsapp_number: '',
+    accommodation_phone: '',
+    organization_phone: '',
     email: '',
     fax: '',
     instagram: '',

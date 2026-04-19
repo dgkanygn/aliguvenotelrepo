@@ -49,12 +49,26 @@ class FileUpload
             throw new \Exception('Geçersiz dosya formatı.');
         }
 
-        // Güvenli dosya ismi
+        // Orijinal dosya adını koruyarak güvenli dosya ismi oluşturulması
         $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
         if (!$ext) {
             $ext = 'bin';
         }
-        $fileName = sprintf('%s_%s.%s', date('Ymd_His'), bin2hex(random_bytes(8)), strtolower($ext));
+        $baseName = pathinfo($file['name'], PATHINFO_FILENAME);
+        
+        // Türkçe karakterleri ve boşlukları güvenli karakterlere çeviriyoruz
+        $search = array('ç','Ç','ğ','Ğ','ı','İ','ö','Ö','ş','Ş','ü','Ü',' ');
+        $replace = array('c','C','g','G','i','I','o','O','s','S','u','U','-');
+        $safeName = str_replace($search, $replace, $baseName);
+        
+        // Dosya isminde sadece alfa-nümerik, tire ve alt çizgi kalmasına izin veriyoruz
+        $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $safeName);
+        
+        if (empty($safeName)) {
+            $safeName = 'unnamed_file';
+        }
+        
+        $fileName = $safeName . '.' . strtolower($ext);
 
         // Klasör ismini güvenli hale getir (sadece harf, rakam, tire, alt tire)
         $folder = preg_replace('/[^a-zA-Z0-9_\-]/', '', $folder);
@@ -77,6 +91,7 @@ class FileUpload
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $domainName = $_SERVER['HTTP_HOST'];
         
-        return $protocol . $domainName . '/uploads/' . $folder . '/' . $fileName;
+        // Eğer siteniz alt klasördeyse (örn: /api), URL'ye bu klasörü de ekliyoruz.
+        return $protocol . $domainName . '/api/uploads/' . $folder . '/' . $fileName;
     }
 }

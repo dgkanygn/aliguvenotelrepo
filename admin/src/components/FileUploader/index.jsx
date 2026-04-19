@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Upload, X, FileText, AlertCircle, CheckCircle2, FileDown } from 'lucide-react';
 
-const FileUploader = ({ 
+const FileUploader = ({
   accept = ".pdf",
   maxFileSize = 5, // MB
   label = "Dosya Yükle",
@@ -68,14 +68,14 @@ const FileUploader = ({
       </div>
 
       {!selectedFile ? (
-        <div 
+        <div
           onClick={handleContainerClick}
           onDragOver={(e) => e.preventDefault()}
           onDrop={onDrop}
           className="relative border-2 border-dashed border-white/10 bg-white/5 hover:border-[#C5A059]/50 hover:bg-[#C5A059]/5 rounded-3xl p-8 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center"
         >
-          <input 
-            type="file" 
+          <input
+            type="file"
             ref={fileInputRef}
             onChange={onDrop}
             accept={accept}
@@ -98,10 +98,10 @@ const FileUploader = ({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center shrink-0">
+            {/* <div className="w-8 h-8 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center shrink-0">
               <CheckCircle2 size={16} />
-            </div>
-            <button 
+            </div> */}
+            <button
               onClick={removeFile}
               className="w-8 h-8 bg-rose-500/10 text-rose-500 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
             >

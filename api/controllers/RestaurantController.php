@@ -18,6 +18,10 @@ class RestaurantController
         try {
             $stmt = $this->db->query("SELECT * FROM restaurant_info LIMIT 1");
             $info = $stmt->fetch();
+            
+            if ($info && isset($info['sample_menu']) && is_string($info['sample_menu'])) {
+                $info['sample_menu'] = json_decode($info['sample_menu'], true);
+            }
 
             $imgStmt = $this->db->query("SELECT * FROM restaurant_images ORDER BY id ASC");
             $images = $imgStmt->fetchAll();
@@ -55,10 +59,18 @@ class RestaurantController
 
             $data = json_decode(file_get_contents("php://input"), true);
 
-            $stmt = $this->db->prepare("UPDATE restaurant_info SET intro_text = :intro_text, warning_text = :warning_text, menu_pdf_url = :menu_pdf_url WHERE id = :id");
+            $stmt = $this->db->prepare("UPDATE restaurant_info SET intro_text = :intro_text, warning_text = :warning_text, menu_pdf_url = :menu_pdf_url, sample_menu = :sample_menu WHERE id = :id");
             $stmt->bindParam(':intro_text', $data['intro_text']);
             $stmt->bindParam(':warning_text', $data['warning_text']);
             $stmt->bindParam(':menu_pdf_url', $data['menu_pdf_url']);
+            
+            $sample_menu = null;
+            if (isset($data['sample_menu'])) {
+                $sample_menu = is_array($data['sample_menu']) || is_object($data['sample_menu']) 
+                    ? json_encode($data['sample_menu'], JSON_UNESCAPED_UNICODE) 
+                    : $data['sample_menu'];
+            }
+            $stmt->bindParam(':sample_menu', $sample_menu);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 
@@ -82,6 +94,10 @@ class RestaurantController
             $stmt->bindParam(':id', $id);
             $stmt->execute();
             $updatedInfo = $stmt->fetch();
+            
+            if ($updatedInfo && isset($updatedInfo['sample_menu']) && is_string($updatedInfo['sample_menu'])) {
+                $updatedInfo['sample_menu'] = json_decode($updatedInfo['sample_menu'], true);
+            }
 
             $imgStmt = $this->db->query("SELECT * FROM restaurant_images ORDER BY id ASC");
             $updatedImages = $imgStmt->fetchAll();

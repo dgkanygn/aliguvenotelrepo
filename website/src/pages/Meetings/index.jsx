@@ -1,12 +1,13 @@
 import { useMeetings } from './hooks/useMeetings'
 import SaloonItem from '../Events/components/SaloonItem'
 import PageBanner from '../../components/PageBanner'
+import Loading from '../../components/Loading'
 import '../Events/styles/events.css'
 
 const Meetings = () => {
   const { data, loading, error } = useMeetings()
 
-  if (loading) return <div className="loading-state h-screen flex items-center justify-center">Yükleniyor...</div>;
+  if (loading) return <Loading />;
   if (error) return <div className="error-state h-screen flex items-center justify-center">Hata: {error}</div>;
 
 

@@ -75,3 +75,14 @@ temp/
 *.db
 *.sqlite
 *.sql.gz
+
+*.png
+*.pdf
+*.jpg
+*.jpeg
+
+.env.development
+.env.production
+
+*.zip
+*.rar
