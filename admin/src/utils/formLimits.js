@@ -55,7 +55,8 @@ export const FORM_LIMITS = {
     whatsapp: 20,
     email: 50,
     fax: 20,
-    social: 255
+    social: 255,
+    site_description: 500
   },
   banners: {
     top_title: 25,

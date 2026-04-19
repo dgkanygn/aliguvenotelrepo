@@ -16,6 +16,7 @@ const BannerManagement = () => {
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
   const [newFile, setNewFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const startEdit = (banner) => {
     setEditingId(banner.id);
@@ -37,12 +38,15 @@ const BannerManagement = () => {
     let imageUrl = editData.image_url;
     if(newFile) {
        try {
+         setIsUploading(true);
          const res = await uploadService.uploadFiles([newFile], 'page_banners');
          if(res && res.success && res.data.length > 0) {
             imageUrl = res.data[0];
          }
        } catch(err) {
          console.error(err);
+       } finally {
+         setIsUploading(false);
        }
     }
     
@@ -164,12 +168,12 @@ const BannerManagement = () => {
 
                         <div className="flex items-center gap-3 pt-4 border-t border-white/5">
                           <button 
-                            disabled={isLoading}
+                            disabled={isLoading || isUploading}
                             onClick={() => onSave(banner.id)}
                             className="flex-1 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white py-2.5 rounded-xl text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
                           >
                             <Save size={16} />
-                            Kaydet
+                            {isUploading ? 'Fotoğraf yükleniyor...' : isLoading ? 'Kaydediliyor...' : 'Kaydet'}
                           </button>
                           <button 
                             onClick={cancelEdit}

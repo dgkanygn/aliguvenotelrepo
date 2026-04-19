@@ -40,13 +40,22 @@ class FileUpload
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mime = $finfo->file($file['tmp_name']);
 
+        // Bazı ortamlarda docx dosyaları zip olarak, eski doc dosyaları da değişebilen formatlarda dönebilir.
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if ($ext === 'docx' && in_array($mime, ['application/zip', 'application/x-zip-compressed', 'application/octet-stream', 'application/x-empty'])) {
+            $mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        }
+        if ($ext === 'doc' && in_array($mime, ['application/CDFV2', 'application/octet-stream', 'application/x-empty'])) {
+            $mime = 'application/msword';
+        }
+
         $allowedTypes = [];
         if ($type === 'image') $allowedTypes = self::$allowedImageTypes;
         if ($type === 'doc') $allowedTypes = self::$allowedDocTypes;
         if ($type === 'all') $allowedTypes = array_merge(self::$allowedImageTypes, self::$allowedDocTypes);
 
         if (!in_array($mime, $allowedTypes, true)) {
-            throw new \Exception('Geçersiz dosya formatı.');
+            throw new \Exception('Geçersiz dosya formatı. (Algılanan: ' . $mime . ')');
         }
 
         // Orijinal dosya adını koruyarak güvenli dosya ismi oluşturulması

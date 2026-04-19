@@ -86,8 +86,8 @@ const ContactManagement = () => {
               </button>
             ) : (
               <div className="px-8 py-3 rounded-xl text-sm font-bold bg-[#1E293B] text-slate-500 border border-white/5 flex items-center gap-2">
-                 <Save size={18} />
-                 Değişiklik Yok
+                <Save size={18} />
+                Değişiklik Yok
               </div>
             )}
           </header>
@@ -105,6 +105,15 @@ const ContactManagement = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
                   <InputField
+                    label="Site Açıklaması (Footer)"
+                    icon={Share2}
+                    value={formData.site_description || ''}
+                    onChange={(val) => setFormData({ ...formData, site_description: val })}
+                    maxLength={FORM_LIMITS.contact.site_description}
+                    isTextArea={true}
+                  />
+
+                  <InputField
                     label="Otel Adresi"
                     icon={MapPin}
                     value={formData.address}
@@ -120,7 +129,7 @@ const ContactManagement = () => {
                       value={formData.landline_phone}
                       onChange={(val) => setFormData({ ...formData, landline_phone: val })}
                       maxLength={FORM_LIMITS.contact.landline}
-                      placeholder="0 (222) ..."
+                      placeholder="05XX..."
                     />
 
                     <InputField
@@ -129,7 +138,7 @@ const ContactManagement = () => {
                       value={formData.mobile_phone}
                       onChange={(val) => setFormData({ ...formData, mobile_phone: val })}
                       maxLength={FORM_LIMITS.contact.mobile}
-                      placeholder="0 550 ..."
+                      placeholder="05XX..."
                     />
 
                     <InputField
@@ -138,7 +147,7 @@ const ContactManagement = () => {
                       value={formData.whatsapp_number}
                       onChange={(val) => setFormData({ ...formData, whatsapp_number: val })}
                       maxLength={FORM_LIMITS.contact.whatsapp}
-                      placeholder="5xx xxx xx xx"
+                      placeholder="05XX..."
                     />
 
                     <InputField
@@ -147,7 +156,7 @@ const ContactManagement = () => {
                       value={formData.fax}
                       onChange={(val) => setFormData({ ...formData, fax: val })}
                       maxLength={FORM_LIMITS.contact.fax}
-                      placeholder="0 (222) ..."
+                      placeholder="05XX..."
                     />
                   </div>
 
@@ -167,7 +176,7 @@ const ContactManagement = () => {
                       value={formData.accommodation_phone}
                       onChange={(val) => setFormData({ ...formData, accommodation_phone: val })}
                       maxLength={FORM_LIMITS.contact.landline}
-                      placeholder="0 (222) ..."
+                      placeholder="05XX..."
                     />
 
                     <InputField
@@ -176,7 +185,7 @@ const ContactManagement = () => {
                       value={formData.organization_phone}
                       onChange={(val) => setFormData({ ...formData, organization_phone: val })}
                       maxLength={FORM_LIMITS.contact.landline}
-                      placeholder="0 (222) ..."
+                      placeholder="05XX..."
                     />
                   </div>
                 </div>

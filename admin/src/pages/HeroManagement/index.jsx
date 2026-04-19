@@ -18,6 +18,7 @@ const HeroManagement = () => {
   const [newFile, setNewFile] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const startAdd = () => {
     setEditData({ title: '', description: '', image_url: '' });
@@ -39,12 +40,15 @@ const HeroManagement = () => {
     let imageUrl = '';
     if (newFile) {
        try {
+         setIsUploading(true);
          const res = await uploadService.uploadFiles([newFile], 'home_hero');
          if(res && res.success && res.data.length > 0) {
             imageUrl = res.data[0];
          }
        } catch(err) {
          console.error(err);
+       } finally {
+         setIsUploading(false);
        }
     }
     
@@ -76,12 +80,15 @@ const HeroManagement = () => {
     let imageUrl = editData.image_url;
     if (newFile) {
        try {
+         setIsUploading(true);
          const res = await uploadService.uploadFiles([newFile], 'home_hero');
          if(res && res.success && res.data.length > 0) {
             imageUrl = res.data[0];
          }
        } catch(err) {
          console.error(err);
+       } finally {
+         setIsUploading(false);
        }
     }
     
@@ -220,11 +227,11 @@ const HeroManagement = () => {
                         </div>
                         <div className="flex items-center gap-3 pt-2">
                           <button 
-                            disabled={isLoading}
+                            disabled={isLoading || isUploading}
                             onClick={() => onSave(hero.id)}
                             className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 cursor-pointer"
                           >
-                            {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
+                            {isUploading ? 'Fotoğraf yükleniyor...' : isLoading ? 'Kaydediliyor...' : 'Kaydet'}
                             <Save size={18} />
                           </button>
                           <button 
@@ -268,7 +275,7 @@ const HeroManagement = () => {
           
           {isAddModalOpen && (
             <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={!isLoading ? cancelAdd : undefined} />
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={!isLoading && !isUploading ? cancelAdd : undefined} />
               <div className="relative w-full max-w-2xl bg-[#0F172A] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
                 <div className="flex justify-between items-center p-6 border-b border-white/5">
                   <h3 className="text-xl font-bold text-white">Yeni Slayt Ekle</h3>
@@ -343,12 +350,12 @@ const HeroManagement = () => {
                     </div>
                     <div className="mt-auto pt-4 border-t border-white/5">
                       <button 
-                        disabled={isLoading}
+                        disabled={isLoading || isUploading}
                         onClick={onSaveNew}
                         className="w-full flex items-center justify-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white py-3 px-8 rounded-2xl text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-lg shadow-[#C5A059]/10"
                       >
                         <Save size={18} />
-                        {isLoading ? 'Ekleniyor...' : 'Slaytı Ekle'}
+                        {isUploading ? 'Fotoğraf yükleniyor...' : isLoading ? 'Ekleniyor...' : 'Slaytı Ekle'}
                       </button>
                     </div>
                   </div>

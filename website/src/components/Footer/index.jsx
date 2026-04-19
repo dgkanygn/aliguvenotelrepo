@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Phone, Mail, Smartphone } from 'lucide-react'
+import { MapPin, Phone, Mail } from 'lucide-react'
 import { FaInstagram, FaFacebook, FaTwitter, FaYoutube, FaLinkedin } from 'react-icons/fa'
 import Logo from '../Logo'
 import { useSiteContext } from '../../context/SiteContext'
+import { formatPhoneNumber } from '../../utils/phoneFormatter'
 import './styles/footer.css'
 
 const Footer = () => {
@@ -65,16 +66,16 @@ const Footer = () => {
               <MapPin size={20} />
               <span>{contactData?.address}</span>
             </li>
-            {contactData?.landline_phone && (
+            {contactData?.accommodation_phone && (
               <li>
                 <Phone size={20} />
-                <span>{contactData.landline_phone}</span>
+                <span>{formatPhoneNumber(contactData.accommodation_phone)} (Konaklama)</span>
               </li>
             )}
-            {contactData?.mobile_phone && (
+            {contactData?.organization_phone && (
               <li>
-                <Smartphone size={20} />
-                <span>{contactData.mobile_phone}</span>
+                <Phone size={20} />
+                <span>{formatPhoneNumber(contactData.organization_phone)} (Organizasyon)</span>
               </li>
             )}
             <li>
@@ -89,8 +90,8 @@ const Footer = () => {
         <div className="container container-bottom">
           <p>&copy; {new Date().getFullYear()} Ali Güven Anadolu Otelcilik Ve TML Uygulama Oteli. Tüm Hakları Saklıdır.</p>
           <div className="footer-legal">
-            <a href="#">Gizlilik Politikası</a>
-            <a href="#">KVKK</a>
+            <Link to="/terms-and-privacy">Kullanım Koşulları ve Gizlilik Politikası</Link>
+            <Link to="/cookie-policy">Çerez Politikası</Link>
           </div>
         </div>
       </div>

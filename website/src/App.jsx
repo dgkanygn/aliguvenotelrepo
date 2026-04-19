@@ -7,8 +7,11 @@ import Events from './pages/Events'
 import Meetings from './pages/Meetings'
 import Contact from './pages/Contact'
 import SpaceDetails from './pages/SpaceDetails'
+import TermsAndPrivacy from './pages/TermsAndPrivacy'
+import CookiePolicy from './pages/CookiePolicy'
 import NotFound from './pages/NotFound'
 import ScrollToTop from './components/ScrollToTop'
+import CookieBanner from './components/CookieBanner'
 
 const App = () => {
   return (
@@ -24,11 +27,14 @@ const App = () => {
           <Route path="/meetings" element={<Meetings />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/event-detail/:type/:id" element={<SpaceDetails />} />
+          <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
         </Route>
 
         {/* 404 Page (No Navbar/Footer) */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <CookieBanner />
     </>
   )
 }

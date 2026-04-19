@@ -262,7 +262,7 @@ const RestaurantManagement = () => {
 
                 <div className="pt-6 border-t border-white/5 space-y-4">
                   <div className="flex justify-between items-center px-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Menü PDF Dosyası</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Menü Dosyası (PDF / DOC)</label>
                   </div>
 
                   {info?.menu_pdf_url && (
@@ -284,7 +284,7 @@ const RestaurantManagement = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-2.5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-lg transition-all cursor-pointer"
-                          title="Tarayıcıda Aç"
+                          title="Görüntüle / İndir"
                         >
                           <ExternalLink size={18} />
                         </a>
@@ -293,8 +293,8 @@ const RestaurantManagement = () => {
                   )}
 
                   <FileUploader
-                    label={info?.menu_pdf_url ? "Menüyü Güncelle" : "Menü PDF Yükle"}
-                    accept=".pdf"
+                    label={info?.menu_pdf_url ? "Menüyü Güncelle" : "Menü Dosyası Yükle"}
+                    accept=".pdf, .doc, .docx"
                     maxFileSize={10}
                     onFileSelect={(file) => {
                       setPdfFile(file);

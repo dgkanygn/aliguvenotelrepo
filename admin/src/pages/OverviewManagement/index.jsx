@@ -19,6 +19,7 @@ const OverviewManagement = () => {
         feature_list: []
     });
     const [newFile, setNewFile] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const hasChanges = overview && formData ? JSON.stringify(overview) !== JSON.stringify(formData) || newFile !== null : false;
 
@@ -32,12 +33,15 @@ const OverviewManagement = () => {
         let imageUrl = formData.image_url;
         if(newFile) {
            try {
+             setIsUploading(true);
              const res = await uploadService.uploadFiles([newFile], 'home_overview');
              if(res && res.success && res.data.length > 0) {
                imageUrl = res.data[0];
              }
            } catch(err) {
              console.error(err);
+           } finally {
+             setIsUploading(false);
            }
         }
         
@@ -92,11 +96,11 @@ const OverviewManagement = () => {
                         {hasChanges ? (
                             <button
                                 onClick={onSave}
-                                disabled={isLoading || isFetching}
+                                disabled={isLoading || isFetching || isUploading}
                                 className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
                             >
-                                {isLoading ? 'Güncelleniyor...' : 'Değişiklikleri Kaydet'}
-                                {!isLoading && <Save size={18} />}
+                                {isUploading ? 'Fotoğraf yükleniyor...' : isLoading ? 'Güncelleniyor...' : 'Değişiklikleri Kaydet'}
+                                {!isLoading && !isUploading && <Save size={18} />}
                             </button>
                         ) : (
                             <div className="px-8 py-3 rounded-xl text-sm font-bold bg-[#1E293B] text-slate-500 border border-white/5 flex items-center gap-2">

@@ -33,6 +33,7 @@ const SaloonManagement = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [newFiles, setNewFiles] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const startAdd = () => {
     setEditData({ title: '', description: '', category_keys: [], amenities: [], images: [] });
@@ -56,12 +57,15 @@ const SaloonManagement = () => {
     let uploadedUrls = [];
     if(newFiles && newFiles.length > 0) {
       try {
+        setIsUploading(true);
         const res = await uploadService.uploadFiles(newFiles, 'saloons');
         if(res && res.success) {
           uploadedUrls = res.data;
         }
       } catch (err) {
          console.error(err);
+      } finally {
+        setIsUploading(false);
       }
     }
 
@@ -104,12 +108,15 @@ const SaloonManagement = () => {
     let uploadedUrls = [];
     if(newFiles && newFiles.length > 0) {
       try {
+        setIsUploading(true);
         const res = await uploadService.uploadFiles(newFiles, 'saloons');
         if(res && res.success) {
           uploadedUrls = res.data;
         }
       } catch (err) {
          console.error(err);
+      } finally {
+        setIsUploading(false);
       }
     }
 
@@ -298,12 +305,12 @@ const SaloonManagement = () => {
 
                         <div className="flex items-center gap-3 pt-6 border-t border-white/5">
                           <button 
-                            disabled={isLoading}
+                            disabled={isLoading || isUploading}
                             onClick={() => onSave(saloon.id)}
                             className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-2xl text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-lg shadow-emerald-500/10"
                           >
                             <Save size={18} />
-                            {isLoading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
+                            {isUploading ? 'Fotoğraf yükleniyor...' : isLoading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
                           </button>
                           <button 
                             onClick={cancelEdit}
@@ -368,7 +375,7 @@ const SaloonManagement = () => {
 
           {isAddModalOpen && (
             <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={!isLoading ? cancelAdd : undefined} />
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={!isLoading && !isUploading ? cancelAdd : undefined} />
               <div className="relative w-full max-w-4xl bg-[#0F172A] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
                 <div className="flex justify-between items-center p-6 border-b border-white/5">
                   <h3 className="text-xl font-bold text-white">Yeni Salon Ekle</h3>
@@ -499,12 +506,12 @@ const SaloonManagement = () => {
 
                         <div className="pt-4 border-t border-white/5">
                           <button 
-                            disabled={isLoading}
+                            disabled={isLoading || isUploading}
                             onClick={onSaveNew}
                             className="w-full flex items-center justify-center gap-2 bg-[#C5A059] hover:bg-[#A68045] text-white px-8 py-3 rounded-2xl text-sm font-bold transition-all disabled:opacity-50 cursor-pointer shadow-lg shadow-[#C5A059]/10"
                           >
                             <Save size={18} />
-                            {isLoading ? 'Ekleniyor...' : 'Salonu Ekle'}
+                            {isUploading ? 'Fotoğraf yükleniyor...' : isLoading ? 'Ekleniyor...' : 'Salonu Ekle'}
                           </button>
                         </div>
                       </div>

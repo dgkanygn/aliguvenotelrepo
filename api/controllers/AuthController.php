@@ -50,9 +50,9 @@ class AuthController
             $payload = [
                 'iss' => 'aliguvenotel',
                 'iat' => time(),
-                // 'exp' => time() + (60 * 60 * 24), // 24 saat
+                'exp' => time() + (60 * 60 * 24), // 24 saat
                 // 'exp' => time() + (60 * 2), // 2 dakika
-                'exp' => time() + 60, // 1 dakika
+                // 'exp' => time() + 60, // 1 dakika
                 'sub' => $admin['id'],
                 'username' => $admin['username']
             ];

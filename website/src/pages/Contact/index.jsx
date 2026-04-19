@@ -2,6 +2,7 @@ import { MapPin, Phone, Smartphone, Mail, Printer, MessageCircle } from 'lucide-
 import PageBanner from '../../components/PageBanner'
 import Loading from '../../components/Loading'
 import { useContact } from './hooks/useContact'
+import { formatPhoneNumber } from '../../utils/phoneFormatter'
 import './styles/contact.css'
 
 const Contact = () => {
@@ -53,7 +54,7 @@ const Contact = () => {
                 </div>
                 <div className="info-text">
                   <h4>Mobil Telefon</h4>
-                  <p><a href={`tel:${info?.mobile_phone?.replace(/[^\d+]/g, '')}`}>{info?.mobile_phone}</a></p>
+                  <p><a href={`tel:${info?.mobile_phone?.replace(/[^\d+]/g, '')}`}>{formatPhoneNumber(info?.mobile_phone)}</a></p>
                 </div>
               </div>
 
@@ -99,15 +100,38 @@ const Contact = () => {
           <div className="cta-stylish-box">
             <h2>Bizimle İletişime Geçin</h2>
             <p>Tüm konaklama ve organizasyon talepleriniz için bize WhatsApp üzerinden anında ulaşabilirsiniz. Profesyonel ekibimiz size en kısa sürede dönüş yapacaktır.</p>
-            <a
-              href={`https://wa.me/90${info?.whatsapp_number ? info.whatsapp_number.replace(/[^\d]/g, '') : '2223300326'}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary whatsapp-cta-btn cursor-pointer"
-            >
-              <MessageCircle size={20} />
-              Hemen Mesaj Gönder
-            </a>
+
+            <div className="cta-buttons-grid">
+              <a
+                href={`https://wa.me/90${info?.accommodation_phone ? info.accommodation_phone.replace(/[^\d]/g, '') : '2223300326'}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary whatsapp-cta-btn cursor-pointer"
+              >
+                <div className="cta-btn-icon">
+                  <MessageCircle size={24} />
+                </div>
+                <div className="cta-btn-text">
+                  <span className="cta-label">Konaklama İçin</span>
+                  <span className="cta-value">{formatPhoneNumber(info?.accommodation_phone) || 'WhatsApp Destek'}</span>
+                </div>
+              </a>
+
+              <a
+                href={`https://wa.me/90${info?.organization_phone ? info.organization_phone.replace(/[^\d]/g, '') : '2223300326'}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary-outline whatsapp-cta-btn organization cursor-pointer"
+              >
+                <div className="cta-btn-icon">
+                  <MessageCircle size={24} />
+                </div>
+                <div className="cta-btn-text">
+                  <span className="cta-label">Organizasyon İçin</span>
+                  <span className="cta-value">{formatPhoneNumber(info?.organization_phone) || 'WhatsApp Destek'}</span>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -2,46 +2,12 @@ import { Clock } from 'lucide-react'
 import ImageGallery from '../../components/ImageGallery'
 import PageBanner from '../../components/PageBanner'
 import Loading from '../../components/Loading'
+import MenuCard from './components/MenuCard'
 import { useRestaurant } from './hooks/useRestaurant'
 import './styles/restaurant.css'
 
-const MenuCard = ({ menu }) => {
-  if (!menu) return null;
-
-  return (
-    <div className="menu-card single-menu">
-      <h2 className="menu-title">{menu.title || menu.baslik || 'Günün Menüsü'}</h2>
-      <div className="pricing-table-wrapper">
-        <table className="pricing-table">
-          <thead>
-            <tr>
-              <th>Yemekler</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(menu.dishes || menu.yemekler || [])?.map((yemek, index) => (
-              <tr key={index}>
-                <td>{yemek}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="menu-footer">
-        <div className="menu-price">
-          <span>Menü Fiyatı:</span>
-          <strong>{menu.price || menu.fiyat}</strong>
-        </div>
-        <p className="menu-note">Fiyatlarımıza KDV dahildir.</p>
-      </div>
-    </div>
-  )
-}
-
 const Restaurant = () => {
   const { data, sampleMenu, loading, error } = useRestaurant()
-
-
 
   if (loading) return <Loading />
   if (error)
@@ -80,14 +46,14 @@ const Restaurant = () => {
 
         <div className="menus-section">
           {info?.menu_pdf_url && (
-            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <div className="menu-pdf-btn-wrapper">
               <a
                 href={info.menu_pdf_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary cursor-pointer"
               >
-                Menüyü İncele (PDF)
+                Menüyü İncele
               </a>
             </div>
           )}
@@ -96,13 +62,12 @@ const Restaurant = () => {
 
         {/* Reusable Gallery */}
         <div className="restaurant-gallery-wrapper section-padding">
-          <h2 className="section-title text-center mb-4">Mekanımızdan Kareler</h2>
+          <h2 className="section-title text-center mb-4">Restoranımızdan Kareler</h2>
           <ImageGallery images={images} galleryId="restaurant-gallery" />
         </div>
       </div>
     </section>
   )
 }
-
 
 export default Restaurant

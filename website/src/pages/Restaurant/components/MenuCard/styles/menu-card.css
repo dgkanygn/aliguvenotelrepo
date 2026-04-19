@@ -1,0 +1,119 @@
+.compact-menu-card {
+  background: var(--white);
+  border: 1px solid rgba(26, 43, 72, 0.08);
+  border-radius: 24px;
+  padding: 2.5rem;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
+  position: relative;
+  transition: var(--transition);
+}
+
+.compact-menu-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06);
+  border-color: var(--secondary);
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.menu-title {
+  font-size: 1.4rem;
+  color: var(--primary);
+  margin: 0;
+}
+
+.menu-badge {
+  background: var(--accent);
+  color: var(--secondary-dark);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.menu-dishes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dish-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background: var(--secondary);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dish-name {
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.compact-menu-card:hover .dish-name {
+  color: var(--primary);
+}
+
+.menu-footer {
+  margin-top: 2.5rem;
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 2px dashed rgba(0, 0, 0, 0.05);
+}
+
+.price-tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.price-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.price-value {
+  font-size: 2.2rem;
+  color: var(--primary);
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+}
+
+.vat-notice {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  opacity: 0.6;
+}
+
+@media (max-width: 576px) {
+  .compact-menu-card {
+    padding: 1.5rem;
+  }
+  
+  .price-value {
+    font-size: 1.8rem;
+  }
+}

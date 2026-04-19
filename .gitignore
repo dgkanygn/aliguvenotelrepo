@@ -80,6 +80,7 @@ temp/
 *.pdf
 *.jpg
 *.jpeg
+*.docx
 
 .env.development
 .env.production

@@ -67,7 +67,8 @@ class ContactController
                     twitter = :twitter, 
                     linkedin = :linkedin, 
                     pinterest = :pinterest, 
-                    youtube = :youtube 
+                    youtube = :youtube,
+                    site_description = :site_description
                 WHERE id = :id"
             );
 
@@ -85,6 +86,7 @@ class ContactController
             $stmt->bindParam(':linkedin', $data['linkedin']);
             $stmt->bindParam(':pinterest', $data['pinterest']);
             $stmt->bindParam(':youtube', $data['youtube']);
+            $stmt->bindParam(':site_description', $data['site_description']);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 

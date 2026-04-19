@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLogin } from './hooks/useLogin';
-import { LogIn } from 'lucide-react';
+import { LogIn, Eye, EyeOff } from 'lucide-react';
 
 const LoginPage = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const { 
     register,
     errors,
@@ -44,12 +45,22 @@ const LoginPage = () => {
 
             <div>
               <label className="block text-slate-300 text-sm font-medium mb-2">Şifre</label>
-              <input
-                type="password"
-                {...register('password')}
-                placeholder="••••••••"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#C5A059] transition-all"
-              />
+              <div className="relative group">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password')}
+                  placeholder="••••••••"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-[#C5A059] transition-all pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-500 hover:text-[#C5A059] transition-colors cursor-pointer"
+                  tabIndex="-1"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="mt-1 text-red-400 text-xs">{errors.password.message}</p>
               )}
