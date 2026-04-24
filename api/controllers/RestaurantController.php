@@ -59,10 +59,11 @@ class RestaurantController
 
             $data = json_decode(file_get_contents("php://input"), true);
 
-            $stmt = $this->db->prepare("UPDATE restaurant_info SET intro_text = :intro_text, warning_text = :warning_text, menu_pdf_url = :menu_pdf_url, sample_menu = :sample_menu WHERE id = :id");
+            $stmt = $this->db->prepare("UPDATE restaurant_info SET intro_text = :intro_text, warning_text = :warning_text, menu_pdf_url = :menu_pdf_url, menu_pdf_url_2 = :menu_pdf_url_2, sample_menu = :sample_menu WHERE id = :id");
             $stmt->bindParam(':intro_text', $data['intro_text']);
             $stmt->bindParam(':warning_text', $data['warning_text']);
             $stmt->bindParam(':menu_pdf_url', $data['menu_pdf_url']);
+            $stmt->bindParam(':menu_pdf_url_2', $data['menu_pdf_url_2']);
             
             $sample_menu = null;
             if (isset($data['sample_menu'])) {

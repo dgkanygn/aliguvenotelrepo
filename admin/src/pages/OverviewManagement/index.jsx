@@ -20,6 +20,7 @@ const OverviewManagement = () => {
     });
     const [newFile, setNewFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadKey, setUploadKey] = useState(Date.now());
 
     const hasChanges = overview && formData ? JSON.stringify(overview) !== JSON.stringify(formData) || newFile !== null : false;
 
@@ -47,6 +48,7 @@ const OverviewManagement = () => {
         
         await handleUpdate({ ...formData, image_url: imageUrl });
         setNewFile(null);
+        setUploadKey(Date.now());
     };
 
     const addFeature = () => {
@@ -125,6 +127,7 @@ const OverviewManagement = () => {
                                     <img src={formData.image_url || overview?.image_url} alt="Overview" className="w-full h-full object-cover" />
                                 </div>
                                 <ImageUploader
+                                    key={uploadKey}
                                     maxFileSize={2}
                                     multiple={false}
                                     idealResolution={{ width: 1200, height: 800 }}

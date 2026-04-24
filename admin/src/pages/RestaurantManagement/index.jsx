@@ -6,16 +6,17 @@ import { useRestaurant } from './hooks/useRestaurant';
 import ImageUploader from '../../components/ImageUploader';
 import FileUploader from '../../components/FileUploader';
 import { FORM_LIMITS } from '../../utils/formLimits';
-import { uploadService } from '../../services/upload.service';
-import { Save, Utensils, FileText, AlertTriangle, FileDown, Trash2, ExternalLink, Plus, ListOrdered } from 'lucide-react';
+import { Save, Utensils, FileText, AlertTriangle, FileDown, Trash2, ExternalLink, Plus, ListOrdered, Upload } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const RestaurantManagement = () => {
   const { isSidebarCollapsed, setIsSidebarCollapsed, isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu } = useDashboard();
-  const { info, images, setImages, isLoading, isFetching, updateInfo } = useRestaurant();
+  const { info, images, setImages, isLoading, isUploading, isFetching, updateInfo } = useRestaurant();
   const [formData, setFormData] = useState(null);
+  const [uploadKey, setUploadKey] = useState(Date.now());
 
-  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfFile1, setPdfFile1] = useState(null);
+  const [pdfFile2, setPdfFile2] = useState(null);
   const [newImages, setNewImages] = useState([]);
   const [hasDeletedImages, setHasDeletedImages] = useState(false);
 
@@ -52,6 +53,7 @@ const RestaurantManagement = () => {
     if (info.intro_text !== formData.intro_text) return true;
     if (info.warning_text !== formData.warning_text) return true;
     if (info.menu_pdf_url !== formData.menu_pdf_url) return true;
+    if (info.menu_pdf_url_2 !== formData.menu_pdf_url_2) return true;
 
     let infoMenu = { title: '', price: '', dishes: [] };
     if (info.sample_menu) {
@@ -73,7 +75,7 @@ const RestaurantManagement = () => {
     if (JSON.stringify(formattedInfoMenu) !== JSON.stringify(formData.sample_menu)) return true;
 
     if (newImages.length > 0) return true;
-    if (pdfFile !== null) return true;
+    if (pdfFile1 !== null || pdfFile2 !== null) return true;
     if (hasDeletedImages) return true;
     return false;
   })();
@@ -84,52 +86,13 @@ const RestaurantManagement = () => {
   };
 
   const onSave = async () => {
-    let finalPdfUrl = formData.menu_pdf_url;
-    let finalImages = [...images];
-
-    try {
-      if (pdfFile) {
-        const pdfToast = toast.loading('PDF yükleniyor...');
-        const pdfUrl = await uploadService.uploadFile(pdfFile);
-        toast.dismiss(pdfToast);
-        if (pdfUrl) {
-          finalPdfUrl = pdfUrl;
-        } else {
-          toast.error("PDF yüklenemedi");
-          return;
-        }
-      }
-
-      if (newImages.length > 0) {
-        const imgToast = toast.loading('Resimler yükleniyor...');
-        const uploadedImgUrls = await Promise.all(
-          newImages.map(file => uploadService.uploadFile(file))
-        );
-        toast.dismiss(imgToast);
-
-        const validUrls = uploadedImgUrls.filter(url => url);
-        if (validUrls.length !== newImages.length) {
-          toast.error("Bazı resimler yüklenemedi");
-        }
-
-        finalImages = [
-          ...finalImages,
-          ...validUrls.map((url, i) => ({ id: `new_${Date.now()}_${i}`, image_url: url }))
-        ];
-      }
-
-      await updateInfo({
-        ...formData,
-        sample_menu: JSON.stringify(formData.sample_menu),
-        menu_pdf_url: finalPdfUrl,
-        restaurant_images: finalImages
-      });
-
-      setPdfFile(null);
+    const success = await updateInfo(formData, pdfFile1, pdfFile2, newImages, images);
+    if (success) {
+      setPdfFile1(null);
+      setPdfFile2(null);
       setNewImages([]);
       setHasDeletedImages(false);
-    } catch (err) {
-      toast.error('Kayıt işlemi başarısız oldu');
+      setUploadKey(Date.now());
     }
   };
 
@@ -200,17 +163,17 @@ const RestaurantManagement = () => {
         <main className="flex-1 overflow-x-hidden p-6 sm:p-10">
           <header className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Gastronomi</p>
+              <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Yemek</p>
               <h1 className="text-3xl font-bold text-white tracking-tight">Restoran Yönetimi</h1>
             </div>
             {hasChanges ? (
               <button
                 onClick={onSave}
-                disabled={isLoading}
+                disabled={isLoading || isUploading}
                 className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
               >
-                {isLoading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
-                {!isLoading && <Save size={18} />}
+                {isLoading || isUploading ? (isUploading ? 'Dosyalar yükleniyor...' : 'Kaydediliyor...') : 'Değişiklikleri Kaydet'}
+                {!(isLoading || isUploading) && <Save size={18} />}
               </button>
             ) : (
               <div className="px-8 py-3 rounded-xl text-sm font-bold bg-[#1E293B] text-slate-500 border border-white/5 flex items-center gap-2">
@@ -262,17 +225,17 @@ const RestaurantManagement = () => {
 
                 <div className="pt-6 border-t border-white/5 space-y-4">
                   <div className="flex justify-between items-center px-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Menü Dosyası (PDF / DOC)</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">1. Menü Dosyası (PDF / DOC)</label>
                   </div>
 
-                  {info?.menu_pdf_url && (
+                  {info?.menu_pdf_url && formData.menu_pdf_url !== '' && formData.menu_pdf_url !== null && !pdfFile1 ? (
                     <div className="bg-[#0F172A] border border-white/5 rounded-2xl p-4 flex items-center justify-between group transition-all hover:border-[#C5A059]/30">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-10 h-10 rounded-xl bg-[#C5A059]/10 flex items-center justify-center flex-shrink-0 text-[#C5A059]">
                           <FileText size={20} />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5 opacity-60">Yayındaki Menü</p>
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5 opacity-60">1. Yayındaki Menü</p>
                           <p className="text-sm text-white font-medium truncate italic" title={info.menu_pdf_url.split('/').pop()}>
                             {info.menu_pdf_url.split('/').pop()}
                           </p>
@@ -288,19 +251,120 @@ const RestaurantManagement = () => {
                         >
                           <ExternalLink size={18} />
                         </a>
+                        <button
+                          onClick={() => {
+                            setFormData({ ...formData, menu_pdf_url: '' });
+                            setPdfFile1(null);
+                          }}
+                          className="p-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg transition-all cursor-pointer"
+                          title="Menüyü Sil"
+                        >
+                          <Trash2 size={18} />
+                        </button>
                       </div>
                     </div>
+                  ) : (
+                    <div className="mt-2">
+                       <label className="flex items-center justify-center w-full min-h-[100px] border-2 border-dashed border-white/10 hover:border-[#C5A059]/50 rounded-2xl bg-[#0F172A] hover:bg-[#C5A059]/5 cursor-pointer transition-all group">
+                         <div className="flex flex-col items-center justify-center p-4 text-center">
+                           <div className="w-10 h-10 mb-2 rounded-xl bg-[#C5A059]/10 flex items-center justify-center text-[#C5A059] group-hover:scale-110 transition-transform">
+                             <Upload size={20} />
+                           </div>
+                           <p className="text-sm text-slate-300 font-medium mb-1">1. Yeni Menü Yükle</p>
+                           <p className="text-[10px] text-slate-500 font-medium">PDF, DOC (Max 10MB)</p>
+                           {pdfFile1 && (
+                             <div className="mt-3 py-1.5 px-3 bg-[#C5A059]/10 text-[#C5A059] rounded-lg text-xs font-semibold flex items-center gap-2">
+                               <FileText size={14} />
+                               <span className="truncate max-w-[150px]">{pdfFile1.name}</span>
+                             </div>
+                           )}
+                         </div>
+                         <input 
+                           type="file" 
+                           className="hidden" 
+                           accept=".pdf, .doc, .docx"
+                           onChange={(e) => {
+                             if(e.target.files && e.target.files.length > 0) {
+                               setPdfFile1(e.target.files[0]);
+                               setFormData({ ...formData, menu_pdf_url: e.target.files[0].name });
+                             }
+                           }}
+                         />
+                       </label>
+                    </div>
                   )}
+                </div>
 
-                  <FileUploader
-                    label={info?.menu_pdf_url ? "Menüyü Güncelle" : "Menü Dosyası Yükle"}
-                    accept=".pdf, .doc, .docx"
-                    maxFileSize={10}
-                    onFileSelect={(file) => {
-                      setPdfFile(file);
-                      setFormData({ ...formData, menu_pdf_url: file.name });
-                    }}
-                  />
+                <div className="pt-6 border-t border-white/5 space-y-4">
+                  <div className="flex justify-between items-center px-1">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">2. Menü Dosyası (PDF / DOC)</label>
+                  </div>
+
+                  {info?.menu_pdf_url_2 && formData.menu_pdf_url_2 !== '' && formData.menu_pdf_url_2 !== null && !pdfFile2 ? (
+                    <div className="bg-[#0F172A] border border-white/5 rounded-2xl p-4 flex items-center justify-between group transition-all hover:border-[#C5A059]/30">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-[#C5A059]/10 flex items-center justify-center flex-shrink-0 text-[#C5A059]">
+                          <FileText size={20} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5 opacity-60">2. Yayındaki Menü</p>
+                          <p className="text-sm text-white font-medium truncate italic" title={info.menu_pdf_url_2.split('/').pop()}>
+                            {info.menu_pdf_url_2.split('/').pop()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <a
+                          href={info.menu_pdf_url_2}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2.5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-lg transition-all cursor-pointer"
+                          title="Görüntüle / İndir"
+                        >
+                          <ExternalLink size={18} />
+                        </a>
+                        <button
+                          onClick={() => {
+                            setFormData({ ...formData, menu_pdf_url_2: '' });
+                            setPdfFile2(null);
+                          }}
+                          className="p-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg transition-all cursor-pointer"
+                          title="Menüyü Sil"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-2">
+                       <label className="flex items-center justify-center w-full min-h-[100px] border-2 border-dashed border-white/10 hover:border-[#C5A059]/50 rounded-2xl bg-[#0F172A] hover:bg-[#C5A059]/5 cursor-pointer transition-all group">
+                         <div className="flex flex-col items-center justify-center p-4 text-center">
+                           <div className="w-10 h-10 mb-2 rounded-xl bg-[#C5A059]/10 flex items-center justify-center text-[#C5A059] group-hover:scale-110 transition-transform">
+                             <Upload size={20} />
+                           </div>
+                           <p className="text-sm text-slate-300 font-medium mb-1">2. Yeni Menü Yükle</p>
+                           <p className="text-[10px] text-slate-500 font-medium">PDF, DOC (Max 10MB)</p>
+                           {pdfFile2 && (
+                             <div className="mt-3 py-1.5 px-3 bg-[#C5A059]/10 text-[#C5A059] rounded-lg text-xs font-semibold flex items-center gap-2">
+                               <FileText size={14} />
+                               <span className="truncate max-w-[150px]">{pdfFile2.name}</span>
+                             </div>
+                           )}
+                         </div>
+                         <input 
+                           type="file" 
+                           className="hidden" 
+                           accept=".pdf, .doc, .docx"
+                           onChange={(e) => {
+                             if(e.target.files && e.target.files.length > 0) {
+                               setPdfFile2(e.target.files[0]);
+                               setFormData({ ...formData, menu_pdf_url_2: e.target.files[0].name });
+                             }
+                           }}
+                         />
+                       </label>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -407,6 +471,7 @@ const RestaurantManagement = () => {
                 <div className="pt-4 border-t border-white/5">
                   {(images.length + newImages.length) < FORM_LIMITS.restaurant.maxPhotos && (
                     <ImageUploader
+                      key={`image-${uploadKey}`}
                       multiple={true}
                       maxFileSize={2}
                       label="Yeni Görsel Yükle"

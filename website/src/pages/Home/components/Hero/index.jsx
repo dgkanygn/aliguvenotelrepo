@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Users, Bed } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 import { useSiteContext } from '../../../../context/SiteContext'
 import './styles/hero.css'
 
@@ -62,7 +62,7 @@ const Hero = ({ data = [] }) => {
               rel="noopener noreferrer"
               className="hero-btn cursor-pointer"
             >
-              <Bed size={20} />
+              <FaWhatsapp size={20} />
               Konaklama için
             </a>
             <a
@@ -71,7 +71,7 @@ const Hero = ({ data = [] }) => {
               rel="noopener noreferrer"
               className="hero-btn-secondary cursor-pointer"
             >
-              <Users size={20} />
+              <FaWhatsapp size={20} />
               Organizasyon için
             </a>
           </div>

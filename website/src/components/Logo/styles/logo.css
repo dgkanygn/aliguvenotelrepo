@@ -14,16 +14,7 @@
 
 .logo-link img {
   display: block;
-}
-
-/* Base heights for logo icons and text */
-.logo-link img:first-child {
   height: 48px;
-  width: auto;
-}
-
-.logo-link img:last-child {
-  height: 40px;
   width: auto;
 }
 
@@ -31,10 +22,8 @@
   .logo-link {
     gap: 0.5rem;
   }
-  .logo-link img:first-child {
+
+  .logo-link img {
     height: 36px;
-  }
-  .logo-link img:last-child {
-    height: 30px;
   }
 }

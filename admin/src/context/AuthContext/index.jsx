@@ -25,31 +25,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkAuth();
-
-    const checkDailyLogout = () => {
-      const now = new Date();
-      if (now.getHours() >= 13) {
-        const lastCleared = localStorage.getItem('last_cleared_13_date');
-        // YYYY-MM-DD olarak bugünün tarihini al
-        const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-        
-        if (lastCleared !== todayStr) {
-          localStorage.removeItem('token');
-          localStorage.setItem('last_cleared_13_date', todayStr);
-          setUser(null);
-          
-          // Eğer login sayfasında değilsek login'e at
-          if (window.location.pathname !== '/login') {
-            window.location.href = '/login';
-          }
-        }
-      }
-    };
-
-    checkDailyLogout(); // İlk başta kontrol et
-    const interval = setInterval(checkDailyLogout, 60000); // Her dakika kontrol et
-
-    return () => clearInterval(interval);
   }, []);
 
   const login = async (username, password) => {

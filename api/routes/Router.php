@@ -148,6 +148,8 @@ class Router
 
         if ($this->subResource === 'login' && $this->method === 'POST') {
             $controller->handleLogin();
+        } elseif ($this->subResource === 'refresh' && $this->method === 'POST') {
+            $controller->handleRefresh();
         } elseif ($this->subResource === 'me' && $this->method === 'GET') {
             $controller->handleMe();
         } elseif ($this->subResource === 'logout' && $this->method === 'POST') {

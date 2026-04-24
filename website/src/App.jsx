@@ -1,4 +1,7 @@
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Routes, Route } from 'react-router-dom'
+import ReactGA from 'react-ga4'
 import MainLayout from './components/MainLayout'
 import Home from './pages/Home'
 import Rooms from './pages/Rooms'
@@ -14,6 +17,13 @@ import ScrollToTop from './components/ScrollToTop'
 import CookieBanner from './components/CookieBanner'
 
 const App = () => {
+  const location = useLocation()
+
+  // Track page views
+  useEffect(() => {
+    ReactGA.send({ hitType: 'pageview', page: location.pathname })
+  }, [location.pathname])
+
   return (
     <>
       <ScrollToTop />

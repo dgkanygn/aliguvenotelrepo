@@ -1,4 +1,4 @@
-import { Clock } from 'lucide-react'
+import { Clock, FileText } from 'lucide-react'
 import ImageGallery from '../../components/ImageGallery'
 import PageBanner from '../../components/PageBanner'
 import Loading from '../../components/Loading'
@@ -35,6 +35,21 @@ const Restaurant = () => {
             <p className="intro-text">
               {info?.intro_text || 'Bilgi bulunamadı.'}
             </p>
+
+            {info?.menu_pdf_url && (
+              <div className="flex justify-center">
+                <a
+                  href={info.menu_pdf_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="menu-btn btn btn-primary btn-lg cursor-pointer flex items-center gap-3 px-8 py-4 text-lg"
+                >
+                  <FileText size={24} />
+                  <span>Menüyü İncele</span>
+                </a>
+              </div>
+            )}
+
             {info?.warning_text && (
               <div className="service-notice">
                 <Clock size={24} />
@@ -45,18 +60,6 @@ const Restaurant = () => {
         </div>
 
         <div className="menus-section">
-          {info?.menu_pdf_url && (
-            <div className="menu-pdf-btn-wrapper">
-              <a
-                href={info.menu_pdf_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary cursor-pointer"
-              >
-                Menüyü İncele
-              </a>
-            </div>
-          )}
           <MenuCard menu={sampleMenu} />
         </div>
 
