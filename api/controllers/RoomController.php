@@ -16,11 +16,11 @@ class RoomController
     public function index()
     {
         try {
-            $stmt = $this->db->query("SELECT * FROM rooms ORDER BY id ASC");
+            $stmt = $this->db->query("SELECT * FROM rooms ORDER BY sort_order ASC, id ASC");
             $rooms = $stmt->fetchAll();
 
             foreach ($rooms as &$room) {
-                $imgStmt = $this->db->prepare("SELECT * FROM room_images WHERE room_id = :room_id ORDER BY is_main DESC, id ASC");
+                $imgStmt = $this->db->prepare("SELECT * FROM room_images WHERE room_id = :room_id ORDER BY sort_order ASC, is_main DESC, id ASC");
                 $imgStmt->bindParam(':room_id', $room['id']);
                 $imgStmt->execute();
                 $room['images'] = $imgStmt->fetchAll();
@@ -57,7 +57,7 @@ class RoomController
             }
 
             // Images
-            $imgStmt = $this->db->prepare("SELECT * FROM room_images WHERE room_id = :room_id ORDER BY is_main DESC, id ASC");
+            $imgStmt = $this->db->prepare("SELECT * FROM room_images WHERE room_id = :room_id ORDER BY sort_order ASC, is_main DESC, id ASC");
             $imgStmt->bindParam(':room_id', $id);
             $imgStmt->execute();
             $room['images'] = $imgStmt->fetchAll();
@@ -89,24 +89,28 @@ class RoomController
                 return;
             }
 
-            $stmt = $this->db->prepare("INSERT INTO rooms (title, description, amenities) VALUES (:title, :description, :amenities)");
+            $stmt = $this->db->prepare("INSERT INTO rooms (title, description, amenities, sort_order) VALUES (:title, :description, :amenities, :sort_order)");
             $amenities = isset($data['amenities']) ? json_encode($data['amenities']) : '[]';
+            $sortOrder = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
             $stmt->bindParam(':title', $data['title']);
             $stmt->bindParam(':description', $data['description']);
             $stmt->bindParam(':amenities', $amenities);
+            $stmt->bindParam(':sort_order', $sortOrder);
             $stmt->execute();
 
             $roomId = $this->db->lastInsertId();
 
             // Görseller ekle
             if (!empty($data['images']) && is_array($data['images'])) {
-                $imgStmt = $this->db->prepare("INSERT INTO room_images (room_id, image_url, is_main) VALUES (:room_id, :image_url, :is_main)");
+                $imgStmt = $this->db->prepare("INSERT INTO room_images (room_id, image_url, is_main, sort_order) VALUES (:room_id, :image_url, :is_main, :sort_order)");
                 foreach ($data['images'] as $index => $image) {
                     $imageUrl = is_array($image) ? $image['image_url'] : $image;
                     $isMain = is_array($image) ? ($image['is_main'] ?? ($index === 0 ? 1 : 0)) : ($index === 0 ? 1 : 0);
+                    $sortOrder = is_array($image) ? ($image['sort_order'] ?? $index) : $index;
                     $imgStmt->bindParam(':room_id', $roomId);
                     $imgStmt->bindParam(':image_url', $imageUrl);
                     $imgStmt->bindParam(':is_main', $isMain);
+                    $imgStmt->bindParam(':sort_order', $sortOrder);
                     $imgStmt->execute();
                 }
             }
@@ -140,11 +144,13 @@ class RoomController
 
             $data = json_decode(file_get_contents("php://input"), true);
 
-            $stmt = $this->db->prepare("UPDATE rooms SET title = :title, description = :description, amenities = :amenities WHERE id = :id");
+            $stmt = $this->db->prepare("UPDATE rooms SET title = :title, description = :description, amenities = :amenities, sort_order = :sort_order WHERE id = :id");
             $amenities = isset($data['amenities']) ? json_encode($data['amenities']) : '[]';
+            $sortOrder = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
             $stmt->bindParam(':title', $data['title']);
             $stmt->bindParam(':description', $data['description']);
             $stmt->bindParam(':amenities', $amenities);
+            $stmt->bindParam(':sort_order', $sortOrder);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 
@@ -154,13 +160,15 @@ class RoomController
                 $delStmt->bindParam(':room_id', $id);
                 $delStmt->execute();
 
-                $imgStmt = $this->db->prepare("INSERT INTO room_images (room_id, image_url, is_main) VALUES (:room_id, :image_url, :is_main)");
+                $imgStmt = $this->db->prepare("INSERT INTO room_images (room_id, image_url, is_main, sort_order) VALUES (:room_id, :image_url, :is_main, :sort_order)");
                 foreach ($data['images'] as $index => $image) {
                     $imageUrl = is_array($image) ? $image['image_url'] : $image;
                     $isMain = is_array($image) ? ($image['is_main'] ?? ($index === 0 ? 1 : 0)) : ($index === 0 ? 1 : 0);
+                    $sortOrder = is_array($image) ? ($image['sort_order'] ?? $index) : $index;
                     $imgStmt->bindParam(':room_id', $id);
                     $imgStmt->bindParam(':image_url', $imageUrl);
                     $imgStmt->bindParam(':is_main', $isMain);
+                    $imgStmt->bindParam(':sort_order', $sortOrder);
                     $imgStmt->execute();
                 }
             }

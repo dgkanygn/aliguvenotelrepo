@@ -33,8 +33,9 @@ export const useRestaurant = () => {
     if (!info) return;
 
     setIsUploading(true);
-    let finalPdfUrl1 = formData.menu_pdf_url;
-    let finalPdfUrl2 = formData.menu_pdf_url_2;
+    // menu_pdf_url artık {title, url} objesi olarak geliyor
+    let finalPdfUrl1 = typeof formData.menu_pdf_url === 'object' ? formData.menu_pdf_url?.url : formData.menu_pdf_url;
+    let finalPdfUrl2 = typeof formData.menu_pdf_url_2 === 'object' ? formData.menu_pdf_url_2?.url : formData.menu_pdf_url_2;
     let finalImages = [...existingImages];
 
     try {
@@ -85,8 +86,8 @@ export const useRestaurant = () => {
       const res = await restaurantService.updateRestaurant(info.id, {
         ...formData,
         sample_menu: JSON.stringify(formData.sample_menu),
-        menu_pdf_url: finalPdfUrl1,
-        menu_pdf_url_2: finalPdfUrl2,
+        menu_pdf_url: { title: formData.menu_pdf_title_1 || '', url: finalPdfUrl1 || '' },
+        menu_pdf_url_2: { title: formData.menu_pdf_title_2 || '', url: finalPdfUrl2 || '' },
         restaurant_images: finalImages
       });
 

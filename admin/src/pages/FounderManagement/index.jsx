@@ -18,13 +18,13 @@ const FounderManagement = () => {
 
   return (
     <div className="flex min-h-screen bg-[#020617] text-slate-300 font-inter">
-      <Sidebar 
-        isCollapsed={isSidebarCollapsed} 
-        setIsCollapsed={setIsSidebarCollapsed} 
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
         isOpen={isMobileMenuOpen}
         setIsOpen={setIsMobileMenuOpen}
       />
-      
+
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar onToggleMobileMenu={toggleMobileMenu} />
 
@@ -34,7 +34,7 @@ const FounderManagement = () => {
               <p className="text-[#C5A059] font-bold text-xs uppercase tracking-[3px] mb-2">Ana Sayfa</p>
               <h1 className="text-3xl font-bold text-white tracking-tight">Kurucu Bilgisi</h1>
             </div>
-            <button 
+            <button
               onClick={onSave}
               disabled={isLoading}
               className="flex items-center gap-2 bg-[#C5A059] hover:bg-[#A68045] disabled:opacity-50 text-white px-8 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-lg shadow-[#C5A059]/10"
@@ -52,9 +52,9 @@ const FounderManagement = () => {
                 <div className="aspect-[3/4] rounded-2xl overflow-hidden border border-white/5 mb-6">
                   <img src={founder.image_url} alt="Founder" className="w-full h-full object-cover" />
                 </div>
-                <ImageUploader 
-                  maxFileSize={2} 
-                  idealResolution={{ width: 600, height: 800 }} 
+                <ImageUploader
+                  maxFileSize={10}
+                  idealResolution={{ width: 600, height: 800 }}
                   label="Fotoğrafı Güncelle"
                 />
               </div>
@@ -66,16 +66,16 @@ const FounderManagement = () => {
                 <div>
                   <div className="flex justify-between items-center mb-3">
                     <div className="flex items-center gap-2">
-                       <User size={16} className="text-[#C5A059]" />
-                       <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Başlık / İsim</label>
+                      <User size={16} className="text-[#C5A059]" />
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Başlık / İsim</label>
                     </div>
                     <span className={`text-[10px] font-bold ${formData.title.length >= FORM_LIMITS.founder.title ? 'text-rose-500' : 'text-slate-600'}`}>{formData.title.length}/{FORM_LIMITS.founder.title}</span>
                   </div>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     maxLength={FORM_LIMITS.founder.title}
                     value={formData.title}
-                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all font-medium text-lg"
                   />
                 </div>
@@ -85,9 +85,9 @@ const FounderManagement = () => {
                     <FileText size={16} className="text-[#C5A059]" />
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Hakkında (İçerik)</label>
                   </div>
-                  <textarea 
+                  <textarea
                     value={formData.content}
-                    onChange={(e) => setFormData({...formData, content: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                     rows={10}
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all resize-none leading-relaxed"
                   />
@@ -102,10 +102,10 @@ const FounderManagement = () => {
                     </div>
                     <span className={`text-[10px] font-bold ${formData.special_text.length >= FORM_LIMITS.founder.special_text ? 'text-rose-500' : 'text-slate-600'}`}>{formData.special_text.length}/{FORM_LIMITS.founder.special_text}</span>
                   </div>
-                  <textarea 
+                  <textarea
                     value={formData.special_text}
                     maxLength={FORM_LIMITS.founder.special_text}
-                    onChange={(e) => setFormData({...formData, special_text: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, special_text: e.target.value })}
                     rows={4}
                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-[#C5A059] transition-all resize-none italic"
                   />

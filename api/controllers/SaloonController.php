@@ -16,11 +16,11 @@ class SaloonController
     public function index()
     {
         try {
-            $stmt = $this->db->query("SELECT * FROM saloons ORDER BY id ASC");
+            $stmt = $this->db->query("SELECT * FROM saloons ORDER BY sort_order ASC, id ASC");
             $saloons = $stmt->fetchAll();
 
             foreach ($saloons as &$saloon) {
-                $imgStmt = $this->db->prepare("SELECT * FROM saloon_images WHERE saloon_id = :saloon_id ORDER BY is_main DESC, id ASC");
+                $imgStmt = $this->db->prepare("SELECT * FROM saloon_images WHERE saloon_id = :saloon_id ORDER BY sort_order ASC, is_main DESC, id ASC");
                 $imgStmt->bindParam(':saloon_id', $saloon['id']);
                 $imgStmt->execute();
                 $saloon['images'] = $imgStmt->fetchAll();
@@ -57,7 +57,7 @@ class SaloonController
             }
 
             // Images
-            $imgStmt = $this->db->prepare("SELECT * FROM saloon_images WHERE saloon_id = :saloon_id ORDER BY is_main DESC, id ASC");
+            $imgStmt = $this->db->prepare("SELECT * FROM saloon_images WHERE saloon_id = :saloon_id ORDER BY sort_order ASC, is_main DESC, id ASC");
             $imgStmt->bindParam(':saloon_id', $id);
             $imgStmt->execute();
             $saloon['images'] = $imgStmt->fetchAll();
@@ -89,24 +89,28 @@ class SaloonController
                 return;
             }
 
-            $stmt = $this->db->prepare("INSERT INTO saloons (title, description, amenities) VALUES (:title, :description, :amenities)");
+            $stmt = $this->db->prepare("INSERT INTO saloons (title, description, amenities, sort_order) VALUES (:title, :description, :amenities, :sort_order)");
             $amenities = isset($data['amenities']) ? json_encode($data['amenities']) : '[]';
+            $sortOrder = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
             $stmt->bindParam(':title', $data['title']);
             $stmt->bindParam(':description', $data['description']);
             $stmt->bindParam(':amenities', $amenities);
+            $stmt->bindParam(':sort_order', $sortOrder);
             $stmt->execute();
 
             $saloonId = $this->db->lastInsertId();
 
             // Görseller ekle
             if (!empty($data['images']) && is_array($data['images'])) {
-                $imgStmt = $this->db->prepare("INSERT INTO saloon_images (saloon_id, image_url, is_main) VALUES (:saloon_id, :image_url, :is_main)");
+                $imgStmt = $this->db->prepare("INSERT INTO saloon_images (saloon_id, image_url, is_main, sort_order) VALUES (:saloon_id, :image_url, :is_main, :sort_order)");
                 foreach ($data['images'] as $index => $image) {
                     $imageUrl = is_array($image) ? $image['image_url'] : $image;
                     $isMain = is_array($image) ? ($image['is_main'] ?? ($index === 0 ? 1 : 0)) : ($index === 0 ? 1 : 0);
+                    $sortOrder = is_array($image) ? ($image['sort_order'] ?? $index) : $index;
                     $imgStmt->bindParam(':saloon_id', $saloonId);
                     $imgStmt->bindParam(':image_url', $imageUrl);
                     $imgStmt->bindParam(':is_main', $isMain);
+                    $imgStmt->bindParam(':sort_order', $sortOrder);
                     $imgStmt->execute();
                 }
             }
@@ -138,11 +142,13 @@ class SaloonController
 
             $data = json_decode(file_get_contents("php://input"), true);
 
-            $stmt = $this->db->prepare("UPDATE saloons SET title = :title, description = :description, amenities = :amenities WHERE id = :id");
+            $stmt = $this->db->prepare("UPDATE saloons SET title = :title, description = :description, amenities = :amenities, sort_order = :sort_order WHERE id = :id");
             $amenities = isset($data['amenities']) ? json_encode($data['amenities']) : '[]';
+            $sortOrder = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
             $stmt->bindParam(':title', $data['title']);
             $stmt->bindParam(':description', $data['description']);
             $stmt->bindParam(':amenities', $amenities);
+            $stmt->bindParam(':sort_order', $sortOrder);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 
@@ -152,13 +158,15 @@ class SaloonController
                 $delStmt->bindParam(':saloon_id', $id);
                 $delStmt->execute();
 
-                $imgStmt = $this->db->prepare("INSERT INTO saloon_images (saloon_id, image_url, is_main) VALUES (:saloon_id, :image_url, :is_main)");
+                $imgStmt = $this->db->prepare("INSERT INTO saloon_images (saloon_id, image_url, is_main, sort_order) VALUES (:saloon_id, :image_url, :is_main, :sort_order)");
                 foreach ($data['images'] as $index => $image) {
                     $imageUrl = is_array($image) ? $image['image_url'] : $image;
                     $isMain = is_array($image) ? ($image['is_main'] ?? ($index === 0 ? 1 : 0)) : ($index === 0 ? 1 : 0);
+                    $sortOrder = is_array($image) ? ($image['sort_order'] ?? $index) : $index;
                     $imgStmt->bindParam(':saloon_id', $id);
                     $imgStmt->bindParam(':image_url', $imageUrl);
                     $imgStmt->bindParam(':is_main', $isMain);
+                    $imgStmt->bindParam(':sort_order', $sortOrder);
                     $imgStmt->execute();
                 }
             }

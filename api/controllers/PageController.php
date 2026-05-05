@@ -81,11 +81,11 @@ class PageController
             $banner = $this->getPageBanners('rooms');
 
             // rooms with their images
-            $stmt = $this->db->query("SELECT * FROM rooms ORDER BY id ASC");
+            $stmt = $this->db->query("SELECT * FROM rooms ORDER BY sort_order ASC, id ASC");
             $rooms = $stmt->fetchAll();
 
             foreach ($rooms as &$room) {
-                $imgStmt = $this->db->prepare("SELECT * FROM room_images WHERE room_id = :room_id ORDER BY is_main DESC, id ASC");
+                $imgStmt = $this->db->prepare("SELECT * FROM room_images WHERE room_id = :room_id ORDER BY sort_order ASC, is_main DESC, id ASC");
                 $imgStmt->bindParam(':room_id', $room['id']);
                 $imgStmt->execute();
                 $room['images'] = $imgStmt->fetchAll();
@@ -123,8 +123,26 @@ class PageController
             $stmt = $this->db->query("SELECT * FROM restaurant_info LIMIT 1");
             $restaurantInfo = $stmt->fetch() ?: null;
 
+            // menu_pdf_url alanlarını JSON olarak decode et
+            if ($restaurantInfo && isset($restaurantInfo['menu_pdf_url']) && is_string($restaurantInfo['menu_pdf_url'])) {
+                $decoded = json_decode($restaurantInfo['menu_pdf_url'], true);
+                if ($decoded !== null) {
+                    $restaurantInfo['menu_pdf_url'] = $decoded;
+                } else {
+                    $restaurantInfo['menu_pdf_url'] = ['title' => '', 'url' => $restaurantInfo['menu_pdf_url']];
+                }
+            }
+            if ($restaurantInfo && isset($restaurantInfo['menu_pdf_url_2']) && is_string($restaurantInfo['menu_pdf_url_2'])) {
+                $decoded = json_decode($restaurantInfo['menu_pdf_url_2'], true);
+                if ($decoded !== null) {
+                    $restaurantInfo['menu_pdf_url_2'] = $decoded;
+                } else {
+                    $restaurantInfo['menu_pdf_url_2'] = ['title' => '', 'url' => $restaurantInfo['menu_pdf_url_2']];
+                }
+            }
+
             // restaurant_images
-            $stmt = $this->db->query("SELECT * FROM restaurant_images ORDER BY id ASC");
+            $stmt = $this->db->query("SELECT * FROM restaurant_images ORDER BY sort_order ASC, id ASC");
             $restaurantImages = $stmt->fetchAll();
 
             http_response_code(200);
@@ -152,11 +170,11 @@ class PageController
             $banner = $this->getPageBanners('events');
 
             // saloons with their images
-            $stmt = $this->db->query("SELECT * FROM saloons WHERE category_keys LIKE '%\"events\"%' ORDER BY id ASC");
+            $stmt = $this->db->query("SELECT * FROM saloons WHERE category_keys LIKE '%\"events\"%' ORDER BY sort_order ASC, id ASC");
             $saloons = $stmt->fetchAll();
 
             foreach ($saloons as &$saloon) {
-                $imgStmt = $this->db->prepare("SELECT * FROM saloon_images WHERE saloon_id = :saloon_id ORDER BY is_main DESC, id ASC");
+                $imgStmt = $this->db->prepare("SELECT * FROM saloon_images WHERE saloon_id = :saloon_id ORDER BY sort_order ASC, is_main DESC, id ASC");
                 $imgStmt->bindParam(':saloon_id', $saloon['id']);
                 $imgStmt->execute();
                 $saloon['images'] = $imgStmt->fetchAll();
@@ -194,11 +212,11 @@ class PageController
             $banner = $this->getPageBanners('meetings');
 
             // saloons with their images
-            $stmt = $this->db->query("SELECT * FROM saloons WHERE category_keys LIKE '%\"meetings\"%' ORDER BY id ASC");
+            $stmt = $this->db->query("SELECT * FROM saloons WHERE category_keys LIKE '%\"meetings\"%' ORDER BY sort_order ASC, id ASC");
             $saloons = $stmt->fetchAll();
 
             foreach ($saloons as &$saloon) {
-                $imgStmt = $this->db->prepare("SELECT * FROM saloon_images WHERE saloon_id = :saloon_id ORDER BY is_main DESC, id ASC");
+                $imgStmt = $this->db->prepare("SELECT * FROM saloon_images WHERE saloon_id = :saloon_id ORDER BY sort_order ASC, is_main DESC, id ASC");
                 $imgStmt->bindParam(':saloon_id', $saloon['id']);
                 $imgStmt->execute();
                 $saloon['images'] = $imgStmt->fetchAll();

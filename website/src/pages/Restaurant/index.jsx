@@ -36,19 +36,43 @@ const Restaurant = () => {
               {info?.intro_text || 'Bilgi bulunamadı.'}
             </p>
 
-            {info?.menu_pdf_url && (
-              <div className="flex justify-center">
-                <a
-                  href={info.menu_pdf_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="menu-btn btn btn-primary btn-lg cursor-pointer flex items-center gap-3 px-8 py-4 text-lg"
-                >
-                  <FileText size={24} />
-                  <span>Menüyü İncele</span>
-                </a>
-              </div>
-            )}
+            {(() => {
+              const menu1Url = typeof info?.menu_pdf_url === 'object' ? info.menu_pdf_url?.url : info?.menu_pdf_url;
+              const menu1Title = typeof info?.menu_pdf_url === 'object' ? info.menu_pdf_url?.title : '';
+              const menu2Url = typeof info?.menu_pdf_url_2 === 'object' ? info.menu_pdf_url_2?.url : info?.menu_pdf_url_2;
+              const menu2Title = typeof info?.menu_pdf_url_2 === 'object' ? info.menu_pdf_url_2?.title : '';
+
+              return (
+                <>
+                  {menu1Url && (
+                    <div className="flex justify-center">
+                      <a
+                        href={menu1Url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="menu-btn btn btn-primary btn-lg cursor-pointer flex items-center gap-3 px-8 py-4 text-lg"
+                      >
+                        <FileText size={24} />
+                        <span>{menu1Title || 'Menüyü İncele'}</span>
+                      </a>
+                    </div>
+                  )}
+                  {menu2Url && (
+                    <div className="flex justify-center" style={{ marginTop: '1rem' }}>
+                      <a
+                        href={menu2Url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="menu-btn btn btn-primary btn-lg cursor-pointer flex items-center gap-3 px-8 py-4 text-lg"
+                      >
+                        <FileText size={24} />
+                        <span>{menu2Title || 'Menüyü İncele'}</span>
+                      </a>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
 
             {info?.warning_text && (
               <div className="service-notice">
